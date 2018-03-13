@@ -9,6 +9,7 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <meta content="{{ config('app.url') }}" name="base_url" id="base_url">
   <meta content="{{ config('app.url') }}" name="domain" id="domain">
+  <meta content="{{ config('app.hris') }}" name="hris-base" id="hris-base">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="{{ asset('css/bs3.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/new-metro.css') }}">
