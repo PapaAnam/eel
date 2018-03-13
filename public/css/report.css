@@ -1,0 +1,15 @@
+
+@media print {
+	body {
+		-webkit-print-color-adjust: exact;
+	}
+	.table th{
+		background-color: #eeeeee !important;
+	}
+	.table td .bg-black{
+		background-color: black !important;
+	}
+}
+.table th{
+	background-color: #eeeeee !important;
+}

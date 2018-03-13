@@ -1,0 +1,1 @@
+<script src="{{ asset('plugins/vue/vue.min.js') }}"></script>
