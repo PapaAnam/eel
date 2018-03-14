@@ -16,7 +16,7 @@ class Employee extends Model
 	public $timestamps = false;
 	protected $fillable = ['name', 'nin', 'gender', 'born_in', 'birthdate', 'position', 'login', 'father', 'mother', 'husband', 'wife', 'son', 'daughter', 'elementary', 'el_year', 'junior', 'jun_year', 'senior', 'sen_year', 'university', 'u_year', 'elektoral', 'cartao_rdtl', 'certidao_baptismo', 'elektoral_path', 'cartao_rdtl_path', 'certidao_baptismo_path', 'type', 'e_from', 'department', 'photo', 'marital_status', 'present_address', 'handphone', 'joining_date', 'non_active', 'non_active_at', 'bri_account', 'salary_rule', 'department_id'];
 	protected $hidden = ['salary_rule', 'login', 'deleted_at'];
-	protected $appends = ['bd', 'e_type', 'marry', 'd_name', 'sd_name', 'join_date', 'p_name', 'non_act', 'non_act_date'];
+	protected $appends = ['bd', 'e_type', 'marry', 'join_date', 'p_name', 'non_act', 'non_act_date'];
 
 	public static function permanent_employee_count()
 	{
