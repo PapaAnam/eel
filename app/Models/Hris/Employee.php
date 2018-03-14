@@ -88,24 +88,6 @@ class Employee extends Model
 		return employee_type($this->type);
 	}
 
-	public function getSdNameAttribute()
-	{
-		$sd = SubDepartment::find($this->department);
-		if($sd)
-			return $sd->name;
-		return '';
-	}
-
-	public function getDNameAttribute()
-	{
-		if($this->department){
-			if(SubDepartment::find($this->department)){
-				return Department::find(SubDepartment::find($this->department)->department)->name;
-			}
-		}
-		return '';
-	}
-
 	public function getPNameAttribute()
 	{
 		return Position::find($this->position)->name;
