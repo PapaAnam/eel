@@ -14,6 +14,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'hris'  => env('HRIS_PATH', 'enterprise_edition/public/hris/'),
+    'hris_name' => env('HRIS_NAME', 'HRIS'),
 
     /*
     |--------------------------------------------------------------------------

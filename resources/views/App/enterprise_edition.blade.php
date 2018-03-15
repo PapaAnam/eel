@@ -22,6 +22,7 @@
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     @component('manifest')
     @endcomponent
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset(mix('js/enterprise-lib.js')) }}"></script>
     <script src="{{ asset(mix('js/enterprise.js')) }}"></script>
 </body>
