@@ -157,8 +157,8 @@ class Employee extends Model
 				'Department' => $d->dep->name,
 				'Position'                  => $d->p_name,
 			];
-			return $data;
 		}
+		return $data;
 	}
 
 	public function scopeData($q, $id = null)
