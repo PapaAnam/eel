@@ -313,37 +313,37 @@ Route::group(['prefix' => 'fleet-management', 'namespace' => 'Fleet'], function(
 	Route::view('/{sub_menu?}/{sub_sub_menu?}', 'App.fleet');
 });
 
-Route::get('/api/lisun-table-list', function(){
-	return collect(DB::connection('sqlsrv')
-		->select('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE=\'BASE TABLE\''))->pluck('TABLE_NAME');
-});
+// Route::get('/api/lisun-table-list', function(){
+// 	return collect(DB::connection('sqlsrv')
+// 		->select('SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE=\'BASE TABLE\''))->pluck('TABLE_NAME');
+// });
 
-Route::get('/departments', function(){
-	return App\Models\Hris\Department::distinct()->get()->pluck('name');
-});
-Route::get('/positions', function(){
-	return App\Models\Hris\Position::distinct()->get()->pluck('name');
-});
-Route::get('/nama', function(){
-	$faker = Faker\Factory::create('id_ID');
-	$nama = [];
-	foreach (range(1, 300) as $i) {
-		$gender = $faker->randomElement(['male', 'female']);
-		$nama[] = [
-			'nip_karyawan' => $faker->unique()->nik,
-			'nama_karyawan' => $faker->name($gender),
-			'jk_karyawan' => $gender === 'male' ? 'Laki-laki' : 'Perempuan',
-			'jenis_karyawan' => $faker->randomElement(['Tetap', 'Sementara']),
-			'pendidikan_karyawan' => $faker->randomElement(['D3', 'D4', 'S1']).' '.$faker->randomElement([]), 
-			'kota_lhr_karyawan' => $faker->city,
-			'tgl_lhr_karyawan' => $faker->dateTimeBetween('-30 years', '-20 years')->format('Y-m-d'),
-			'agama_karyawan' => $faker->randomElement(['Islam','Kristen','Katholik','Hindu','Buddha']),
-			'status_karyawan' => $faker->randomElement(['Nikah', 'Belum Nikah']),
-			'alamat_karyawan' => $faker->address,
-			'tgl_masuk_karyawan' => $faker->dateTimeBetween('-1 years')->format('Y-m-d'),
-			'id_divisi' => $faker->randomElement(range(1, 62)),
-			'id_jabatan' => $faker->randomElement(range(1, 35)),
-		];
-	}
-	return $nama;
-});
+// Route::get('/departments', function(){
+// 	return App\Models\Hris\Department::distinct()->get()->pluck('name');
+// });
+// Route::get('/positions', function(){
+// 	return App\Models\Hris\Position::distinct()->get()->pluck('name');
+// });
+// Route::get('/nama', function(){
+// 	$faker = Faker\Factory::create('id_ID');
+// 	$nama = [];
+// 	foreach (range(1, 300) as $i) {
+// 		$gender = $faker->randomElement(['male', 'female']);
+// 		$nama[] = [
+// 			'nip_karyawan' => $faker->unique()->nik,
+// 			'nama_karyawan' => $faker->name($gender),
+// 			'jk_karyawan' => $gender === 'male' ? 'Laki-laki' : 'Perempuan',
+// 			'jenis_karyawan' => $faker->randomElement(['Tetap', 'Sementara']),
+// 			'pendidikan_karyawan' => $faker->randomElement(['D3', 'D4', 'S1']).' '.$faker->randomElement([]), 
+// 			'kota_lhr_karyawan' => $faker->city,
+// 			'tgl_lhr_karyawan' => $faker->dateTimeBetween('-30 years', '-20 years')->format('Y-m-d'),
+// 			'agama_karyawan' => $faker->randomElement(['Islam','Kristen','Katholik','Hindu','Buddha']),
+// 			'status_karyawan' => $faker->randomElement(['Nikah', 'Belum Nikah']),
+// 			'alamat_karyawan' => $faker->address,
+// 			'tgl_masuk_karyawan' => $faker->dateTimeBetween('-1 years')->format('Y-m-d'),
+// 			'id_divisi' => $faker->randomElement(range(1, 62)),
+// 			'id_jabatan' => $faker->randomElement(range(1, 35)),
+// 		];
+// 	}
+// 	return $nama;
+// });
