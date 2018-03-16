@@ -8,6 +8,7 @@ Route::view('/uji-coba', 'c');
 
 #ENTERPRISE EDITION
 Route::get('/home', 'HomeController@index')->name('home');
+Route::view('/aa', 'aa');
 // Route::get('/dd', function(){
 // 	return '<img src="'.asset('0001/photo/payroll erd.png').'">';
 	// $dbName = "D:\Documents\Database1.accdb";
@@ -38,7 +39,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 
 	# DEPARTMENTS MODUL
 	Route::group(['prefix' => 'departments', 'namespace' => 'Hris'], function(){
-		Route::get('/', 'DepartmentController@index')->name('departments');
+		// Route::get('/', 'DepartmentController@index')->name('departments');
 		Route::get('/data/{id?}', 'DepartmentController@getData');
 		Route::post('/store', 'DepartmentController@store');
 		Route::put('/update/{id}', 'DepartmentController@update');

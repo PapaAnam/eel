@@ -12,7 +12,7 @@
   <meta content="{{ config('app.hris') }}" name="hris-base" id="hris-base">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"> --}}
-  <link rel="stylesheet" href="{{ asset('css/new-metro.css') }}">
+  {{-- <link rel="stylesheet" href="{{ asset('css/new-metro.css') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-schemes.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-icons.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="{{ asset('iCheck/all.css') }}">
   <link rel="stylesheet" href="{{ asset('css/new_preloader.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/hris-additional.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/tiles.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/tiles.css') }}"> --}}
   <style>
   .mac {
     position: fixed;
@@ -37,19 +37,17 @@
     display: none;
   }
 </style>
-</head>
-<body>
-  <div id="app-hris">
-    <hris></hris>
-  </div>
   <script src="{{ asset('js/jquery.min.js') }}"></script>
-  <script src="{{ asset('js/metro.min.js') }}"></script>
-  {{-- <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script> --}}
-  <script src="{{ asset('js/select2.full.min.js') }}"></script>
   <script src="{{ asset('js/jquery.inputmask.js') }}"></script>
   <script src="{{ asset('js/jquery.inputmask.extensions.js') }}"></script>
   <script src="{{ asset('js/jquery.inputmask.date.extensions.js') }}"></script>
-  <script src="{{ asset('js/moment.min.js') }}"></script>
+</head>
+<body>
+  <input type="text" data-inputmask="\'alias\': \'hh:mm:ss\'" data-mask>
+  {{-- <script src="{{ asset('js/metro.min.js') }}"></script> --}}
+  {{-- <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script> --}}
+  {{-- <script src="{{ asset('js/select2.full.min.js') }}"></script> --}}
+  {{-- <script src="{{ asset('js/moment.min.js') }}"></script>
   <script src="{{ asset('js/fullcalendar.min.js') }}"></script>
   <script src="{{ asset('iCheck/icheck.min.js') }}"></script>
   <script src="{{ asset('datatable/js/jquery.dataTables.min.js') }}"></script>
@@ -58,6 +56,9 @@
   <script src="{{ asset('datatable/responsive/js/responsive.bootstrap4.min.js') }}"></script>
   @component('manifest')
   @endcomponent
-  <script src="{{ asset(mix('js/hris.js')) }}"></script>
+  <script src="{{ asset(mix('js/hris.js')) }}"></script> --}}
+  <script>
+    $('input').inputmask()
+  </script>
 </body>
 </html>

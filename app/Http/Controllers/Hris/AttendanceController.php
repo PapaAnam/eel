@@ -147,6 +147,19 @@ class AttendanceController extends Controller
         return parent::created();
     }
 
+    public function update($id, Request $r)
+    {
+        $r->validate([
+            'break'     => 'required',
+        ]);
+        A::find($id)->update([
+            'break'         => $r->break,
+            'end_break'     => $r->end_break,
+            'out'           => $r->out,
+        ]);
+        return 'Attendance updated';
+    }
+
     public function create(Request $r)
     {
         $rules             = $this->rules;
@@ -214,6 +227,11 @@ class AttendanceController extends Controller
         return parent::created();
     }
 
+    public function api($id)
+    {
+        return A::with('emp')->where('id', $id)->first();
+    }
+
     public function break(Request $r)
     {
         $id = $r->id;
@@ -222,6 +240,23 @@ class AttendanceController extends Controller
             'data'          => $data
             );
         return view('hris.attendances.break', $oper);
+    }
+
+    public function store(Request $r)
+    {
+        $r->validate([
+            'status'        => 'required',
+            'created_at'    => 'required|date_format:Y-m-d',
+            'enter'         => 'required|date_format:"H:i:s"',
+        ]);
+        A::updateOrCreate([
+            'created_at'    => $r->created_at,
+            'employee'      => $r->employee,
+        ], [
+            'enter'         => $r->enter,
+            'status'        => $r->status,
+        ]);
+        return 'Attendance success created';
     }
 
     public function breakUpdate(Request $r)
@@ -308,6 +343,12 @@ class AttendanceController extends Controller
         
         parent::create_activity('Deleted attendance');
         return parent::deleted();
+    }
+
+    public function delete($id)
+    {
+        A::find($id)->delete();
+        return 'Attendance deleted';
     }
 
     public function upload_attendance(Request $r)

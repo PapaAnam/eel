@@ -144,6 +144,14 @@ class EmployeeController extends Controller
         return $rules;
     }
 
+    public function api(Request $r, $id = null)
+    {
+        if($id){
+            return E::find($id);
+        }
+        return E::all();
+    }
+
     public function handleUpload($r)
     {
         $a = ''; $a1 = ''; $b = ''; $b1 = ''; $c = ''; $c1 = '';
