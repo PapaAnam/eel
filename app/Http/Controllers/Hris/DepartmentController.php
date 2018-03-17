@@ -16,6 +16,14 @@ use PDF;
 class DepartmentController extends Controller
 {
 
+    public function api($id = null)
+    {
+        if($id){
+            return D::find($id);
+        }
+        return D::data();
+    }
+
     public function getData($id = null)
     {
         if($id){

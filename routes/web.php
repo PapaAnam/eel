@@ -75,7 +75,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 
 	# EMPLOYEES MODUL
 	Route::group(['prefix' => 'employees', 'namespace' => 'Hris'], function(){
-		Route::get('/', 'EmployeeController@index');
+		// Route::get('/', 'EmployeeController@index');
 		Route::get('/data/{id?}', 'EmployeeController@getData');
 		Route::post('/store', 'EmployeeController@store');
 		Route::put('/update/{id}', 'EmployeeController@update');
@@ -108,7 +108,8 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 
 	# ATTENDANCES MODUL
 	Route::group(['prefix' => 'attendances', 'namespace' => 'Hris'], function(){
-		Route::get('/', 'AttendanceController@index');
+		// Route::get('/', 'AttendanceController@index');
+		Route::get('/example', 'AttendanceController@example');
 		Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
 		Route::get('/x100c', 'AttendanceController@x100c');
 		Route::post('/store', 'AttendanceController@store');

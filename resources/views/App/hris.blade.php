@@ -12,7 +12,7 @@
   <meta content="{{ config('app.hris') }}" name="hris-base" id="hris-base">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"> --}}
-  <link rel="stylesheet" href="{{ asset('css/new-metro.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/new-metro.css?3892832') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-schemes.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-icons.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">

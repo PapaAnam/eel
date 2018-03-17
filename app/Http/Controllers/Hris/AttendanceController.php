@@ -12,8 +12,10 @@ use App\Models\Hris\SubDepartment       as SD;
 use App\Models\Hris\Employee            as E;
 use App\Models\Hris\OverTime            as O;
 use App\Models\Hris\LeavePeriod         as LP;
+use App\Models\Hris\Department          as D;
 use App\Models\Absensi\CheckInOut;
 use Excel;
+use Storage;
 
 class AttendanceController extends Controller
 {
@@ -427,6 +429,91 @@ class AttendanceController extends Controller
                 });
             });
         })->export('xlsx');
+    }
+
+    public function storeMulti(Request $r)
+    {
+        $r->validate([
+            'dep'           => 'required',
+            'created_at'    => 'required|date_format:Y-m-d',
+            'time_at'       => 'required|date_format:"H:i:s"',
+        ]);
+        if(!$r->subdep || $r->subdep == 'all'){
+            $d = [];
+            $depts = D::with('depts.depts')->where('id', $r->dep)->get();
+            $d[] = $depts[0]->id;
+            if(count($depts[0]->depts) > 0){
+                foreach ($depts[0]->depts as $dep) {
+                    $d[] = $dep->id;
+                    if(count($dep->depts) > 0){
+                        foreach ($dep->depts as $subdep) {
+                            $d[] = $subdep->id;
+                        }
+                    }
+                }
+            }
+            $employees = E::whereIn('department', $d)->get();
+            foreach ($employees as $e) {
+                A::updateOrCreate([
+                    'employee'      => $e->id,
+                    'created_at'    => $r->created_at,
+                ], [
+                    $r->time        => $r->time_at
+                ]);
+            }
+        }else if($r->subdep || $r->subsubdep){
+            $d      = [];
+            $depts  = D::with('depts')->where('id', $r->subdep)->get();
+            $d[]    = $depts[0]->id;
+            if(count($depts[0]->depts) > 0){
+                foreach ($depts[0]->depts as $dep) {
+                    $d[] = $dep->id;
+                }
+            }
+            $employees = E::whereIn('department', $d)->get();
+            foreach ($employees as $e) {
+                A::updateOrCreate([
+                    'employee'      => $e->id,
+                    'created_at'    => $r->created_at,
+                ], [
+                    $r->time        => $r->time_at
+                ]);
+            }
+        }
+        return 'Attendance multi success';
+    }
+
+    public function storeExcel(Request $r)
+    {
+        Storage::deleteDirectory('attendances');
+        $file_path = $r->file('attendance_excel')->store('attendances');
+        $file_path = explode('/', $file_path);
+        $file_name = end($file_path);
+        $rows = Excel::load('public/storage/attendances/'.$file_name)->get();
+        // $rows->dd();
+        $datas = [];
+        $rows->each(function($row){
+            $created_at = $row->created_at->format('Y-m-d');
+            if(E::where('nin', $row->employee)->count()){
+                $re = E::where('nin', $row->employee)->first()->id;
+                A::updateOrCreate([
+                   'created_at' => $created_at, 
+                   'employee'   => $re 
+                ], [
+                    'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
+                    'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
+                    'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
+                    'out'        => is_null($row->out) ? '00:00:00' : $row->out->format('H:i:s'),
+                    'status'     => $row->status
+                ]);
+            }
+        });
+        return response('Import and attendance success');
+    }
+
+    public function example()
+    {
+        return response()->download(public_path('attendance_format_example.xlsx'));
     }
 }
 
