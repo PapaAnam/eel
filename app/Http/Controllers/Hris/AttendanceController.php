@@ -504,7 +504,7 @@ class AttendanceController extends Controller
                     'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                     'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
                     'out'        => is_null($row->out) ? '00:00:00' : $row->out->format('H:i:s'),
-                    'status'     => $row->status
+                    'status'     => ucwords($row->status),
                 ]);
             }
         });
@@ -513,7 +513,42 @@ class AttendanceController extends Controller
 
     public function example()
     {
-        return response()->download(public_path('attendance_format_example.xlsx'));
+        Excel::create('attendance_format_example', function($excel){
+            $excel->sheet('data', function($sheet){
+                $emp = E::all()->transform(function($item){
+                    $status = array_random([
+                        'Present',
+                        'Sick',
+                        'Absent',
+                        'Father Leave',
+                        'Holiday',
+                        'Special Permit',
+                        'Pregnancy',
+                    ]);
+                    return [
+                        'employee'      => $item->id,
+                        'enter'         => $status === 'Present' ? '08:30:00' : '',
+                        'break'         => $status === 'Present' ? '12:00:00' : '',
+                        'end_break'     => $status === 'Present' ? '12:30:00' : '',
+                        'out'           => $status === 'Present' ? '18:00:00' : '',
+                        'status'        => $status,
+                        'created_at'    => substr((String) now(), 0, 10),
+                    ];
+                });
+                $sheet->with($emp);
+                $sheet->cell('I2', 'Catatan');
+                $sheet->cell('I3', 'Hanya gunakan status berikut');
+                $sheet->cell('I4', ucwords('present'));
+                $sheet->cell('I5', ucwords('sick'));
+                $sheet->cell('I6', ucwords('absent'));
+                $sheet->cell('I7', ucwords('father leave'));
+                $sheet->cell('I8', ucwords('holiday'));
+                $sheet->cell('I9', ucwords('special permit'));
+                $sheet->cell('I10', ucwords('pregnancy'));
+
+            });
+        })->download('xlsx');
+        // return response()->download(public_path('attendance_format_example.xlsx'));
     }
 }
 

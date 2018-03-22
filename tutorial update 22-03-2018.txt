@@ -1,0 +1,5 @@
+Setelah berhasil git pull
+
+jalankan perintah php artisan migrate
+
+dah itu saja

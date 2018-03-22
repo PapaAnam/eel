@@ -106,7 +106,8 @@ class EmployeeController extends Controller
             'joining_date'    => $r->joining_date,
             'marital_status'  => $r->marital_status,
             'bri_account'     => $r->bri_account,
-            'department_id' => $r->department
+            'department_id'   => $r->department,
+            'seguranca_social' => $r->seguranca_social,
         ];
         return $storeData;
     }
