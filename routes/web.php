@@ -96,7 +96,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 
 	# ACCOUNTS MODUL
 	Route::group(['prefix' => 'accounts', 'namespace' => 'Hris'], function(){
-		Route::get('/', 'AccountController@index');
+		// Route::get('/', 'AccountController@index');
 		Route::get('/data/{id?}', 'AccountController@getData');
 		Route::post('/store', 'AccountController@store');
 		Route::put('/update/{id}', 'AccountController@update');

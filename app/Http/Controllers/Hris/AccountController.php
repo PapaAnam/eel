@@ -27,20 +27,20 @@ class AccountController extends Controller
         return U::data($id);
     }
 
-    public function index(Request $r)
-    {
-        if(!$r->ajax())
-            return redirect()->route('hris');
-        parent::check_authority('account');
-        return view('hris.accounts.index');
-    }
+    // public function index(Request $r)
+    // {
+    //     if(!$r->ajax())
+    //         return redirect()->route('hris');
+    //     parent::check_authority('account');
+    //     return view('hris.accounts.index');
+    // }
 
     private function storeData($r)
     {
         // $store['home']         =  $r->home!=null ? $r->home : 0;
         $store['department']      =  $r->department!=null ? $r->department : 0;
-        $store['sub_department']  =  $r->sub_department!=null ? $r->sub_department : 0;
-        $store['position']        =  $r->position!=null ? $r->position : 0;
+        // $store['sub_department']  =  $r->sub_department!=null ? $r->sub_department : 0;
+        $store['job_title']        =  $r->job_title!=null ? $r->job_title : 0;
         $store['employee']        =  $r->employee_menu!=null ? $r->employee_menu : 0;
         $store['calendar']        =  $r->calendar!=null ? $r->calendar : 0;
         $store['special_day']    =  $r->special_day!=null ? $r->special_day : 0;
@@ -62,14 +62,14 @@ class AccountController extends Controller
             'username'      => 'required|unique:hris_users|min:6|max:20|alpha',
             'password'      => 'required|min:6|max:20|alpha_num|confirmed',
             'level'         => 'required',
-            'employee'      => 'required'
+            // 'employee'      => 'required'
         ];
         $this->validate($r, $rules);
-        if(U::where('employee', $r->employee)->count()){
-            return response('the select employee already has account. employee just only have at least 1 account', 409);
-        }
+        // if(U::where('employee', $r->employee)->count()){
+        //     return response('the select employee already has account. employee just only have at least 1 account', 409);
+        // }
         $error = true;
-        if($r->department || $r->sub_department || $r->position || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
+        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
             $error = false;
         if($error)
             return response('authority required. please check authority', 409);
@@ -77,7 +77,7 @@ class AccountController extends Controller
             'username' => $r->username,
             'password' => bcrypt($r->password),
             'level'    => $r->level,
-            'employee' => $r->employee
+            // 'employee' => $r->employee
         ]);
         $store             = $this->storeData($r);
         $store['user']     = $U->id;
@@ -106,7 +106,7 @@ class AccountController extends Controller
             $rules['password']      = 'required|min:6|max:20|alpha_num|confirmed';
         $this->validate($r, $rules);
         $error = true;
-        if($r->department || $r->sub_department || $r->position || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
+        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
             $error = false;
         if($error)
             return response('authority required. please check authority', 409);
