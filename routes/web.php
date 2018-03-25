@@ -109,6 +109,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 	# ATTENDANCES MODUL
 	Route::group(['prefix' => 'attendances', 'namespace' => 'Hris'], function(){
 		// Route::get('/', 'AttendanceController@index');
+		Route::get('/filter', 'AttendanceController@filter');
 		Route::get('/example', 'AttendanceController@example');
 		Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
 		Route::get('/x100c', 'AttendanceController@x100c');

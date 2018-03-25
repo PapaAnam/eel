@@ -550,5 +550,14 @@ class AttendanceController extends Controller
         })->download('xlsx');
         // return response()->download(public_path('attendance_format_example.xlsx'));
     }
+
+    public function filter(Request $r)
+    {
+        return A::where('employee', $r->query('employee'))
+        ->whereMonth('created_at', $r->query('month'))
+        ->whereYear('created_at', $r->query('year'))
+        ->latest()
+        ->get();
+    }
 }
 
