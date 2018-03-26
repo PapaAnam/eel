@@ -16,9 +16,6 @@ mix
 if(mix.inProduction()){
 	mix.version()
 	.minify([
-		'public/js/jquery.js'
-		], 'public/js')
-	.minify([
 		'public/css/enterprise.css'
 		], 'public/css')
 	.minify([

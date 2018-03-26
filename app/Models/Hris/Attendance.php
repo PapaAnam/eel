@@ -8,7 +8,7 @@ class Attendance extends Model
 	protected $table = 'hris_attendances';
 	public $timestamps = false;
 	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status'];
-    protected $appends = ['stat', 'work_total', 'over_time'];
+    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours'];
 
     public static function data($id)
     {
@@ -35,15 +35,32 @@ class Attendance extends Model
 
     public function getWorkTotalAttribute()
     {
-        if($this->break && $this->enter && $this->end_break && $this->out)
+        if($this->break && $this->enter && $this->end_break && $this->out){
+            $diff = round((strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600, 2);
+            $bulat = floor($diff);
+            $decimal = round(($diff - $bulat)*60);
+            return $bulat . ' hours '.$decimal.' minutes';
+        }
+        return '-';
+    }
+
+    public function getWorkTotalInHoursAttribute()
+    {
+        if($this->break && $this->enter && $this->end_break && $this->out){
             return round((strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600, 2);
+        }
         return '-';
     }
 
     public function getOverTimeAttribute()
     {
-        if(strtotime($this->out) > strtotime('17:00:00')){
-            return (strtotime($this->break)-strtotime($this->enter))/3600;
+        if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
+            $hours = (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
+            $jam   = floor($hours);
+            $dec   = $hours - $jam;
+            $minutes = $dec * 60;
+            $t = ($jam > 1) ? 'hours' : "hour";
+            return $jam . ' '.$t.' '.$minutes.' minutes';
         }
         return 0;
     }

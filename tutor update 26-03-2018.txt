@@ -1,0 +1,23 @@
+setelah git pull berhasil
+
+tambahkan key dan value berikut ke .env
+
+# ATTENDANCES DUMMY
+ATT_END_BREAK_DUMMY=13:00:00
+ATT_ENTER_DUMMY=08:30:00
+ATT_BREAK_DUMMY=12:00:00
+OVER_TIME=17:00:00
+
+ini hanyalah untuk data dummy ketika run, valuenya sendiri silakan dikustom sesuai kebutuhan
+
+php artisan db:seed --class=HrisAttendanceTableSeeder
+
+jika keluar ErrorReflection blablabla silakan run
+
+composer dump-autoload
+
+lalu ulangi jika ingin mengisi data dummy lagi
+
+php artisan db:seed --class=HrisAttendanceTableSeeder
+
+data dummy diperlukan jika ingin data palsu ditampilkan untuk uji coba

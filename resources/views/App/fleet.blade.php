@@ -17,7 +17,7 @@
   <div id="app-fleet">
     <fleet-management></fleet-management>
   </div>
-  <script src="{{ asset('js/jquery.js') }}"></script>
+  <script src="{{ asset('js/jquery.min.js') }}"></script>
   @component('manifest')
   @endcomponent
   <script src="{{ asset(mix('js/fleet-lib.js')) }}"></script>

@@ -56,8 +56,7 @@
   <script src="{{ asset('datatable/js/dataTables.bootstrap4.min.js') }}"></script>
   <script src="{{ asset('datatable/responsive/js/dataTables.responsive.min.js') }}"></script>
   <script src="{{ asset('datatable/responsive/js/responsive.bootstrap4.min.js') }}"></script>
-  @component('manifest')
-  @endcomponent
+  @include('manifest')
   <script src="{{ asset(mix('js/hris.js')) }}"></script>
 </body>
 </html>
