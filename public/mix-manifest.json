@@ -1,19 +1,8 @@
 {
-    "/js/hris.js": "/js/hris.js?id=fa639d563161a477cd9d",
-    "/js/fleet.js": "/js/fleet.js?id=46199fab299aefae9808",
-    "/js/vendor.js": "/js/vendor.js?id=f906e88b98418996ede5",
-    "/js/enterprise.js": "/js/enterprise.js?id=94fd7c20e661c5e76e3b",
-    "/js/login-hris.js": "/js/login-hris.js?id=a96ace442ffd83b36908",
-    "/js/manifest.js": "/js/manifest.js?id=957900a6d09d3ae6ea99",
-    "/css/enterprise.css": "/css/enterprise.css?id=7941cfef9cd555bcdb12",
-    "/js/enterprise-lib.js": "/js/enterprise-lib.js?id=887c5888ce7fdd622103",
-    "/js/jquery.min.js": "/js/jquery.min.js?id=86d5206af37b6bcea4d2",
-    "/css/enterprise.min.css": "/css/enterprise.min.css?id=7941cfef9cd555bcdb12",
-    "/js/enterprise.min.js": "/js/enterprise.min.js?id=94fd7c20e661c5e76e3b",
-    "/css/new-metro.css": "/css/new-metro.css?id=74d2432082f16a60001d",
-    "/css/fleet-lib.css": "/css/fleet-lib.css?id=39cdf5be65322d489ece",
-    "/js/fleet-lib.js": "/js/fleet-lib.js?id=c24d2b4ea09b583abad1",
-    "/css/fleet-lib.min.css": "/css/fleet-lib.min.css?id=39cdf5be65322d489ece",
-    "/js/fleet-lib.min.js": "/js/fleet-lib.min.js?id=c24d2b4ea09b583abad1",
-    "/js/fleet.min.js": "/js/fleet.min.js?id=46199fab299aefae9808"
+    "/js/hris.js": "/js/hris.js",
+    "/js/fleet.js": "/js/fleet.js",
+    "/js/vendor.js": "/js/vendor.js",
+    "/js/enterprise.js": "/js/enterprise.js",
+    "/js/login-hris.js": "/js/login-hris.js",
+    "/js/manifest.js": "/js/manifest.js"
 }

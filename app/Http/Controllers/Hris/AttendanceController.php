@@ -493,9 +493,9 @@ class AttendanceController extends Controller
         // $rows->dd();
         $datas = [];
         $rows->each(function($row){
-            $created_at = $row->created_at->format('Y-m-d');
-            if(E::where('nin', $row->employee)->count()){
-                $re = E::where('nin', $row->employee)->first()->id;
+            $created_at = is_string($row->created_at) ? $row->created_at : $row->created_at->format('Y-m-d');
+            if(E::where('nin', $row->employee_nin)->count()){
+                $re = E::where('nin', $row->employee_nin)->first()->id;
                 A::updateOrCreate([
                    'created_at' => $created_at, 
                    'employee'   => $re 
@@ -526,7 +526,7 @@ class AttendanceController extends Controller
                         'Pregnancy',
                     ]);
                     return [
-                        'employee'      => $item->id,
+                        'employee_nin'  => $item->nin,
                         'enter'         => $status === 'Present' ? '08:30:00' : '',
                         'break'         => $status === 'Present' ? '12:00:00' : '',
                         'end_break'     => $status === 'Present' ? '12:30:00' : '',
