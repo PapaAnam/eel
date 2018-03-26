@@ -58,7 +58,7 @@ class Attendance extends Model
             $hours = (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
             $jam   = floor($hours);
             $dec   = $hours - $jam;
-            $minutes = $dec * 60;
+            $minutes = round($dec * 60);
             $t = ($jam > 1) ? 'hours' : "hour";
             return $jam . ' '.$t.' '.$minutes.' minutes';
         }
