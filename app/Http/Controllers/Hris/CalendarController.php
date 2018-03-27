@@ -99,8 +99,12 @@ class CalendarController extends Controller
     public function update($id, Request $r)
     {
         $this->validate($r, $this->rules);
-        C::find($id)->update($r->all());
+        C::find($id)->update([
+            'event'     => $r->event,
+            'month'     => substr($r->date_event, 0, 2),
+            'date'      => substr($r->date_event, 3, 2)
+        ]);
         parent::create_activity('Updated special day');
-        return parent::updated();
+        return 'Special day success updated';
     }
 }
