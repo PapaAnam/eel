@@ -128,7 +128,7 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 		Route::get('/event-list', 'CalendarController@getEventList');
 		Route::put('/update/{id}', 'CalendarController@update');
 		Route::post('/store', 'CalendarController@store');
-		Route::delete('/delete', 'CalendarController@delete');
+		Route::delete('/{id}', 'CalendarController@remove');
 	});
 
 	#SALARY RULES

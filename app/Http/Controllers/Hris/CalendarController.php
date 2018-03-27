@@ -19,7 +19,7 @@ class CalendarController extends Controller
     {
         C::find($r->id)->delete();
         parent::create_activity('Delete special day');
-        return parent::deleted();
+        return 'Special day has success deleted';
     }
 
     public function edit(Request $r)

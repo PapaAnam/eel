@@ -1,0 +1,5 @@
+setelah git pull origin master
+
+run php artisan migrate
+
+dah itu saja 
