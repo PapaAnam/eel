@@ -151,9 +151,9 @@ class AttendanceController extends Controller
 
     public function update($id, Request $r)
     {
-        $r->validate([
-            'break'     => 'required',
-        ]);
+        // $r->validate([
+        //     'break'     => 'required',
+        // ]);
         A::find($id)->update([
             'break'         => $r->break,
             'end_break'     => $r->end_break,
@@ -524,6 +524,7 @@ class AttendanceController extends Controller
                         'Holiday',
                         'Special Permit',
                         'Pregnancy',
+                        'Over Time',
                     ]);
                     return [
                         'employee_nin'  => $item->nin,
@@ -539,12 +540,13 @@ class AttendanceController extends Controller
                 $sheet->cell('I2', 'Catatan');
                 $sheet->cell('I3', 'Hanya gunakan status berikut');
                 $sheet->cell('I4', ucwords('present'));
-                $sheet->cell('I5', ucwords('sick'));
-                $sheet->cell('I6', ucwords('absent'));
-                $sheet->cell('I7', ucwords('father leave'));
-                $sheet->cell('I8', ucwords('holiday'));
-                $sheet->cell('I9', ucwords('special permit'));
-                $sheet->cell('I10', ucwords('pregnancy'));
+                $sheet->cell('I5', ucwords('over time'));
+                $sheet->cell('I6', ucwords('sick'));
+                $sheet->cell('I7', ucwords('absent'));
+                $sheet->cell('I8', ucwords('father leave'));
+                $sheet->cell('I9', ucwords('holiday'));
+                $sheet->cell('I10', ucwords('special permit'));
+                $sheet->cell('I11', ucwords('pregnancy'));
 
             });
         })->download('xlsx');
@@ -553,7 +555,11 @@ class AttendanceController extends Controller
 
     public function filter(Request $r)
     {
-        return A::where('employee', $r->query('employee'))
+        return A::with(['emp' => function($q){
+            $q->with(['sr'=>function($k){
+                $k->where('status', '1');
+            }]);
+        }])->where('employee', $r->query('employee'))
         ->whereMonth('created_at', $r->query('month'))
         ->whereYear('created_at', $r->query('year'))
         ->latest()

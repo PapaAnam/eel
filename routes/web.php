@@ -234,7 +234,11 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 	Route::group(['prefix' => 'payroll'], function() {
 		$c = 'Hris\PayrollController@';
 		$r = 'payroll';
-		Route::get('', $c.'index')->name($r);
+		Route::get('/filter', $c.'filter');
+		Route::namespace('Hris')->group(function(){
+			Route::get('/slip/{id}', 'PayrollSlipController@excelExport');
+		});
+		Route::post('/pay-all-employee', $c.'payAll');
 		Route::post('dt', $c.'dt')->name($r.'.dt');
 		Route::post('create', $c.'create')->name($r.'.create');
 		Route::get('{id}/edit', $c.'edit')->name($r.'.edit');

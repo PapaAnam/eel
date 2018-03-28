@@ -8,7 +8,7 @@ class Attendance extends Model
 	protected $table = 'hris_attendances';
 	public $timestamps = false;
 	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status'];
-    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours'];
+    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money'];
 
     public static function data($id)
     {
@@ -52,15 +52,62 @@ class Attendance extends Model
         return '-';
     }
 
+    private function convertHour($hours)
+    {
+        $jam   = floor($hours);
+        $dec   = $hours - $jam;
+        $minutes = round($dec * 60);
+        $t = ($jam > 1) ? 'hours' : "hour";
+        return $jam . ' '.$t.' '.$minutes.' minutes';
+    }
+
     public function getOverTimeAttribute()
     {
+        if($this->status === 'Over Time'){
+            if($this->out && $this->enter){
+                $hours = $this->over_time_in_hours;
+                return $this->convertHour($hours);
+            }
+            return 0;
+        }
         if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
             $hours = (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
-            $jam   = floor($hours);
-            $dec   = $hours - $jam;
-            $minutes = round($dec * 60);
-            $t = ($jam > 1) ? 'hours' : "hour";
-            return $jam . ' '.$t.' '.$minutes.' minutes';
+            return $this->convertHour($hours);
+        }
+        return 0;
+    }
+
+    public function getOverTimeInHoursAttribute()
+    {
+        if($this->status === 'Over Time'){
+            if($this->out && $this->enter){
+                return (strtotime($this->out)-strtotime($this->enter))/3600;
+            }
+            return 0;
+        }
+        if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
+            return (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
+        }
+        return 0;
+    }
+
+    public function getIsHolidayAttribute()
+    {
+        return date('l', strtotime($this->created_at)) === 'Sunday';
+    }
+
+    public function getOverTimeInMoneyAttribute()
+    {
+        if($this->emp){
+            if($this->emp->sr){
+                $sr = $this->emp->sr;
+                $basic_salary = $sr->basic_salary;
+                $mul = 1.5;
+                if($this->is_holiday){
+                    $mul = 2;
+                }
+                return round($basic_salary/22/8*$mul*$this->over_time_in_hours, 2);
+            }
         }
         return 0;
     }

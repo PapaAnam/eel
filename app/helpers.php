@@ -66,7 +66,7 @@ function reset_form($action, $csrf_field)
 	$csrf_field.
 	'<input type="hidden" name="id" id="reset_id">
 	<input type="hidden" name="_method" value="PUT">
-</form>';
+	</form>';
 }
 
 function error($errors, $field)
@@ -74,8 +74,8 @@ function error($errors, $field)
 	if ($errors->has($field)){
 		echo '<span class="help-block">
 		<strong>'.$errors->first($field).'</strong>
-	</span>';
-}
+		</span>';
+	}
 }
 
 function level($id)
@@ -135,8 +135,8 @@ function help_block($errors, $field)
 	if ($errors->has($field)){
 		return '<span class="help-block">
 		<strong>'.$errors->first($field).'</strong>
-	</span>';
-}
+		</span>';
+	}
 }
 
 function active_modul($m, $modul)
@@ -300,4 +300,13 @@ function array_key_rename($array, $rename)
 		array_push($newArray, $newValue);
 	}
 	return $newArray;
+}
+
+function convertHour($hours)
+{
+	$jam   = floor($hours);
+	$dec   = $hours - $jam;
+	$minutes = round($dec * 60);
+	$t = ($jam > 1) ? 'hours' : "hour";
+	return $jam . ' '.$t.' '.$minutes.' minutes';
 }
