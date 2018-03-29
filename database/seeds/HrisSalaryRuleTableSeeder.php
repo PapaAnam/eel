@@ -25,6 +25,7 @@ class HrisSalaryRuleTableSeeder extends Seeder
     			'incentive'		=> round($faker->numberBetween(2000000, 6000000), -4),
     			'eat_cost'		=> round($faker->numberBetween(100000, 6000000), -4),
     			'ritation'		=> round($faker->numberBetween(2000000, 6000000), -4),
+    			'etc'			=> round($faker->numberBetween(100000, 6000000), -4),
     			'status'		=> '1',
     			'created_at'	=> (String) now(),
     			'updated_at'	=> (String) now(),

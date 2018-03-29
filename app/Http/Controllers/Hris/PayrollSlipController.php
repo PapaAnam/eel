@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Excel;
 use App\Models\Hris\Salary;
 use App\Models\Hris\Attendance;
+use Auth;
 
 class PayrollSlipController extends Controller
 {
@@ -20,7 +21,7 @@ class PayrollSlipController extends Controller
 				$sheet->cell('A1', 'Lisun Salary Slip');
 				$sheet->cell('A3', 'Name :');
 				$sheet->cell('B3', $s->emp->name);
-				$sheet->cell('A3', 'NIN :');
+				$sheet->cell('A4', 'NIN :');
 				$sheet->cell('B4', $s->emp->nin);
 				$sheet->cell('A6', 'Basic Salary');
 				$sheet->cell('B6', $s->sr[0]->basic_salary);
@@ -58,10 +59,35 @@ class PayrollSlipController extends Controller
 				$sheet->cell('B10', round($total_holiday, -4));
 				$sheet->cell('A11', 'Incentive Sales');
 				$sheet->cell('B11', $s->sr[0]->incentive);
-				$sheet->cell('A12', 'Ritation');
-				$sheet->cell('B12', $s->sr[0]->ritation);
-				$sheet->cell('A12', 'Sub Total');
-				$sheet->cell('B12', $s->clear_salary);
+				$sheet->cell('A12', 'Eat Cost');
+				$sheet->cell('B12', $s->sr[0]->eat_cost);
+				$sheet->cell('A13', 'ETC');
+				$sheet->cell('B13', $s->sr[0]->etc);
+				$sheet->cell('A14', 'Ritation');
+				$sheet->cell('B14', $s->sr[0]->ritation);
+				$sheet->cell('A15', function($cell){
+					$cell->setFontWeight('bold');
+					$cell->setAlignment('center');
+				});
+				$sheet->cell('A15', 'Sub Total');
+				$sheet->cell('B15', $s->clear_salary);
+				$sheet->cell('A17', 'Potongan');
+				$sheet->cell('A17', function($cell){
+					$cell->setFontWeight('bold');
+				});
+				$sheet->cell('A18', 'Pajak (Seguranca Social 4%)');
+				$sheet->cell('A19', 'Kas Bon');
+				$sheet->cell('A20', function($cell){
+					$cell->setFontWeight('bold');
+					$cell->setAlignment('center');
+				});
+				$sheet->cell('A20', 'Sub Total');
+				$sheet->cell('A22', 'Total');
+				$sheet->cell('A24', 'Dili '.date('F, Y-d'));
+				$sheet->cell('A25', 'HRD Lisun');
+				$sheet->cell('C25', 'Penerima');
+				$sheet->cell('A27', Auth::user()->username);
+				$sheet->cell('C27', $s->emp->name);
 			});
 		})->download('xlsx');
 	}

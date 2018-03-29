@@ -7,7 +7,7 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position'];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time'];
 	protected $appends = ['clear_salary'];
 
 	public function emp()
@@ -25,7 +25,7 @@ class Salary extends Model
 		if($this->sr){
 			if(count($this->sr) > 0){
 				$sr = $this->sr[0];
-				return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation;
+				return round($sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->over_time, -4);
 			}
 		}
 		return 0;

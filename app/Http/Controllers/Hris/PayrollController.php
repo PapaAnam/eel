@@ -149,10 +149,12 @@ class PayrollController extends Controller
                 $over_time = 0;
                 $attendances = Attendance::where('employee', $e->id)
                 ->whereMonth('created_at', $r->month)
-                ->whereYear('created_at', $r->year);
+                ->whereYear('created_at', $r->year)
+                ->get();
                 foreach($attendances as $a){
                     $over_time += $a->over_time_in_money;
                 }
+                // return $over_time;
                 S::updateOrCreate([
                     'employee'      => $e->id,
                     'month'         => $r->month,
