@@ -24,7 +24,8 @@ class Salary extends Model
 	{
 		if($this->gross_salary){
 			$sr = $this->sr[0];
-			return round($this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt), -4);
+			// return $this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt);
+			return round($this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt), env('ROUND', 2));
 		}
 		return 0;
 	}
@@ -34,7 +35,8 @@ class Salary extends Model
 		if($this->sr){
 			if(count($this->sr) > 0){
 				$sr = $this->sr[0];
-				return round($sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->over_time, -4);
+				// return round($sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->over_time, env('ROUND', 2));
+				return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->over_time;
 			}
 		}
 		return 0;

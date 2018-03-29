@@ -79,7 +79,7 @@ class Attendance extends Model
 
     public function getOverTimeInHoursAttribute()
     {
-        if($this->status === 'Over Time'){
+        if($this->status === 'Over Time' || ($this->status === 'Present' && $this->is_holiday)){
             if($this->out && $this->enter){
                 return (strtotime($this->out)-strtotime($this->enter))/3600;
             }
@@ -106,7 +106,8 @@ class Attendance extends Model
                 if($this->is_holiday){
                     $mul = 2;
                 }
-                return round($basic_salary/22/8*$mul*$this->over_time_in_hours, 2);
+                // return round($basic_salary/22/8*$mul*$this->over_time_in_hours, 2);
+                return $basic_salary/22/8*$mul*$this->over_time_in_hours;
             }
         }
         return 0;

@@ -49,14 +49,14 @@ class PayrollSlipController extends Controller
 				foreach($biasa as $item){
 					$total_biasa += $item['over_time_in_money'];
 				}
-				$sheet->cell('B9', (int) round($total_biasa, -4));
+				$sheet->cell('B9', (int) round($total_biasa, env('ROUND', 2)));
 				$sheet->cell('A10', 'Total Over Time Holiday');
 				$holiday = $att->where('is_holiday', true);
 				$total_holiday = 0;
 				foreach($holiday as $item){
 					$total_holiday += $item['over_time_in_money'];
 				}
-				$sheet->cell('B10', round($total_holiday, -4));
+				$sheet->cell('B10', round($total_holiday, env('ROUND', 2)));
 				$sheet->cell('A11', 'Incentive Sales');
 				$sheet->cell('B11', $s->sr[0]->incentive);
 				$sheet->cell('A12', 'Eat Cost');
