@@ -18,17 +18,19 @@ class HrisSalaryRuleTableSeeder extends Seeder
     	$data 		= [];
     	foreach ($employees as $e) {
     		$data[] = [
-    			'employee'		=> $e,
-    			'created_at'	=> (String) now(),
-    			'basic_salary'	=> round($faker->numberBetween(2000000, 6000000), -4),
-    			'allowance'		=> round($faker->numberBetween(2000000, 6000000), -4),
-    			'incentive'		=> round($faker->numberBetween(2000000, 6000000), -4),
-    			'eat_cost'		=> round($faker->numberBetween(100000, 6000000), -4),
-    			'ritation'		=> round($faker->numberBetween(2000000, 6000000), -4),
-    			'etc'			=> round($faker->numberBetween(100000, 6000000), -4),
-    			'status'		=> '1',
-    			'created_at'	=> (String) now(),
-    			'updated_at'	=> (String) now(),
+    			'employee'			=> $e,
+    			'created_at'		=> (String) now(),
+    			'basic_salary'		=> round($faker->numberBetween(2000000, 6000000), -4),
+    			'allowance'			=> round($faker->numberBetween(2000000, 6000000), -4),
+    			'incentive'			=> round($faker->numberBetween(2000000, 6000000), -4),
+    			'eat_cost'			=> round($faker->numberBetween(100000, 6000000), -4),
+    			'ritation'			=> round($faker->numberBetween(2000000, 6000000), -4),
+    			'etc'				=> round($faker->numberBetween(100000, 6000000), -4),
+    			'seguranca_social'	=> round($faker->numberBetween(100000, 1000000), -4),
+    			'cash_receipt'		=> round($faker->numberBetween(100000, 3000000), -4),
+    			'status'			=> '1',
+    			'created_at'		=> (String) now(),
+    			'updated_at'		=> (String) now(),
     		];
     	}
     	DB::table('hris_salary_rules')->insert($data);

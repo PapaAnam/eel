@@ -8,7 +8,7 @@ class Salary extends Model
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
 	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time'];
-	protected $appends = ['clear_salary'];
+	protected $appends = ['clear_salary', 'gross_salary'];
 
 	public function emp()
 	{
@@ -21,6 +21,15 @@ class Salary extends Model
 	}
 
 	public function getClearSalaryAttribute()
+	{
+		if($this->gross_salary){
+			$sr = $this->sr[0];
+			return round($this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt), -4);
+		}
+		return 0;
+	}
+
+	public function getGrossSalaryAttribute()
 	{
 		if($this->sr){
 			if(count($this->sr) > 0){

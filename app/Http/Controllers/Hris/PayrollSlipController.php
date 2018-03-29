@@ -70,19 +70,23 @@ class PayrollSlipController extends Controller
 					$cell->setAlignment('center');
 				});
 				$sheet->cell('A15', 'Sub Total');
-				$sheet->cell('B15', $s->clear_salary);
+				$sheet->cell('B15', $s->gross_salary);
 				$sheet->cell('A17', 'Potongan');
 				$sheet->cell('A17', function($cell){
 					$cell->setFontWeight('bold');
 				});
 				$sheet->cell('A18', 'Pajak (Seguranca Social 4%)');
+				$sheet->cell('B18', $s->sr[0]->seguranca_social);
 				$sheet->cell('A19', 'Kas Bon');
+				$sheet->cell('B19', $s->sr[0]->cash_receipt);
 				$sheet->cell('A20', function($cell){
 					$cell->setFontWeight('bold');
 					$cell->setAlignment('center');
 				});
 				$sheet->cell('A20', 'Sub Total');
+				$sheet->cell('B20', $s->sr[0]->seguranca_social+$s->sr[0]->cash_receipt);
 				$sheet->cell('A22', 'Total');
+				$sheet->cell('B22', $s->clear_salary);
 				$sheet->cell('A24', 'Dili '.date('F, Y-d'));
 				$sheet->cell('A25', 'HRD Lisun');
 				$sheet->cell('C25', 'Penerima');

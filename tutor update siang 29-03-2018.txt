@@ -1,0 +1,3 @@
+sudah fix datatable di attendance
+tambah seguranca dan kasbon
+run php artisan migrate
