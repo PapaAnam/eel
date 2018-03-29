@@ -528,6 +528,7 @@ class AttendanceController extends Controller
                     ]);
                     return [
                         'employee_nin'  => $item->nin,
+                        'employee_name' => $item->name,
                         'enter'         => $status === 'Present' ? '08:30:00' : '',
                         'break'         => $status === 'Present' ? '12:00:00' : '',
                         'end_break'     => $status === 'Present' ? '12:30:00' : '',
