@@ -99,7 +99,7 @@ class Attendance extends Model
                     $mul = 2;
                 }
                 // return round($basic_salary/22/8*$mul*$this->over_time_in_hours, 2);
-                return $basic_salary/22/8*$mul*$this->over_time_in_hours;
+                return round($basic_salary/22/8*$mul*$this->over_time_in_hours, env('ROUND', 2));
             }
         }
         return 0;

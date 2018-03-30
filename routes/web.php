@@ -354,3 +354,28 @@ Route::group(['prefix' => 'fleet-management', 'namespace' => 'Fleet'], function(
 // 	}
 // 	return $nama;
 // });
+
+Route::get('/test', function(){
+	Excel::create('uji coba', function($excel){
+		$excel->sheet('data', function($sheet){
+			$faker = \Faker\Factory::create('id_ID');
+			$data = [];
+			$total = 0;
+			$total1 = 0;
+			foreach (range(1, 100) as $i) {
+				$desimal = $faker->numberBetween(100000000, 999999999) / 1000000;
+				$bulat   = round($desimal, 2);
+				$data[] = [
+					'desimal'	=> $desimal,
+					'bulat'		=> $bulat,
+				];
+				$total += $desimal;
+				$total1 += $bulat;
+			}
+			$sheet->fromArray($data);
+			$sheet->cell('A102', 'Total');
+			$sheet->cell('A103', $total);
+			$sheet->cell('B103', $total1);
+		});
+	})->download('xlsx');
+});

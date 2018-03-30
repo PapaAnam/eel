@@ -40,6 +40,7 @@ class PayrollSlipController extends Controller
 		foreach($biasa as $item){
 			$this->total_over_time_money += $item['over_time_in_money'];
 		}
+		$this->total_over_time_money = round($this->total_over_time_money, env('ROUND', 2));
 		$this->total_over_time_hours = 0;
 		foreach($biasa as $item){
 			$this->total_over_time_hours += $item['over_time_in_hours'];
@@ -52,6 +53,8 @@ class PayrollSlipController extends Controller
 		foreach($holiday as $item){
 			$this->total_over_time_holiday_in_money += $item['over_time_in_money'];
 		}
+
+		$this->total_over_time_holiday_in_money = round($this->total_over_time_holiday_in_money, env('ROUND', 2));
 
 		// total over time pada hari libur (jam)
 		$this->total_over_time_holiday_in_hours = 0;
