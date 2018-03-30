@@ -45,7 +45,7 @@ class Attendance extends Model
     public function getWorkTotalInHoursAttribute()
     {
         if($this->break && $this->enter && $this->end_break && $this->out && !$this->is_holiday){
-            return round((strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600, 2);
+            return (strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600;
         }
         return '-';
     }

@@ -379,3 +379,10 @@ Route::get('/test', function(){
 		});
 	})->download('xlsx');
 });
+
+Route::get('/test-pdf', function(){
+	PDF::loadView('test_pdf')->download('test.pdf');
+});
+Route::get('/test-pdf2', function(){
+	PDF::loadView('test_pdf2')->download('test.pdf');
+});
