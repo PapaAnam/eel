@@ -27,9 +27,9 @@ class SalaryRule extends Model
 		$i = 1;
 		foreach ($this->export() as $d) {
 			$data[] = [
-				'#' => $i++,
-				'Employee'                       => '('.$d->nin.') '.$d->name,
-				'Dept/Pos' => $d->dep->name.'/'.$d->pos->name,
+				'#' 						=> $i++,
+				'Employee'                  => '('.$d->nin.') '.$d->name,
+				'Dept/Pos' 					=> $d->dep->name.'/'.$d->pos->name,
 				'Basic Salary'              => $d->sr ? $d->sr->basic_salary : 'Not Set Yet',
 				'Allowance'                 => $d->sr ? $d->sr->allowance : 'Not Set Yet',
 				'Incentive'                 => $d->sr ? $d->sr->incentive : 'Not Set Yet',

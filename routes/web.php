@@ -236,7 +236,8 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 		$r = 'payroll';
 		Route::get('/filter', $c.'filter');
 		Route::namespace('Hris')->group(function(){
-			Route::get('/slip/{id}', 'PayrollSlipController@excelExport');
+			Route::get('/slip/excel/{id}', 'PayrollSlipController@excelExport');
+			Route::get('/slip/pdf/{id}', 'PayrollSlipController@pdfExport');
 		});
 		Route::post('/pay-all-employee', $c.'payAll');
 		Route::post('dt', $c.'dt')->name($r.'.dt');

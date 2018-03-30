@@ -3,6 +3,8 @@
 namespace App\Models\Hris;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Hris\Calendar;
+
 class Attendance extends Model
 {
 	protected $table = 'hris_attendances';
@@ -35,18 +37,14 @@ class Attendance extends Model
 
     public function getWorkTotalAttribute()
     {
-        if($this->break && $this->enter && $this->end_break && $this->out){
-            $diff = round((strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600, 2);
-            $bulat = floor($diff);
-            $decimal = round(($diff - $bulat)*60);
-            return $bulat . ' hours '.$decimal.' minutes';
-        }
-        return '-';
+        if($this->work_total_in_hours === '-')
+            return '-';
+        return $this->convertHour($this->work_total_in_hours);
     }
 
     public function getWorkTotalInHoursAttribute()
     {
-        if($this->break && $this->enter && $this->end_break && $this->out){
+        if($this->break && $this->enter && $this->end_break && $this->out && !$this->is_holiday){
             return round((strtotime($this->break)-strtotime($this->enter))/3600 + (strtotime($this->out)-strtotime($this->end_break))/3600, 2);
         }
         return '-';
@@ -63,18 +61,9 @@ class Attendance extends Model
 
     public function getOverTimeAttribute()
     {
-        if($this->status === 'Over Time'){
-            if($this->out && $this->enter){
-                $hours = $this->over_time_in_hours;
-                return $this->convertHour($hours);
-            }
+        if($this->over_time_in_hours === 0)
             return 0;
-        }
-        if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
-            $hours = (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
-            return $this->convertHour($hours);
-        }
-        return 0;
+        return $this->convertHour($this->over_time_in_hours);
     }
 
     public function getOverTimeInHoursAttribute()
@@ -93,7 +82,10 @@ class Attendance extends Model
 
     public function getIsHolidayAttribute()
     {
-        return date('l', strtotime($this->created_at)) === 'Sunday';
+        $libur = Calendar::where('month', substr($this->created_at, 5, 2))
+        ->where('date', substr($this->created_at, 8, 2))
+        ->exists();
+        return date('l', strtotime($this->created_at)) === 'Sunday' || $libur;
     }
 
     public function getOverTimeInMoneyAttribute()

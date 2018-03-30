@@ -2,21 +2,73 @@
 
 namespace App\Http\Controllers\Hris;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use PDF;
+use Auth;
 use Excel;
 use App\Models\Hris\Salary;
+use Illuminate\Http\Request;
 use App\Models\Hris\Attendance;
-use Auth;
+use App\Http\Controllers\Controller;
 
 class PayrollSlipController extends Controller
 {
-	public function excelExport($id)
+
+	private $total_hari_kerja, $s, $file_name, $total_over_time_money, $total_over_time_hours, $total_over_time_holiday_in_money, $total_over_time_holiday_in_hours, $seguranca_social;
+
+	public function getData($id)
 	{
-		$s = Salary::with(['emp', 'sr'=>function($q){
+		$s = $this->s = Salary::with(['emp', 'sr'=>function($q){
 			$q->where('status', '1');
 		}])->where('id', $id)->first();
-		Excel::create('slip ('.$s->emp->nin.') '.$s->emp->name.' ['.now().']', function($excel) use ($s){
+		$this->total_hari_kerja = Attendance::where('employee', $s->emp->id)
+		->whereMonth('created_at', $s->month)
+		->whereYear('created_at', $s->year)
+		->where('status', 'Present')
+		->count();
+		$this->file_name = 'slip ('.$s->emp->nin.') '.$s->emp->name.' ['.now().']';
+		$att = Attendance::with(['emp' => function($q){
+			$q->with(['sr'=>function($k){
+				$k->where('status', '1');
+			}]);
+		}])->where('employee', $s->employee)
+		->whereMonth('created_at', $s->month)
+		->whereYear('created_at', $s->year)
+		->latest()
+		->get();
+		$biasa = $att->where('is_holiday', false)->values();
+		$this->total_over_time_money = 0;
+		foreach($biasa as $item){
+			$this->total_over_time_money += $item['over_time_in_money'];
+		}
+		$this->total_over_time_hours = 0;
+		foreach($biasa as $item){
+			$this->total_over_time_hours += $item['over_time_in_hours'];
+		}
+		$this->total_over_time_hours = convertHour($this->total_over_time_hours);
+
+		// total over time pada hari libur (duit)
+		$holiday = $att->where('is_holiday', true)->values();
+		$this->total_over_time_holiday_in_money = 0;
+		foreach($holiday as $item){
+			$this->total_over_time_holiday_in_money += $item['over_time_in_money'];
+		}
+
+		// total over time pada hari libur (jam)
+		$this->total_over_time_holiday_in_hours = 0;
+		foreach($holiday as $item){
+			$this->total_over_time_holiday_in_hours += $item['over_time_in_hours'];
+		}
+		$this->total_over_time_holiday_in_hours = convertHour($this->total_over_time_holiday_in_hours);
+
+		// menghitung seguranca social
+		$this->seguranca_social = $this->s->sr[0]->basic_salary*4/100;
+	}
+
+	public function generate($id, $type)
+	{
+		$this->getData($id);
+		$s = $this->s;
+		Excel::create($this->file_name, function($excel) use ($s){
 			$excel->sheet('slip', function($sheet) use ($s){
 				$sheet->cell('A1', 'Lisun Salary Slip');
 				$sheet->cell('A3', 'Name :');
@@ -28,35 +80,13 @@ class PayrollSlipController extends Controller
 				$sheet->cell('A7', 'Tunjangan Jabatan');
 				$sheet->cell('B7', $s->sr[0]->allowance);
 				$sheet->cell('A8', 'Total Hari Kerja');
-				$total_hari_kerja = Attendance::where('employee', $s->emp->id)
-				->whereMonth('created_at', $s->month)
-				->whereYear('created_at', $s->year)
-				->where('status', 'Present')
-				->count();
-				$sheet->cell('B8', $total_hari_kerja);
+				$sheet->cell('B8', $this->total_hari_kerja);
 				$sheet->cell('A9', 'Total Over Time Biasa');
-				$att = Attendance::with(['emp' => function($q){
-					$q->with(['sr'=>function($k){
-						$k->where('status', '1');
-					}]);
-				}])->where('employee', $s->employee)
-				->whereMonth('created_at', $s->month)
-				->whereYear('created_at', $s->year)
-				->latest()
-				->get();
-				$biasa = $att->where('is_holiday', false);
-				$total_biasa = 0;
-				foreach($biasa as $item){
-					$total_biasa += $item['over_time_in_money'];
-				}
-				$sheet->cell('B9', (int) round($total_biasa, env('ROUND', 2)));
+				$sheet->cell('B9', $this->total_over_time_money);
+				$sheet->cell('C9', $this->total_over_time_hours);
 				$sheet->cell('A10', 'Total Over Time Holiday');
-				$holiday = $att->where('is_holiday', true);
-				$total_holiday = 0;
-				foreach($holiday as $item){
-					$total_holiday += $item['over_time_in_money'];
-				}
-				$sheet->cell('B10', round($total_holiday, env('ROUND', 2)));
+				$sheet->cell('B10', $this->total_over_time_holiday_in_money);
+				$sheet->cell('C10', $this->total_over_time_holiday_in_hours);
 				$sheet->cell('A11', 'Incentive Sales');
 				$sheet->cell('B11', $s->sr[0]->incentive);
 				$sheet->cell('A12', 'Eat Cost');
@@ -76,7 +106,8 @@ class PayrollSlipController extends Controller
 					$cell->setFontWeight('bold');
 				});
 				$sheet->cell('A18', 'Pajak (Seguranca Social 4%)');
-				$sheet->cell('B18', $s->sr[0]->seguranca_social);
+				$seguranca_social = $this->seguranca_social;
+				$sheet->cell('B18', $seguranca_social);
 				$sheet->cell('A19', 'Kas Bon');
 				$sheet->cell('B19', $s->sr[0]->cash_receipt);
 				$sheet->cell('A20', function($cell){
@@ -84,7 +115,7 @@ class PayrollSlipController extends Controller
 					$cell->setAlignment('center');
 				});
 				$sheet->cell('A20', 'Sub Total');
-				$sheet->cell('B20', $s->sr[0]->seguranca_social+$s->sr[0]->cash_receipt);
+				$sheet->cell('B20', $seguranca_social+$s->sr[0]->cash_receipt);
 				$sheet->cell('A22', 'Total');
 				$sheet->cell('B22', $s->clear_salary);
 				$sheet->cell('A24', 'Dili '.date('F, Y-d'));
@@ -93,6 +124,27 @@ class PayrollSlipController extends Controller
 				$sheet->cell('A27', Auth::user()->username);
 				$sheet->cell('C27', $s->emp->name);
 			});
-		})->download('xlsx');
+		})->download($type);
+	}
+
+	public function excelExport($id)
+	{
+		$this->generate($id, 'xlsx');
+	}
+
+	public function pdfExport($id)
+	{
+		$this->getData($id);
+		return PDF::loadView('hris.payroll.slip.pdf', [
+			's'									=> $this->s,
+			'total_hari_kerja'					=> $this->total_hari_kerja,
+			'total_over_time_money'				=> $this->total_over_time_money, 
+			'total_over_time_hours'				=> $this->total_over_time_hours, 
+			'total_over_time_holiday_in_money'	=> $this->total_over_time_holiday_in_money, 
+			'total_over_time_holiday_in_hours'	=> $this->total_over_time_holiday_in_hours,
+			'seguranca_social'					=> $this->seguranca_social,
+		])->setPaper('A4')
+		// ->stream();
+		->download($this->file_name.'.pdf');
 	}
 }

@@ -25,7 +25,8 @@ class Salary extends Model
 		if($this->gross_salary){
 			$sr = $this->sr[0];
 			// return $this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt);
-			return round($this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt), env('ROUND', 2));
+			$seguranca_social = $sr->basic_salary*4/100;
+			return round($this->gross_salary - ($seguranca_social + $sr->cash_receipt), env('ROUND', 2));
 		}
 		return 0;
 	}
