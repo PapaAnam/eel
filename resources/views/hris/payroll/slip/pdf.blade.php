@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html>
-<head>
-	<title>Salary Slip</title>
+<head> --}}
+	{{-- <title>Salary Slip</title> --}}
 	<style>
 	body {
 		font-family: sans-serif;
@@ -13,8 +13,8 @@
 		padding: 5px;
 	}
 </style>
-</head>
-<body>
+{{-- </head>
+<body> --}}
 	<strong>Lisun Salary Slip</strong>
 	<br>
 	<hr>
@@ -122,5 +122,5 @@
 			</tr>
 		</tbody>
 	</table>
-</body>
-</html>
+{{-- </body>
+</html> --}}
