@@ -1,14 +1,14 @@
 <table>
 	<tr>
 		<td width="40%">
-			<img class="pull-left" width="100px" height="40px" src="@if($lisun){{ asset('images/company/lisun.jpg') }}@else{{ local_file('images\company\lisun.jpg') }}@endif">
+			<img width="100px" height="40px" src="@if($lisun){{ asset('images/company/lisun.jpg') }}@else{{ local_file('images\company\lisun.jpg') }}@endif">
 		</td>
 		<td>
 			<h3>Employees</h3>
 		</td>
 	</tr>
 </table>
-<table id="example1" class="table table-bordered table-striped">
+<table>
 	<thead>
 		<tr>
 			<th width="10px">#</th>
@@ -89,6 +89,3 @@
 		</td>
 	</tr>
 </table>
-@push('ready-function')
-
-@endpush
