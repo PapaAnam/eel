@@ -158,6 +158,7 @@ class AttendanceController extends Controller
             'break'         => $r->break,
             'end_break'     => $r->end_break,
             'out'           => $r->out,
+            'enter'         => $r->enter,
         ]);
         return 'Attendance updated';
     }

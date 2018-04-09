@@ -386,3 +386,7 @@ Route::get('/test-pdf', function(){
 Route::get('/test-pdf2', function(){
 	return PDF::loadView('test_pdf2')->download('test.pdf');
 });
+
+Route::get('/testt', function(){
+	return convertHour(App\Models\Hris\Attendance::overTimeTotalInMonth(2018,4,1));
+});

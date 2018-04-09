@@ -155,6 +155,7 @@ class PayrollController extends Controller
                     $over_time += $a->over_time_in_money;
                 }
                 // return $over_time;
+                // $over_time = Attendance::overTimeTotalInMonth($r->year, $r->month, $e->id);
                 S::updateOrCreate([
                     'employee'      => $e->id,
                     'month'         => $r->month,

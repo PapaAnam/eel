@@ -105,4 +105,18 @@ class Attendance extends Model
         return 0;
     }
 
+    public function scopeWorkTotalInMonth($q, $year, $month, $employee)
+    {
+        return $q->whereMonth('created_at', $month)->whereYear('created_at', $year)->whereEmployee($employee)->get()->sum(function($item){
+            if($item['work_total_in_hours'] !== '-'){
+                return $item['work_total_in_hours'];
+            }
+        });
+    }
+
+    public function scopeOverTimeTotalInMonth($q, $year, $month, $employee)
+    {
+        return $q->workTotalInMonth($year, $month, $employee) - 176;
+    }
+
 }
