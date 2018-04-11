@@ -308,11 +308,17 @@ function convertHour($hours)
 	$dec   = $hours - $jam;
 	$minutes = round($dec * 60);
 	$t = ($jam > 1) ? 'hours' : "hour";
+	$prefix = '';
+	if($jam<=0){
+		$prefix = '';
+	}else{
+		$prefix = $jam . ' '.$t;
+	}
 	$suffix = '';
 	if($minutes > 1){
 		$suffix = ' '.$minutes.' minutes';
 	}elseif($minutes > 0){
 		$suffix = ' '.$minutes.' minute';
 	}
-	return $jam . ' '.$t.$suffix;
+	return $prefix.$suffix;
 }

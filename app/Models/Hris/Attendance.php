@@ -10,7 +10,9 @@ class Attendance extends Model
 	protected $table = 'hris_attendances';
 	public $timestamps = false;
 	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status'];
-    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money'];
+    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money', 
+    // 'over_time_in_week', 
+    'day'];
 
     public static function data($id)
     {
@@ -39,7 +41,7 @@ class Attendance extends Model
     {
         if($this->work_total_in_hours === '-')
             return '-';
-        return $this->convertHour($this->work_total_in_hours);
+        return convertHour($this->work_total_in_hours);
     }
 
     public function getWorkTotalInHoursAttribute()
@@ -63,7 +65,7 @@ class Attendance extends Model
     {
         if($this->over_time_in_hours === 0)
             return 0;
-        return $this->convertHour($this->over_time_in_hours);
+        return convertHour($this->over_time_in_hours);
     }
 
     public function getOverTimeInHoursAttribute()
@@ -117,6 +119,70 @@ class Attendance extends Model
     public function scopeOverTimeTotalInMonth($q, $year, $month, $employee)
     {
         return $q->workTotalInMonth($year, $month, $employee) - 176;
+    }
+
+    public function scopeInMonth($q, $employee, $year, $month)
+    {
+        $att = $q->with(['emp' => function($q){
+            $q->with(['sr'=>function($k){
+                $k->where('status', '1');
+            }]);
+        }])->where('employee', $employee)
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->orderBy('created_at')
+        ->get();
+        $total = count($att);
+        $total_in_week = [];
+        $sum = 0;
+        $sum_over_time = 0;
+        foreach ($att as $key => $a) {
+            if($a->day == 'Saturday' || ($total - $key < 7 && $key == $total-1)){
+                if($a->work_total_in_hours != '-'){
+                    $sum+=$a->work_total_in_hours;
+                }
+                if($a->over_time_in_hours != '-'){
+                    $sum_over_time+=$a->over_time_in_hours;
+                }
+                $total_in_week [] = [
+                    'total_in_week'             => convertHour($sum),
+                    'over_time_total_in_week'   => convertHour($sum_over_time),
+                    'date'                      => $a->created_at,
+                ];
+                $sum = 0;
+                $sum_over_time = 0;
+            }else{
+                if($a->work_total != '-'){
+                    $sum+=$a->work_total_in_hours;
+                }
+                if($a->over_time_in_hours != '-'){
+                    $sum_over_time+=$a->over_time_in_hours;
+                }
+            }
+        }
+        $att = $att->transform(function($item) use ($total_in_week){
+            $ada = false;
+            foreach ($total_in_week as $week) {
+                if($item->created_at == $week['date']){
+                    $item->over_time_in_week = $week['over_time_total_in_week'];
+                    $item->work_total_in_week = $week['total_in_week'];
+                    $ada = true;
+                    break;
+                }
+            }
+            if(!$ada){
+                $item->over_time_in_week = 0;
+                $item->work_total_in_week = 0;
+            }
+            return $item;
+        })->values();
+        return $att;
+    }
+
+    public function getDayAttribute($q)
+    {
+        $hari = date('l', strtotime($this->created_at));
+        return $hari;
     }
 
 }

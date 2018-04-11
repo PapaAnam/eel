@@ -15,7 +15,7 @@ class HrisAttendanceTableSeeder extends Seeder
 		$employees = DB::table('hris_employees')->get()->pluck('id');
     	DB::statement('SET FOREIGN_KEY_CHECKS=0;');
     	DB::table('hris_attendances')->truncate();
-    	foreach (range(0,30) as $i) {
+    	foreach (range(0,60) as $i) {
     		$data 		= [];
     		$interval 	= strtotime('+'.$i.' days');
     		$is_sunday 	= date('l', $interval) == 'Sunday';
@@ -32,7 +32,7 @@ class HrisAttendanceTableSeeder extends Seeder
     		}
 	        DB::table('hris_attendances')->insert($data);
     	}
-    	foreach (range(1,30) as $i) {
+    	foreach (range(1,60) as $i) {
     		$data 		= [];
     		$interval 	= strtotime('-'.$i.' days');
     		$is_sunday 	= date('l', $interval) == 'Sunday';

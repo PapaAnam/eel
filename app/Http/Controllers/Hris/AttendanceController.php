@@ -43,18 +43,18 @@ class AttendanceController extends Controller
         $no = 1;
         foreach ($q as $d) {
             $data[] = [
-            $no++,
-            '('.$d->emp->nin.') '.$d->emp->name,
-            english_date($d->created_at),
-            absence_status($d->status),
-            $d->enter,
-            $d->break,
-            $d->end_break,
-            $d->out,
-            '<a data-hint="Break" '.$hint.' href="#" onclick="addBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
-            <a data-hint="End Break" '.$hint.' href="#" onclick="addEndBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
-            <a data-hint="Out" '.$hint.' href="#" onclick="addOut(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>'.
-            del_btn($d->id)
+                $no++,
+                '('.$d->emp->nin.') '.$d->emp->name,
+                english_date($d->created_at),
+                absence_status($d->status),
+                $d->enter,
+                $d->break,
+                $d->end_break,
+                $d->out,
+                '<a data-hint="Break" '.$hint.' href="#" onclick="addBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
+                <a data-hint="End Break" '.$hint.' href="#" onclick="addEndBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
+                <a data-hint="Out" '.$hint.' href="#" onclick="addOut(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>'.
+                del_btn($d->id)
             ];
         }
         return $data;
@@ -80,7 +80,7 @@ class AttendanceController extends Controller
     }
 
     private $rules = [
-    'status'            => 'required'
+        'status'            => 'required'
     ];
 
     private function already_absence($emp, $date)
@@ -92,8 +92,8 @@ class AttendanceController extends Controller
     {
         // dd($r->all());
         $sd = [
-        'status'        => 'present',
-        'created_at'    => $r->created_at
+            'status'        => 'present',
+            'created_at'    => $r->created_at
         ];
         $sd = array_add($sd, $r->time, $r->time_oclock);
         $sd = array_add($sd, 'employee', '');
@@ -151,9 +151,6 @@ class AttendanceController extends Controller
 
     public function update($id, Request $r)
     {
-        // $r->validate([
-        //     'break'     => 'required',
-        // ]);
         A::find($id)->update([
             'break'         => $r->break,
             'end_break'     => $r->end_break,
@@ -172,8 +169,9 @@ class AttendanceController extends Controller
             $e_from = 1;
         else
             $e_from = 2;
-        if(A::whereRaw('employee = \''.$r->employee.'\' and date(created_at)=\''.$r->created_at.'\'')->count()>0)
+        if(A::whereRaw('employee = \''.$r->employee.'\' and date(created_at)=\''.$r->created_at.'\'')->count()>0){
             return response('Employee already attendance!!!', 409);
+        }
         if($r->status==1){
             $rules['enter'] = 'required';
             $this->validate($r, $rules);
@@ -194,36 +192,36 @@ class AttendanceController extends Controller
             $exist = LP::where([
                 'employee' => $r->employee,
                 'year'     => date('Y')
-                ])->count()>0;
-            // dd($exist);
+            ])->count()>0;
             if($exist){
                 $LP = LP::where(array(
                     'employee' => $r->employee,
                     'year'     => date('Y')
-                    ))
+                ))
                 ->first();
-                if(LP::find($e_from)->$status-$LP->$status<=0)
+                if(LP::find($e_from)->$status-$LP->$status<=0){
                     return response(title_case(str_replace('_', ' ', $status)).' reached limit is '.$LP->$status, 409);
+                }
                 LP::where([
                     'employee' => $r->employee,
                     'year'     => date('Y')
-                    ])
+                ])
                 ->update([
                     $status=> ++$LP->$status
-                    ]);
+                ]);
             }else{
                 LP::create([
                     $status    => 1,
                     'employee' => $r->employee,
                     'year'     => date('Y')
-                    ]);
+                ]);
             }
         }
         $sd = [
-        'employee'      => $r->employee,
-        'status'        => $r->status,
-        'created_at'    => $r->created_at,
-        'enter'         => $r->enter
+            'employee'      => $r->employee,
+            'status'        => $r->status,
+            'created_at'    => $r->created_at,
+            'enter'         => $r->enter
         ];
         A::create($sd);
         parent::create_activity('Added new attendance');
@@ -241,7 +239,7 @@ class AttendanceController extends Controller
         $data = $this->data($id);
         $oper = array(
             'data'          => $data
-            );
+        );
         return view('hris.attendances.break', $oper);
     }
 
@@ -275,7 +273,7 @@ class AttendanceController extends Controller
         $data = $this->data($id);
         $oper = array(
             'data'          => $data
-            );
+        );
         return view('hris.attendances.end_break', $oper);
     }
 
@@ -292,18 +290,19 @@ class AttendanceController extends Controller
         $data = $this->data($id);
         $oper = array(
             'data'          => $data
-            );
+        );
         return view('hris.attendances.out', $oper);
     }
 
     public function outUpdate(Request $r)
     {
         A::find($r->id)->update(['out'=>$r->out]);
-        if(strtotime($r->out)>strtotime('18:00:00'))
+        if(strtotime($r->out)>strtotime('18:00:00')){
             O::create([
                 'created_at'      => date('Y-m-d'),
                 'employee'  => A::find($r->id)->employee
-                ]);
+            ]);
+        }
         return parent::updated();
     }
 
@@ -330,20 +329,20 @@ class AttendanceController extends Controller
             $LP = LP::where(array(
                 'employee' => $A->employee,
                 'year'     => date('Y')
-                ))
+            ))
             ->first();
             LP::where([
                 'employee' => $A->employee,
                 'year'     => date('Y')
-                ])
+            ])
             ->update([
                 $status=> --$LP->$status
-                ]);
+            ]);
             if($LP->special_permit==0&&$LP->holiday==0&&$LP->father_leave==0&&$LP->sick==0&&$LP->pregnancy==0)
                 $LP->delete();
         }
         $A->delete();
-        
+
         parent::create_activity('Deleted attendance');
         return parent::deleted();
     }
@@ -361,28 +360,27 @@ class AttendanceController extends Controller
         return response()->json([
             'success'   => 'file has been uploaded', 
             'file_name' => str_replace('attendances/', '', $file_path)
-            ], 200);
+        ], 200);
     }
 
     public function create_by_excel(Request $r)
     {
         $rows = Excel::load('public\storage\attendances\\'.$r->attendance_excel)->get();
-        // $rows->dd();
         $datas = [];
         $rows->each(function($row){
             $created_at = $row->created_at->format('Y-m-d');
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                   'created_at' => $created_at, 
-                   'employee'   => $re 
-                ], [
-                    'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
-                    'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
-                    'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
-                    'out'        => is_null($row->out) ? '00:00:00' : $row->out->format('H:i:s'),
-                    'status'     => $row->status
-                ]);
+                 'created_at' => $created_at, 
+                 'employee'   => $re 
+             ], [
+                'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
+                'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
+                'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
+                'out'        => is_null($row->out) ? '00:00:00' : $row->out->format('H:i:s'),
+                'status'     => $row->status
+            ]);
             }
         });
         return response('Import and attendance success');
@@ -413,18 +411,17 @@ class AttendanceController extends Controller
                 $datas = [];
                 foreach ($this->data() as $d) {
                     $arr        = [
-                    'Employee'  => '('.$d->nin.') '.$d->e_name,
-                    'Date'      => $d->created_at,
-                    'Status'    => absence_status($d->status),
-                    'Enter'     => $d->enter,
-                    'Break'     => $d->break,
-                    'End Break' => $d->end_break,
-                    'Out'       => $d->out,
+                        'Employee'  => '('.$d->nin.') '.$d->e_name,
+                        'Date'      => $d->created_at,
+                        'Status'    => absence_status($d->status),
+                        'Enter'     => $d->enter,
+                        'Break'     => $d->break,
+                        'End Break' => $d->end_break,
+                        'Out'       => $d->out,
                     ];
                     array_push($datas, $arr);
                 }
                 $sheet->with($datas);
-                // $sheet->row(1, ['#', 'name', 'department']);
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
                 });
@@ -491,22 +488,21 @@ class AttendanceController extends Controller
         $file_path = explode('/', $file_path);
         $file_name = end($file_path);
         $rows = Excel::load('public/storage/attendances/'.$file_name)->get();
-        // $rows->dd();
         $datas = [];
         $rows->each(function($row){
             $created_at = is_string($row->created_at) ? $row->created_at : $row->created_at->format('Y-m-d');
             if(E::where('nin', $row->employee_nin)->count()){
                 $re = E::where('nin', $row->employee_nin)->first()->id;
                 A::updateOrCreate([
-                   'created_at' => $created_at, 
-                   'employee'   => $re 
-                ], [
-                    'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
-                    'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
-                    'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
-                    'out'        => is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s')),
-                    'status'     => ucwords($row->status),
-                ]);
+                 'created_at' => $created_at, 
+                 'employee'   => $re 
+             ], [
+                'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
+                'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
+                'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
+                'out'        => is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s')),
+                'status'     => ucwords($row->status),
+            ]);
             }
         });
         return response('Import and attendance success');
@@ -552,20 +548,11 @@ class AttendanceController extends Controller
 
             });
         })->download('xlsx');
-        // return response()->download(public_path('attendance_format_example.xlsx'));
     }
 
     public function filter(Request $r)
     {
-        return A::with(['emp' => function($q){
-            $q->with(['sr'=>function($k){
-                $k->where('status', '1');
-            }]);
-        }])->where('employee', $r->query('employee'))
-        ->whereMonth('created_at', $r->query('month'))
-        ->whereYear('created_at', $r->query('year'))
-        ->latest()
-        ->get();
+        return A::inMonth($r->query('employee'), $r->query('year'), $r->query('month'));
     }
 }
 
