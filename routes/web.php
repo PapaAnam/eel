@@ -249,11 +249,11 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 	});
 
 		#Leave Period
-	simple_route('LeavePeriod', 'leave_period', 'cudeta');
-	Route::get('leave_period/refresh_table', 'LeavePeriodController@refresh_table')->name('leave_period.refresh_table');
-	Route::get('leave_period/employee/print', 'LeavePeriodController@employee_print')->name('leave_period.employee.print');
-	Route::get('leave_period/employee/pdf', 'LeavePeriodController@employee_pdf')->name('leave_period.employee.pdf');
-	Route::get('leave_period/employee/excel', 'LeavePeriodController@employee_excel')->name('leave_period.employee.excel');
+	// simple_route('LeavePeriod', 'leave_period', 'cudeta');
+	// Route::get('leave_period/refresh_table', 'LeavePeriodController@refresh_table')->name('leave_period.refresh_table');
+	// Route::get('leave_period/employee/print', 'LeavePeriodController@employee_print')->name('leave_period.employee.print');
+	// Route::get('leave_period/employee/pdf', 'LeavePeriodController@employee_pdf')->name('leave_period.employee.pdf');
+	// Route::get('leave_period/employee/excel', 'LeavePeriodController@employee_excel')->name('leave_period.employee.excel');
 
 		#Announcement modul
 	Route::get('/announcements', 'Hris\AnnouncementController@index')->name('announcements');

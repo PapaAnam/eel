@@ -176,30 +176,9 @@ class Controller extends BaseController
 
     private $m;
 
-    public function excels($m, $data)
-    {
-        $this->m = $m;
-        $this->data = $data;
-        return Excel::create($this->m.' ['.now().']', function($excel) {
-            $excel->setTitle($this->m.' ['.now().']');
-            $excel->sheet('sheet1', function($sheet) {
-                $oper  = array_merge([
-                    'data'      => $this->data
-                    ], $this->add_oper);
-                $sheet->loadView($this->m.'.excel', $oper);
-                $sheet->setAutoSize(true);
-            });
-        })->export('xlsx');
-    }
-
     public function pdf()
     {
         return $this->pdfs($this->modul, $this->data, true);
-    }
-
-    public function excel()
-    {
-        return $this->excels($this->modul, $this->data);
     }
 
     private $excel_title;
