@@ -14,19 +14,6 @@ class Attendance extends Model
     // 'over_time_in_week', 
     'day'];
 
-    public static function data($id)
-    {
-        $data = parent::join('hris_employees', 'hris_employees.id', '=', 'hris_attendances.employee')
-        ->join('hris_positions', 'hris_employees.position', '=', 'hris_positions.id')
-        ->join('hris_sub_departments', 'hris_sub_departments.id', '=', 'hris_employees.department')
-        ->selectRaw('hris_positions.name as p_name, hris_sub_departments.name as d_name, hris_employees.name as e_name, hris_attendances.*, hris_employees.nin')
-        ->orderBy('enter', 'desc')
-        ->latest();
-        if($id!=null)
-            return $data->where('hris_attendances.id', $id)->first();
-        return $data->get();
-    }
-
     public function emp()
     {
         return $this->belongsTo('App\Models\Hris\Employee', 'employee');
@@ -70,16 +57,20 @@ class Attendance extends Model
 
     public function getOverTimeInHoursAttribute()
     {
-        if($this->status === 'Over Time' || ($this->status === 'Present' && $this->is_holiday)){
+        // if($this->status === 'Over Time' || ($this->status === 'Present' && $this->is_holiday)){
             if($this->out && $this->enter){
-                return (strtotime($this->out)-strtotime($this->enter))/3600;
+                $break      = strtotime('12:00:00');
+                $end_break  = strtotime('13:00:00');
+                $enter      = strtotime($this->enter);
+                $out        = strtotime($this->out);
+                return ($break-$enter)+($out-$end_break)/3600;
             }
             return 0;
-        }
-        if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
-            return (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
-        }
-        return 0;
+        // }
+        // if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
+        //     return (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
+        // }
+        // return 0;
     }
 
     public function getIsHolidayAttribute()
@@ -199,7 +190,48 @@ class Attendance extends Model
             }
             return $item;
         })->values();
-        return $att;
+        $att_baru = [];
+        foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
+            $ada = false;
+            foreach ($att as $a) {
+                if(substr($a->created_at, 8, 2) == $i){
+                    $att_baru[] = $a;
+                    $ada = true;
+                    break;
+                }
+            }
+            if($i < 10){
+                $i = '0'.$i;
+            }
+            $tgl = $year.'-'.$month.'-'.$i;
+            if(!$ada){
+                $libur = Calendar::where('month', substr($tgl, 5, 2))
+                ->where('date', substr($tgl, 8, 2))
+                ->exists() || date('l', strtotime($tgl)) === 'Sunday';
+                $att_baru[] = [
+                    "id"                        => str_random(12),
+                    "employee"                  => null,
+                    "created_at"                => $tgl,
+                    "enter"                     => null,
+                    "break"                     => null,
+                    "end_break"                 => null,
+                    "out"                       => null,
+                    "status"                    => null,
+                    "over_time_in_week"         => null,
+                    "work_total_in_week"        => null,
+                    "stat"                      => null,
+                    "work_total"                => null,
+                    "over_time"                 => null,
+                    "work_total_in_hours"       => null,
+                    "is_holiday"                => $libur,
+                    "over_time_in_hours"        => null,
+                    "over_time_in_money"        => null,
+                    "day"                       => date('l', strtotime($tgl)),
+                    "emp"                       => null,
+                ];
+            }
+        }
+        return $att_baru;
     }
 
     public function getDayAttribute($q)
