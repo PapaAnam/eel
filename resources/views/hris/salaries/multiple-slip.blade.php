@@ -42,7 +42,7 @@
 				<td align="right">{{ $s->sr->allowance }}</td>
 			</tr>
 			<tr>
-				<td>Total Work Time</td>
+				<td>Total Work Day</td>
 				<td align="right">{{ $total_hari_kerja[$loop->index] }}</td>
 			</tr>
 			<tr>
@@ -93,7 +93,7 @@
 				<td align="right">{{ $seguranca_social[$loop->index]+$s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
-				<td>Total</td>
+				<td>Total Yang Diterima</td>
 				<td align="right">{{ $s->clear_salary }}</td>
 			</tr>
 		</tbody>
