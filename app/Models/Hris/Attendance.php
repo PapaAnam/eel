@@ -63,7 +63,7 @@ class Attendance extends Model
                 $end_break  = strtotime('13:00:00');
                 $enter      = strtotime($this->enter);
                 $out        = strtotime($this->out);
-                return ($break-$enter)+($out-$end_break)/3600;
+                return (($break-$enter)+($out-$end_break))/3600;
             }
             return 0;
         // }
