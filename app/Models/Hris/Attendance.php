@@ -121,6 +121,29 @@ class Attendance extends Model
         return $q->workTotalInMonth($year, $month, $employee) - 176;
     }
 
+    public function scopeOtRegularInMonth($q, $year, $month, $employee)
+    {
+        return $q->overTimeTotalInMonth($year, $month, $employee) - $q->overTimeHolidayInMonth($year, $month, $employee)['in_reg'];
+    }
+
+    public function scopeOverTimeHolidayInMonth($q, $year, $month, $employee)
+    {
+        $attendances = $q->inMonth($employee, $year, $month);
+        $ot_money = 0;
+        $ot_hours = 0;
+        foreach ($attendances as $a) {
+            if($a->is_holiday){
+                $ot_money += $a->over_time_in_money;
+                $ot_hours += $a->over_time_in_hours;
+            }
+        }
+        return [
+            'in_money'      => $ot_money,
+            'in_hours'      => convertHour($ot_hours),
+            'in_reg'        => $ot_hours,
+        ];
+    }
+
     public function scopeInMonth($q, $employee, $year, $month)
     {
         $att = $q->with(['emp' => function($q){

@@ -320,5 +320,8 @@ function convertHour($hours)
 	}elseif($minutes > 0){
 		$suffix = ' '.$minutes.' minute';
 	}
+	if(trim($prefix.$suffix) == ''){
+		return '-';
+	}
 	return $prefix.$suffix;
 }

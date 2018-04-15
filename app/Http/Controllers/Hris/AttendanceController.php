@@ -151,11 +151,22 @@ class AttendanceController extends Controller
 
     public function update($id, Request $r)
     {
+        $break          = $r->break;
+        $end_break      = $r->end_break;
+        $out            = $r->out;
+        $enter          = $r->enter;
+        if($r->status != 'Present'){
+            $break          = null;
+            $end_break      = null;
+            $out            = null;
+            $enter          = null;
+        }
         A::find($id)->update([
-            'break'         => $r->break,
-            'end_break'     => $r->end_break,
-            'out'           => $r->out,
-            'enter'         => $r->enter,
+            'break'         => $break,
+            'end_break'     => $end_break,
+            'out'           => $out,
+            'enter'         => $enter,
+            'status'        => $r->status,
         ]);
         return 'Attendance updated';
     }

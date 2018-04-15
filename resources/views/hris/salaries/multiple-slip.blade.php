@@ -1,24 +1,25 @@
-{{-- <!DOCTYPE html>
-<html>
-<head> --}}
-	{{-- <title>Salary Slip</title> --}}
 	<style>
 	body {
 		font-family: sans-serif;
+	}
+	* {
+		font-size: 11px;
 	}
 	table {
 		width: 100%;
 	}
 	td {
-		padding: 5px;
+		padding: 1px 5px;
 	}
 </style>
-{{-- </head>
-<body> --}}
-	<strong>Lisun Salary Slip</strong>
-	<br>
-	<hr>
-	<table>
+@foreach ($salaries as $s)
+<div style="width: 49%; display: inline-block; margin-bottom: 20px; margin-right: 5px;">
+	<div style="display: block;">
+		<strong>Lisun Salary Slip</strong>
+		<br>
+		<hr>
+	</div>
+	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
 				<td>Name</td>
@@ -30,12 +31,10 @@
 			</tr>
 		</tbody>
 	</table>
-	<br>
-	<br>
-	<table>
+	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
-				<td width="400px">Basic Salary</td>
+				<td width="250px">Basic Salary</td>
 				<td align="right">{{ $s->sr->basic_salary }}</td>
 			</tr>
 			<tr>
@@ -44,7 +43,7 @@
 			</tr>
 			<tr>
 				<td>Total Work Time</td>
-				<td align="right">{{ $total_hari_kerja }}</td>
+				<td align="right">{{ $total_hari_kerja[$loop->index] }}</td>
 			</tr>
 			<tr>
 				<td>Over Time Regular ({{ $s->ot_regular_in_hours }})</td>
@@ -76,15 +75,14 @@
 			</tr>
 		</tbody>
 	</table>
-	<br>
-	<table>
+	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
 				<td width="250px">Potongan</td>
 			</tr>
 			<tr>
 				<td>Pajak (Seguranca Social 4%)</td>
-				<td align="right">{{ $seguranca_social }}</td>
+				<td align="right">{{ $seguranca_social[$loop->index] }}</td>
 			</tr>
 			<tr>
 				<td>Kas Bon</td>
@@ -92,7 +90,7 @@
 			</tr>
 			<tr>
 				<td>Sub Total</td>
-				<td align="right">{{ $seguranca_social+$s->sr->cash_receipt }}</td>
+				<td align="right">{{ $seguranca_social[$loop->index]+$s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
 				<td>Total</td>
@@ -100,8 +98,6 @@
 			</tr>
 		</tbody>
 	</table>
-	<br>
-	<br>
 	<table>
 		<tbody>
 			<tr>
@@ -119,5 +115,8 @@
 			</tr>
 		</tbody>
 	</table>
-{{-- </body>
-</html> --}}
+</div>
+@endforeach
+<script>
+	window.print();
+</script>

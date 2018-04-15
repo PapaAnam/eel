@@ -110,8 +110,8 @@ class OverTimeController extends Controller
                 foreach ($attendances as $a) {
                     if($a->is_holiday)
                         $ot_holiday += $a->over_time_in_hours;
-                    else
-                        $ot_regular += $a->over_time_in_hours;
+                    // else
+                    //     $ot_regular += $a->over_time_in_hours;
                     if($a->work_total_in_hours != '-'){
                         $total += $a->work_total_in_hours;   
                     }
@@ -131,19 +131,65 @@ class OverTimeController extends Controller
                 $total_data = count($attendances);
                 $sheet->with($datas);
                 $sheet->row(1, function($row){
-                    $row->setFontWeight('bold');
+                    $row->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
                 $sheet->cell('G'.($total_data+2), 'Total');
+                $sheet->cell('G'.($total_data+2), function($cell){
+                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                });
                 $sheet->cell('H'.($total_data+2), convertHour($total));
+                $sheet->cell('H'.($total_data+2), function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
                 $sheet->cell('G'.($total_data+3), 'Standart Time Work / Month');
+                $sheet->cell('G'.($total_data+3), function($cell){
+                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                });
                 $sheet->cell('H'.($total_data+3), '176 hours');
-                // $sheet->cell('G'.($total_data+4), 'Over Time Regular');
-                // $sheet->cell('H'.($total_data+4), $ot_regular);
-                // $sheet->cell('G'.($total_data+3), 'Over Time Holiday');
-                // $sheet->cell('H'.($total_data+3), $ot_holiday);
+                $sheet->cell('H'.($total_data+3), function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                $ot_regular = $total - 176 - $ot_holiday;
+                $sheet->cell('G'.($total_data+4), 'Over Time Regular');
+                $sheet->cell('G'.($total_data+4), function($cell){
+                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                });
+                $sheet->cell('H'.($total_data+4), convertHour($ot_regular));
+                $sheet->cell('H'.($total_data+4), function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                $sheet->cell('G'.($total_data+5), 'Over Time Holiday');
+                $sheet->cell('G'.($total_data+5), function($cell){
+                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                });
+                $sheet->cell('H'.($total_data+5), convertHour($ot_holiday));
+                $sheet->cell('H'.($total_data+5), function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                // set border to all active cell
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+                foreach ($kolom as $k) {
+                    $sheet->cell($k.'1', function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });   
+                }
+                $baris = 2;
+                foreach ($attendances as $a) { 
+                    foreach ($kolom as $k) {
+                        $sheet->cell($k.$baris, function($cell){
+                            $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                        });   
+                    }
+                    if($a->is_holiday){
+                        $sheet->row($baris, function($row){
+                            $row->setBackground('#ff0055');
+                        });
+                    }
+                    $baris++;
+                }
             });
-        })->export('xlsx');
-    }
+})->export('xlsx');
+}
 
 }
 

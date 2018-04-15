@@ -151,20 +151,40 @@ class PayrollController extends Controller
                 ->whereMonth('created_at', $r->month)
                 ->whereYear('created_at', $r->year)
                 ->get();
-                foreach($attendances as $a){
-                    $over_time += $a->over_time_in_money;
+
+                // menghitung work total
+                $work_total = $attendances->sum(function($item){
+                    if($item['work_total_in_hours'] !== '-'){
+                        return $item['work_total_in_hours'];
+                    }
+                });
+
+                // menghitung ot holiday
+                $ot_holiday_money = 0;
+                $ot_holiday_hours = 0;
+                foreach ($attendances as $a) {
+                    if($a->is_holiday){
+                        $ot_holiday_money += $a->over_time_in_money;
+                        $ot_holiday_hours += $a->over_time_in_hours;
+                    }
                 }
-                // return $over_time;
-                // $over_time = Attendance::overTimeTotalInMonth($r->year, $r->month, $e->id);
+
+                // menghitung ot regular
+                $ot_regular_in_hours = $work_total - 176 - $ot_holiday_hours;
+                $ot_regular = $sr->basic_salary/22/8*1.5*$ot_regular_in_hours;
+                
                 S::updateOrCreate([
                     'employee'      => $e->id,
                     'month'         => $r->month,
                     'year'          => $r->year,
                 ], [
-                    'salary_rule'   => $sr->id,
-                    'department'    => $e->dep->id,
-                    'position'      => $e->pos->id,
-                    'over_time'     => $over_time,
+                    'salary_rule'           => $sr->id,
+                    'department'            => $e->dep->id,
+                    'position'              => $e->pos->id,
+                    'ot_regular'            => round($ot_regular, env('ROUND', 2)),
+                    'ot_holiday'            => $ot_holiday_money,
+                    'ot_regular_in_hours'   => convertHour($ot_regular_in_hours),
+                    'ot_holiday_in_hours'   => convertHour($ot_holiday_hours),
                 ]);
                 $total_success++;
             }else{

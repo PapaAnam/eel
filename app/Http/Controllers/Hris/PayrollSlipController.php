@@ -64,7 +64,7 @@ class PayrollSlipController extends Controller
 		$this->total_over_time_holiday_in_hours = convertHour($this->total_over_time_holiday_in_hours);
 
 		// menghitung seguranca social
-		$this->seguranca_social = $this->s->sr[0]->basic_salary*4/100;
+		$this->seguranca_social = $this->s->sr->basic_salary*4/100;
 	}
 
 	public function generate($id, $type)
@@ -79,9 +79,9 @@ class PayrollSlipController extends Controller
 				$sheet->cell('A4', 'NIN :');
 				$sheet->cell('B4', $s->emp->nin);
 				$sheet->cell('A6', 'Basic Salary');
-				$sheet->cell('B6', $s->sr[0]->basic_salary);
+				$sheet->cell('B6', $s->sr->basic_salary);
 				$sheet->cell('A7', 'Tunjangan Jabatan');
-				$sheet->cell('B7', $s->sr[0]->allowance);
+				$sheet->cell('B7', $s->sr->allowance);
 				$sheet->cell('A8', 'Total Hari Kerja');
 				$sheet->cell('B8', $this->total_hari_kerja);
 				$sheet->cell('A9', 'Total Over Time Biasa');
@@ -91,13 +91,13 @@ class PayrollSlipController extends Controller
 				$sheet->cell('B10', $this->total_over_time_holiday_in_money);
 				$sheet->cell('C10', $this->total_over_time_holiday_in_hours);
 				$sheet->cell('A11', 'Incentive Sales');
-				$sheet->cell('B11', $s->sr[0]->incentive);
+				$sheet->cell('B11', $s->sr->incentive);
 				$sheet->cell('A12', 'Eat Cost');
-				$sheet->cell('B12', $s->sr[0]->eat_cost);
+				$sheet->cell('B12', $s->sr->eat_cost);
 				$sheet->cell('A13', 'ETC');
-				$sheet->cell('B13', $s->sr[0]->etc);
+				$sheet->cell('B13', $s->sr->etc);
 				$sheet->cell('A14', 'Ritation');
-				$sheet->cell('B14', $s->sr[0]->ritation);
+				$sheet->cell('B14', $s->sr->ritation);
 				$sheet->cell('A15', function($cell){
 					$cell->setFontWeight('bold');
 					$cell->setAlignment('center');
@@ -112,13 +112,13 @@ class PayrollSlipController extends Controller
 				$seguranca_social = $this->seguranca_social;
 				$sheet->cell('B18', $seguranca_social);
 				$sheet->cell('A19', 'Kas Bon');
-				$sheet->cell('B19', $s->sr[0]->cash_receipt);
+				$sheet->cell('B19', $s->sr->cash_receipt);
 				$sheet->cell('A20', function($cell){
 					$cell->setFontWeight('bold');
 					$cell->setAlignment('center');
 				});
 				$sheet->cell('A20', 'Sub Total');
-				$sheet->cell('B20', $seguranca_social+$s->sr[0]->cash_receipt);
+				$sheet->cell('B20', $seguranca_social+$s->sr->cash_receipt);
 				$sheet->cell('A22', 'Total');
 				$sheet->cell('B22', $s->clear_salary);
 				$sheet->cell('A24', 'Dili '.date('F, Y-d'));
@@ -141,13 +141,53 @@ class PayrollSlipController extends Controller
 		return PDF::loadView('hris.payroll.slip.pdf', [
 			's'									=> $this->s,
 			'total_hari_kerja'					=> $this->total_hari_kerja,
-			'total_over_time_money'				=> $this->total_over_time_money, 
-			'total_over_time_hours'				=> $this->total_over_time_hours, 
-			'total_over_time_holiday_in_money'	=> $this->total_over_time_holiday_in_money, 
-			'total_over_time_holiday_in_hours'	=> $this->total_over_time_holiday_in_hours,
+			// 'total_over_time_money'				=> $this->total_over_time_money, 
+			// 'total_over_time_hours'				=> $this->total_over_time_hours, 
+			// 'total_over_time_holiday_in_money'	=> $this->total_over_time_holiday_in_money, 
+			// 'total_over_time_holiday_in_hours'	=> $this->total_over_time_holiday_in_hours,
 			'seguranca_social'					=> $this->seguranca_social,
 		])->setPaper('A4')
 		// ->stream();
 		->download($this->file_name.'.pdf');
+	}
+
+	private function multipleSlipData($r)
+	{
+		$employees = explode(',', $r->query('employees'));
+		$salaries = [];
+		$total_hari_kerja					= [];
+		$total_over_time_money				= [];
+		$total_over_time_hours				= [];
+		$total_over_time_holiday_in_money	= [];
+		$total_over_time_holiday_in_hours	= [];
+		$seguranca_social					= [];
+		foreach ($employees as $e) {
+			$salary = Salary::where('employee', $e)
+			->where('month', $r->query('month'))
+			->where('year', $r->query('year'))
+			->first();
+			$this->getData($salary->id);
+			// return $this->s;
+			$salaries[] 						= $this->s;
+			$total_hari_kerja[]					= $this->total_hari_kerja;
+			$seguranca_social[]					= $this->seguranca_social;
+		}
+		return [
+			'salaries'							=> $salaries,
+			'total_hari_kerja'					=> $total_hari_kerja,
+			'seguranca_social'					=> $seguranca_social,
+		];
+	}
+
+	public function multipleSlip(Request $r)
+	{
+		return view('hris/salaries/multiple-slip', $this->multipleSlipData($r));
+	}
+
+	public function multipleSlipPdf(Request $r)
+	{
+		return PDF::loadView('hris/salaries/multiple-slip-pdf', $this->multipleSlipData($r))
+		->setPaper('A4')
+		->download('multiple slip period '.$r->query('year').'-'.$r->query('month').'.pdf');
 	}
 }

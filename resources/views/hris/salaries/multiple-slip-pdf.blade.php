@@ -1,24 +1,24 @@
-{{-- <!DOCTYPE html>
-<html>
-<head> --}}
-	{{-- <title>Salary Slip</title> --}}
 	<style>
 	body {
 		font-family: sans-serif;
+	}
+	* {
+		font-size: 11px;
 	}
 	table {
 		width: 100%;
 	}
 	td {
-		padding: 5px;
+		padding: 1px 5px;
 	}
 </style>
-{{-- </head>
-<body> --}}
+@foreach ($salaries as $s)
+<div style="width: 45%; padding-right: 20px; display: inline-block; margin-bottom: 20px; margin-right: 10px;">
+	<div style="display: block; height: 100px;"></div>
 	<strong>Lisun Salary Slip</strong>
 	<br>
 	<hr>
-	<table>
+	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
 				<td>Name</td>
@@ -30,12 +30,10 @@
 			</tr>
 		</tbody>
 	</table>
-	<br>
-	<br>
-	<table>
+	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
-				<td width="400px">Basic Salary</td>
+				<td width="230px">Basic Salary</td>
 				<td align="right">{{ $s->sr->basic_salary }}</td>
 			</tr>
 			<tr>
@@ -44,7 +42,7 @@
 			</tr>
 			<tr>
 				<td>Total Work Time</td>
-				<td align="right">{{ $total_hari_kerja }}</td>
+				<td align="right">{{ $total_hari_kerja[$loop->index] }}</td>
 			</tr>
 			<tr>
 				<td>Over Time Regular ({{ $s->ot_regular_in_hours }})</td>
@@ -70,21 +68,16 @@
 				<td>Ritation</td>
 				<td align="right">{{ $s->sr->ritation }}</td>
 			</tr>
-			<tr>
+			<tr style="padding-bottom: 20px">
 				<td>Sub Total</td>
 				<td align="right">{{ $s->gross_salary }}</td>
 			</tr>
-		</tbody>
-	</table>
-	<br>
-	<table>
-		<tbody>
 			<tr>
-				<td width="250px">Potongan</td>
+				<td width="230px">Potongan</td>
 			</tr>
 			<tr>
-				<td>Pajak (Seguranca Social 4%)</td>
-				<td align="right">{{ $seguranca_social }}</td>
+				<td width="230px">Pajak (Seguranca Social 4%)</td>
+				<td align="right">{{ $seguranca_social[$loop->index] }}</td>
 			</tr>
 			<tr>
 				<td>Kas Bon</td>
@@ -92,32 +85,29 @@
 			</tr>
 			<tr>
 				<td>Sub Total</td>
-				<td align="right">{{ $seguranca_social+$s->sr->cash_receipt }}</td>
+				<td align="right">{{ $seguranca_social[$loop->index]+$s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
 				<td>Total</td>
 				<td align="right">{{ $s->clear_salary }}</td>
 			</tr>
-		</tbody>
-	</table>
-	<br>
-	<br>
-	<table>
-		<tbody>
-			<tr>
-				<td>{{ 'Dili '.date('F, Y-d') }}</td>
+			<tr style="padding-bottom: 20px;">
+				<td width="230px">{{ 'Dili '.date('F, Y-d') }}</td>
 			</tr>
 			<tr>
-				<td style="padding-bottom: 40px;">
+				<td width="230px" style="padding-bottom: 40px;">
 					HRD Lisun
 				</td>
 				<td align="right">Penerima</td>
 			</tr>
 			<tr>
-				<td>{{ Auth::user()->username }}</td>
+				<td style="padding-bottom: 40px;">{{ Auth::user()->username }}</td>
 				<td align="right">{{ $s->emp->name }}</td>
 			</tr>
 		</tbody>
 	</table>
-{{-- </body>
-</html> --}}
+</div>
+@endforeach
+<script>
+	window.print();
+</script>
