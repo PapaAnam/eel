@@ -155,12 +155,12 @@ class AttendanceController extends Controller
         $end_break      = $r->end_break;
         $out            = $r->out;
         $enter          = $r->enter;
-        if($r->status != 'Present'){
-            $break          = null;
-            $end_break      = null;
-            $out            = null;
-            $enter          = null;
-        }
+        // if($r->status != 'Present'){
+        //     $break          = null;
+        //     $end_break      = null;
+        //     $out            = null;
+        //     $enter          = null;
+        // }
         A::find($id)->update([
             'break'         => $break,
             'end_break'     => $end_break,
