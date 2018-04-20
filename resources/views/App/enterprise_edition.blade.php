@@ -6,9 +6,7 @@
     <title>
         {{ config('app.name') }}
     </title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <meta content="{{ config('app.url') }}" name="base_url" id="base_url">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('meta')
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/font-awesome-animation.min.css') }}">
     <link rel="stylesheet" href="{{ asset(mix('css/enterprise.css')) }}">

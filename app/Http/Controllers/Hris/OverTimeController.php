@@ -15,6 +15,17 @@ use Excel;
 
 class OverTimeController extends Controller
 {
+
+    public function regular(Request $r)
+    {
+        return Attendance::otRegular($r->query('year'), $r->query('month'), $r->query('employee'));
+    }
+
+    public function holiday(Request $r)
+    {
+        return Attendance::otHoliday($r->query('year'), $r->query('month'), $r->query('employee'));
+    }
+
     private function data($id = null)
     {
         return O::data($id);

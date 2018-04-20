@@ -40,7 +40,7 @@ class SalaryRuleController extends Controller
 			'incentive' 		=> 'required|numeric|min:0|max:999999999',
 			'eat_cost' 			=> 'required|numeric|min:0|max:999999999',
 			'etc' 				=> 'required|numeric|min:0|max:999999999',
-			// 'seguranca_social' 	=> 'required|numeric|min:0|max:999999999',
+			'seguranca' 		=> 'required|numeric|min:0|max:999999999',
 			'cash_receipt'		=> 'required|numeric|min:0|max:999999999',
 		]);
 		SalaryRule::whereEmployee($r->employee)->update(['status' => 0]);

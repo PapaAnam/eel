@@ -8,7 +8,7 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours'];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca'];
 	protected $appends = ['clear_salary', 'gross_salary', 
 	// 'ot_regular', 
 	// 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours'
@@ -28,8 +28,10 @@ class Salary extends Model
 	{
 		if($this->gross_salary){
 			$sr = $this->sr;
-			// return $this->gross_salary - ($sr->seguranca_social + $sr->cash_receipt);
-			$seguranca_social = $sr->basic_salary*4/100;
+			$seguranca_social = $sr->seguranca;
+			if(config('app.seguranca')){
+				$seguranca_social = $sr->basic_salary * 4 / 100;
+			}
 			return round($this->gross_salary - ($seguranca_social + $sr->cash_receipt), env('ROUND', 2));
 		}
 		return 0;

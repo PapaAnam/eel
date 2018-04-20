@@ -11,14 +11,8 @@ for($a=1;$a<=200;$a++)
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Aplikasi penggajian yang mudah digunakan untuk melakukan penggajian">
-  <meta name="keywords" content="HRIS Application, Aplikasi penggajian karyawan, Sistem penggajian karyawan">
-  <meta content="{{ config('app.url') }}" name="base_url" id="base_url">
-  <meta name="author" content="Hairul Anam">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
+  @include('meta')
+  <meta name="logo" content="{{ config('app.logo') }}">
   <title>Login HRIS</title>
   <link rel="stylesheet" href="{{ asset('css/metro.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-icons.min.css') }}">
