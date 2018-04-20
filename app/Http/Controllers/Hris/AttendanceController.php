@@ -31,11 +31,6 @@ class AttendanceController extends Controller
         return CheckInOut::with('UserInfo')->get();
     }
 
-    private function data($id = null)
-    {
-        return A::data($id);
-    }
-
     private function create_dt($q)
     {
         $hint = 'data-role="hint" data-hint-background="bg-darkMagenta" data-hint-color="fg-white" data-hint-mode="2" data-hint-position="top"';
@@ -383,9 +378,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                 'created_at' => $created_at, 
-                 'employee'   => $re 
-             ], [
+                   'created_at' => $created_at, 
+                   'employee'   => $re 
+               ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
                 'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
@@ -399,10 +394,11 @@ class AttendanceController extends Controller
 
     #EXPORT
 
-    public function to_print($data=null)
+    public function toPrint(Request $r)
     {
-        parent::check_authority('attendance');
-        return view('hris.attendances.export.print', ['data'=>$this->data()]);
+        return view('hris.attendances.export.print', [
+            'data' => $this->getData(null, $r->query('date'))
+        ]);
     }
 
     public function pdf()
@@ -411,24 +407,25 @@ class AttendanceController extends Controller
         return parent::pdfs('hris.attendances.export', $this->data(), true);
     }
 
-    public function excel()
+    public function excel(Request $r)
     {
         parent::check_authority('attendance');
-        Excel::create('lisun_hris_attendance_'.date('Y_m_d_h_i_s'), function($excel){
+        Excel::create('lisun_hris_attendance_'.date('Y_m_d_h_i_s'), function($excel) use ($r){
             $excel->setTitle('Lisun HRIS Attendance');
             $excel->setCreator('Lisun')->setCompany('Lisun');
             $excel->setDescription('Lisun HRIS Attendance');
-            $excel->sheet('data', function($sheet){
+            $excel->sheet('data', function($sheet) use ($r){
                 $datas = [];
-                foreach ($this->data() as $d) {
+                foreach ($this->getData(null, $r->query('date')) as $d) {
                     $arr        = [
-                        'Employee'  => '('.$d->nin.') '.$d->e_name,
-                        'Date'      => $d->created_at,
-                        'Status'    => absence_status($d->status),
-                        'Enter'     => $d->enter,
-                        'Break'     => $d->break,
-                        'End Break' => $d->end_break,
-                        'Out'       => $d->out,
+                        'Employee'      => '('.$d->emp->nin.') '.$d->emp->name,
+                        'Date'          => $d->created_at,
+                        'Status'        => absence_status($d->status),
+                        'Enter'         => $d->enter,
+                        'Break'         => $d->break,
+                        'End Break'     => $d->end_break,
+                        'Out'           => $d->out,
+                        'Work Total'    => $d->work_total
                     ];
                     array_push($datas, $arr);
                 }
@@ -505,9 +502,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee_nin)->count()){
                 $re = E::where('nin', $row->employee_nin)->first()->id;
                 A::updateOrCreate([
-                 'created_at' => $created_at, 
-                 'employee'   => $re 
-             ], [
+                   'created_at' => $created_at, 
+                   'employee'   => $re 
+               ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
                 'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),

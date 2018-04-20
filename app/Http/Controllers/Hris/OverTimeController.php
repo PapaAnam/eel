@@ -119,23 +119,23 @@ class OverTimeController extends Controller
                 $ot_holiday = 0;
                 $total      = 0;
                 foreach ($attendances as $a) {
-                    if($a->is_holiday)
-                        $ot_holiday += $a->over_time_in_hours;
+                    if($a['is_holiday'])
+                        $ot_holiday += $a['over_time_in_hours'];
                     // else
                     //     $ot_regular += $a->over_time_in_hours;
-                    if($a->work_total_in_hours != '-'){
-                        $total += $a->work_total_in_hours;   
+                    if($a['work_total_in_hours'] != '-'){
+                        $total += $a['work_total_in_hours'];   
                     }
                     $arr         = [
                         '#'                 => $i++,
-                        'Date'              => $a->day.' '.$a->created_at,
-                        'Status'            => $a->status,
-                        'Enter At'          => $a->enter,
-                        'Break'             => $a->break,
-                        'End Break'         => $a->end_break,
-                        'Out At'            => $a->out,
-                        'Work Total'        => $a->work_total,
-                        'Total Time (W)'    => $a->work_total_in_week
+                        'Date'              => $a['day'].' '.$a['created_at'],
+                        'Status'            => $a['status'],
+                        'Enter At'          => $a['enter'],
+                        'Break'             => $a['break'],
+                        'End Break'         => $a['end_break'],
+                        'Out At'            => $a['out'],
+                        'Work Total'        => $a['work_total'],
+                        'Total Time (W)'    => $a['work_total_in_week']
                     ];
                     array_push($datas, $arr);
                 }
@@ -191,7 +191,7 @@ class OverTimeController extends Controller
                             $cell->setBorder('thin', 'thin', 'thin', 'thin');
                         });   
                     }
-                    if($a->is_holiday){
+                    if($a['is_holiday']){
                         $sheet->row($baris, function($row){
                             $row->setBackground('#ff0055');
                         });
