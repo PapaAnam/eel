@@ -1,5 +1,5 @@
 @push('css')
-<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/bs3.min.css') }}">
 @endpush
 @extends('layouts.export.template')
 @section('content')

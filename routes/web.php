@@ -173,25 +173,6 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 		Route::post('dt', $c.'dt')->name($r.'.dt');
 	});
 
-		#Mutation modul
-	Route::get('/mutations', 'Hris\MutationController@index')->name('mutations');
-	Route::group(['prefix' => 'mutation'], function() {
-		$c = 'Hris\MutationController@';
-		$r = 'mutation';
-		Route::post('create', $c.'create')->name($r.'.create');
-		Route::post('edit', $c.'edit')->name($r.'.edit');
-		Route::put('update', $c.'update')->name($r.'.update');
-		Route::delete('remove', $c.'remove')->name($r.'.remove');
-		Route::post('detail', $c.'detail')->name($r.'.detail');
-		Route::post('dt', $c.'dt')->name($r.'.dt');
-		export_route($c, $r);
-		Route::get('{id}/letter/print', $c.'letterprint')->name($r.'.letter.print');
-		Route::get('{id}/letter/excel', $c.'letterexcel')->name($r.'.letter.excel');
-		Route::get('{id}/letter/pdf', $c.'letterpdf')->name($r.'.letter.pdf');
-		Route::post('refresh_mutation_id', $c.'refresh_mutation_id')->name($r.'.refresh_mutation_id');
-		Route::post('check_position_department', $c.'check_position_department')->name($r.'.check_position_department');
-	});
-
 		#Attendance modul
 	// Route::get('/manage_attendances', 'Hris\AttendanceController@index')->name('attendances');
 	// Route::group(['prefix' => 'manage_attendance'], function() {

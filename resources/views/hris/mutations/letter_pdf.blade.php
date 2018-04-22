@@ -1,5 +1,5 @@
 @push('css')
-<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/bs3.min.css') }}">
 @endpush
 @extends('layouts.export.template')
 @section('content')
@@ -18,17 +18,16 @@
 		SURAT MUTASI PEGAWAI BARU / LAMA<br>
 		HRD – LISUN
 	</div>
-	<div class="col-xs-3" style="border: 1px solid #cccccc; padding-top: 10px; padding-bottom: 10px;">
+	<div class="col-xs-4" style="border: 1px solid #cccccc; padding-top: 10px; padding-bottom: 10px;">
 		LSN/01/2017<br>
 		{{ english_date($data->created_at) }}
 	</div>
 </div>
 <div class="row margin-bottom">
 	<div class="col-xs-12">
-		<br>
 		Kepada, <br>
-		{{ $m->name.' - '.$m->position }}<br>
-		{{ $m->department.' - '.$m->sub_department }} <br>
+		{{ $data->man->name.' - '.$data->man->pos->name }}<br>
+		{{ $data->man->dep->department }} <br>
 		{{ $data->city }}<br><br>
 		Dengan Hormat,<br> 
 		<p>Melalui Surat Mutasi ini bahwa nama yang tertera di bawah ini :</p>
@@ -40,19 +39,19 @@
 			<tbody>
 				<tr>
 					<td width="40%">NIN</td>
-					<td>{{ $data->nin }}</td>
+					<td>{{ $data->emp->nin }}</td>
 				</tr>
 				<tr>
 					<td>Nama</td>
-					<td>{{ $data->e_name }}</td>
+					<td>{{ $data->emp->name }}</td>
 				</tr>
 				<tr>
-					<td>Departemen, Sub Departemen</td>
-					<td>{{ $old->department.', '.$old->sub_department }}</td>
+					<td>Departemen</td>
+					<td>{{ $data->odep->name }}</td>
 				</tr>
 				<tr>
 					<td>Jabatan</td>
-					<td>{{ $old->position }}</td>
+					<td>{{ $data->ojb->name }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -68,12 +67,12 @@
 		<table class="table table-bordered">
 			<tbody>
 				<tr>
-					<td width="40%">Departemen, Sub Departemen</td>
-					<td>{{ $data->d_name.', '.$data->sd_name }}</td>
+					<td width="40%">Departemen</td>
+					<td>{{ $data->ndep->name }}</td>
 				</tr>
 				<tr>
 					<td>Jabatan</td>
-					<td>{{ $data->p_name }}</td>
+					<td>{{ $data->njb->name }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -92,13 +91,12 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-6 text-left">
-		<br>Di Buat Oleh<br><br><br>							
+	<div class="col-xs-6 text-left" >
+		Di Buat Oleh<br><br><br>							
 		HRD Manager								
 	</div>
-	<div class="col-xs-4 text-right">
-		<br>Mengetahui<br><br><br>
+	<div class="col-xs-5 text-right">
+		Mengetahui<br><br><br>
 		General Manager
 	</div>
 </div> 
-@endsection

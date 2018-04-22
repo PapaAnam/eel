@@ -208,17 +208,6 @@ class Controller extends BaseController
         return $pdf->download($title.' ['.now().'].pdf');
     }
 
-    protected function remove(Request $r)
-    {
-        $tbl = explode('\\', $this->table);
-        $msg = $tbl[1];
-        if(count($tbl)==3)
-            $msg = $tbl[2];
-        $this->create_activity('Deleted '.strtolower($msg));
-        $this->table::find($r->id)->delete();
-        return $this->deleted();
-    }
-
     protected function create_activity($event)
     {
         Ac::create([
