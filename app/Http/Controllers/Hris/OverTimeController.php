@@ -128,7 +128,7 @@ class OverTimeController extends Controller
                     }
                     $arr         = [
                         '#'                 => $i++,
-                        'Employee'          => $a['emp']['nin'].$a['emp']['name']
+                        'Employee'          => $a['emp']['nin'].$a['emp']['name'],
                         'Date'              => $a['day'].' '.$a['created_at'],
                         'Status'            => $a['status'],
                         'Enter At'          => $a['enter'],
