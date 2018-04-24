@@ -119,7 +119,7 @@ class Attendance extends Model
 
     public function scopeOtRegular($q, $year, $month, $employee)
     {
-        $work_total = $q->workTotalInMonth($year, $month, $employee)['in_reg'];
+        $work_total = $q->workTotalInMonth($year, $month, $employee);
         if($work_total <= 0){
             return '-';
         }
