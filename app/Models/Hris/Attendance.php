@@ -238,10 +238,11 @@ class Attendance extends Model
             if($i < 10){
                 $i = '0'.$i;
             }
+            $bulan = '';
             if($month < 10){
-                $month = '0'.$month;
+                $bulan = '0'.$month;
             }
-            $tgl = $year.'-'.$month.'-'.$i;
+            $tgl = $year.'-'.$bulan.'-'.$i;
             if(!$ada){
                 $libur = Calendar::where('month', substr($tgl, 5, 2))
                 ->where('date', substr($tgl, 8, 2))
