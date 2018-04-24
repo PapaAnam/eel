@@ -71,7 +71,7 @@ class PayrollController extends Controller
                     'ot_holiday'            => round($ot_holiday_money, env('ROUND', 2)),
                     'ot_regular_in_hours'   => $otr['in_hours'],
                     'ot_holiday_in_hours'   => $ot_holiday_hours,
-                    'absent'                => $absent,
+                    'absent'                => round($absent, env('ROUND', 2)),
                     'absent_punishment'     => $absent_punishment,
                 ]);
                 $total_success++;
