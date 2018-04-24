@@ -35,13 +35,13 @@ class SalaryRuleController extends Controller
 				]
 			], 422);
 		$r->validate([
-			'basic_salary' 		=> 'required|numeric|min:0|max:999999999',
-			'allowance' 		=> 'required|numeric|min:0|max:999999999',
-			'incentive' 		=> 'required|numeric|min:0|max:999999999',
-			'eat_cost' 			=> 'required|numeric|min:0|max:999999999',
-			'etc' 				=> 'required|numeric|min:0|max:999999999',
-			'seguranca' 		=> 'required|numeric|min:0|max:999999999',
-			'cash_receipt'		=> 'required|numeric|min:0|max:999999999',
+			'basic_salary' 		=> 'numeric|min:0|max:999999999',
+			'allowance' 		=> 'numeric|min:0|max:999999999',
+			'incentive' 		=> 'numeric|min:0|max:999999999',
+			'eat_cost' 			=> 'numeric|min:0|max:999999999',
+			'etc' 				=> 'numeric|min:0|max:999999999',
+			'seguranca' 		=> 'numeric|min:0|max:999999999',
+			'cash_receipt'		=> 'numeric|min:0|max:999999999',
 		]);
 		SalaryRule::whereEmployee($r->employee)->update(['status' => 0]);
 		SalaryRule::create($r->except(['name'])+['status'=>1]);

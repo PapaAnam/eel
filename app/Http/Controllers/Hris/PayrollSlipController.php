@@ -20,51 +20,47 @@ class PayrollSlipController extends Controller
 		$s = $this->s = Salary::with(['emp', 'sr'=>function($q){
 			$q->where('status', '1');
 		}])->where('id', $id)->first();
-		$this->total_hari_kerja = Attendance::where('employee', $s->emp->id)
-		->whereMonth('created_at', $s->month)
-		->whereYear('created_at', $s->year)
-		->where('status', 'Present')
-		->count();
+		$this->total_hari_kerja = Attendance::totalHariKerja($s->year, $s->month, $s->emp->id);
 		$this->file_name = 'slip ('.$s->emp->nin.') '.$s->emp->name.' ['.now().']';
-		$att = Attendance::with(['emp' => function($q){
-			$q->with(['sr'=>function($k){
-				$k->where('status', '1');
-			}]);
-		}])->where('employee', $s->employee)
-		->whereMonth('created_at', $s->month)
-		->whereYear('created_at', $s->year)
-		->latest()
-		->get();
-		$biasa = $att->where('is_holiday', false)->values();
-		$this->total_over_time_money = 0;
-		foreach($biasa as $item){
-			$this->total_over_time_money += $item['over_time_in_money'];
-		}
-		$this->total_over_time_money = round($this->total_over_time_money, env('ROUND', 2));
-		$this->total_over_time_hours = 0;
-		foreach($biasa as $item){
-			$this->total_over_time_hours += $item['over_time_in_hours'];
-		}
-		$this->total_over_time_hours = convertHour($this->total_over_time_hours);
+		// $att = Attendance::with(['emp' => function($q){
+		// 	$q->with(['sr'=>function($k){
+		// 		$k->where('status', '1');
+		// 	}]);
+		// }])->where('employee', $s->employee)
+		// ->whereMonth('created_at', $s->month)
+		// ->whereYear('created_at', $s->year)
+		// ->latest()
+		// ->get();
+		// $biasa = $att->where('is_holiday', false)->values();
+		// $this->total_over_time_money = 0;
+		// foreach($biasa as $item){
+		// 	$this->total_over_time_money += $item['over_time_in_money'];
+		// }
+		// $this->total_over_time_money = round($this->total_over_time_money, env('ROUND', 2));
+		// $this->total_over_time_hours = 0;
+		// foreach($biasa as $item){
+		// 	$this->total_over_time_hours += $item['over_time_in_hours'];
+		// }
+		// $this->total_over_time_hours = convertHour($this->total_over_time_hours);
 
 		// total over time pada hari libur (duit)
-		$holiday = $att->where('is_holiday', true)->values();
-		$this->total_over_time_holiday_in_money = 0;
-		foreach($holiday as $item){
-			$this->total_over_time_holiday_in_money += $item['over_time_in_money'];
-		}
+		// $holiday = $att->where('is_holiday', true)->values();
+		// $this->total_over_time_holiday_in_money = 0;
+		// foreach($holiday as $item){
+		// 	$this->total_over_time_holiday_in_money += $item['over_time_in_money'];
+		// }
 
-		$this->total_over_time_holiday_in_money = round($this->total_over_time_holiday_in_money, env('ROUND', 2));
+		// $this->total_over_time_holiday_in_money = round($this->total_over_time_holiday_in_money, env('ROUND', 2));
 
 		// total over time pada hari libur (jam)
-		$this->total_over_time_holiday_in_hours = 0;
-		foreach($holiday as $item){
-			$this->total_over_time_holiday_in_hours += $item['over_time_in_hours'];
-		}
-		$this->total_over_time_holiday_in_hours = convertHour($this->total_over_time_holiday_in_hours);
+		// $this->total_over_time_holiday_in_hours = 0;
+		// foreach($holiday as $item){
+		// 	$this->total_over_time_holiday_in_hours += $item['over_time_in_hours'];
+		// }
+		// $this->total_over_time_holiday_in_hours = convertHour($this->total_over_time_holiday_in_hours);
 
 		// menghitung seguranca social
-		$this->seguranca_social = $this->s->sr->basic_salary*4/100;
+		// $this->seguranca_social = $this->s->sr->basic_salary*4/100;
 	}
 
 	public function generate($id, $type)
@@ -80,45 +76,47 @@ class PayrollSlipController extends Controller
 				$sheet->cell('B4', $s->emp->nin);
 				$sheet->cell('A6', 'Basic Salary');
 				$sheet->cell('B6', $s->sr->basic_salary);
-				$sheet->cell('A7', 'Tunjangan Jabatan');
+				$sheet->cell('A7', 'Allowance');
 				$sheet->cell('B7', $s->sr->allowance);
-				$sheet->cell('A8', 'Total Hari Kerja');
+				$sheet->cell('A8', 'Total Work Day');
 				$sheet->cell('B8', $this->total_hari_kerja);
-				$sheet->cell('A9', 'Total Over Time Biasa');
-				$sheet->cell('B9', $this->total_over_time_money);
-				$sheet->cell('C9', $this->total_over_time_hours);
-				$sheet->cell('A10', 'Total Over Time Holiday');
-				$sheet->cell('B10', $this->total_over_time_holiday_in_money);
-				$sheet->cell('C10', $this->total_over_time_holiday_in_hours);
+				$sheet->cell('A9', 'Over Time Regular ('.$s->ot_regular_in_hours.')');
+				$sheet->cell('B9', $s->ot_regular);
+				// $sheet->cell('C9', $this->total_over_time_hours);
+				$sheet->cell('A10', 'Over Time Holiday ('.$s->ot_holiday_in_hours.')');
+				$sheet->cell('B10', $s->ot_holiday);
+				// $sheet->cell('C10', $this->total_over_time_holiday_in_hours);
 				$sheet->cell('A11', 'Incentive Sales');
 				$sheet->cell('B11', $s->sr->incentive);
 				$sheet->cell('A12', 'Eat Cost');
 				$sheet->cell('B12', $s->sr->eat_cost);
-				$sheet->cell('A13', 'ETC');
-				$sheet->cell('B13', $s->sr->etc);
-				$sheet->cell('A14', 'Ritation');
-				$sheet->cell('B14', $s->sr->ritation);
-				$sheet->cell('A15', function($cell){
+				// $sheet->cell('A13', 'ETC');
+				// $sheet->cell('B13', $s->sr->etc);
+				$sheet->cell('A13', 'Ritation');
+				$sheet->cell('B13', $s->sr->ritation);
+				$sheet->cell('A14', function($cell){
 					$cell->setFontWeight('bold');
 					$cell->setAlignment('center');
 				});
-				$sheet->cell('A15', 'Sub Total');
-				$sheet->cell('B15', $s->gross_salary);
-				$sheet->cell('A17', 'Potongan');
-				$sheet->cell('A17', function($cell){
+				$sheet->cell('A14', 'Sub Total');
+				$sheet->cell('B14', $s->gross_salary);
+				$sheet->cell('A16', 'Potongan');
+				$sheet->cell('A16', function($cell){
 					$cell->setFontWeight('bold');
 				});
-				$sheet->cell('A18', 'Pajak (Seguranca Social 4%)');
-				$seguranca_social = $this->seguranca_social;
-				$sheet->cell('B18', $seguranca_social);
-				$sheet->cell('A19', 'Kas Bon');
-				$sheet->cell('B19', $s->sr->cash_receipt);
+				$sheet->cell('A17', 'Pajak (Seguranca Social 4%)');
+				// $seguranca_social = $this->seguranca_social;
+				$sheet->cell('B17', $s->seguranca);
+				$sheet->cell('A18', 'Kas Bon');
+				$sheet->cell('B18', $s->sr->cash_receipt);
+				$sheet->cell('A19', 'Absent ('.$s->absent.' days)');
+				$sheet->cell('B19', $s->absent_punishment);
 				$sheet->cell('A20', function($cell){
 					$cell->setFontWeight('bold');
 					$cell->setAlignment('center');
 				});
 				$sheet->cell('A20', 'Sub Total');
-				$sheet->cell('B20', $seguranca_social+$s->sr->cash_receipt);
+				$sheet->cell('B20', $s->total_potongan);
 				$sheet->cell('A22', 'Total');
 				$sheet->cell('B22', $s->clear_salary);
 				$sheet->cell('A24', 'Dili '.date('F, Y-d'));
@@ -145,7 +143,7 @@ class PayrollSlipController extends Controller
 			// 'total_over_time_hours'				=> $this->total_over_time_hours, 
 			// 'total_over_time_holiday_in_money'	=> $this->total_over_time_holiday_in_money, 
 			// 'total_over_time_holiday_in_hours'	=> $this->total_over_time_holiday_in_hours,
-			'seguranca_social'					=> $this->seguranca_social,
+			// 'seguranca_social'					=> $this->seguranca_social,
 		])->setPaper('A4')
 		// ->stream();
 		->download($this->file_name.'.pdf');

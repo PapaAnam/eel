@@ -31,25 +31,6 @@ class OverTimeController extends Controller
         return O::data($id);
     }
 
-    public function dt()
-    {
-        $data = array();
-        $no = 1;
-        foreach ($this->data() as $d) {
-            $data[] = [
-                $no++,
-                $d->e_name,
-                $d->d_name,
-                $d->sd_name,
-                $d->p_name,
-                english_date($d->created_at),
-                $d->pay,
-                '<a data-role="hint" data-hint-background="bg-blue" data-hint-color="fg-white" data-hint-mode="2" data-hint="Pay" data-hint-position="top" onclick="pay(\''.$d->id.'\')" class="button fg-white bg-blue cycle-button" href="#"><span class="mif-dollar2"></span></a>'
-            ];
-        }
-        return response(['data'=>$data], 200);
-    }
-
     public function index(Request $r)
     {
         if(!$r->ajax()){

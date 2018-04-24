@@ -42,8 +42,8 @@
 				<td align="right">{{ $s->sr->allowance }}</td>
 			</tr>
 			<tr>
-				<td>Total Work Day</td>
-				<td align="right">{{ $total_hari_kerja[$loop->index] }}</td>
+				<td>Total Work Day ({{ $total_hari_kerja[$loop->index] }} days)</td>
+				<td align="right"></td>
 			</tr>
 			<tr>
 				<td>Over Time Regular ({{ $s->ot_regular_in_hours }})</td>
@@ -61,10 +61,10 @@
 				<td>Eat Cost</td>
 				<td align="right">{{ $s->sr->eat_cost }}</td>
 			</tr>
-			<tr>
+			{{-- <tr>
 				<td>ETC</td>
 				<td align="right">{{ $s->sr->etc }}</td>
-			</tr>
+			</tr> --}}
 			<tr>
 				<td>Ritation</td>
 				<td align="right">{{ $s->sr->ritation }}</td>
@@ -82,15 +82,19 @@
 			</tr>
 			<tr>
 				<td>Pajak (Seguranca Social 4%)</td>
-				<td align="right">{{ $seguranca_social[$loop->index] }}</td>
+				<td align="right">{{ $s->seguranca }}</td>
 			</tr>
 			<tr>
 				<td>Kas Bon</td>
 				<td align="right">{{ $s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
+				<td>Absent ({{ $s->absent }} days)</td>
+				<td align="right">{{ $s->absent_punishment }}</td>
+			</tr>
+			<tr>
 				<td>Sub Total</td>
-				<td align="right">{{ $seguranca_social[$loop->index]+$s->sr->cash_receipt }}</td>
+				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
 				<td>Total Yang Diterima</td>

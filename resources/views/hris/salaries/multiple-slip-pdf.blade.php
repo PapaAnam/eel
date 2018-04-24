@@ -77,7 +77,7 @@
 			</tr>
 			<tr>
 				<td width="230px">Pajak (Seguranca Social 4%)</td>
-				<td align="right">{{ $seguranca_social[$loop->index] }}</td>
+				<td align="right">{{ $->seguranca }}</td>
 			</tr>
 			<tr>
 				<td>Kas Bon</td>
@@ -85,7 +85,7 @@
 			</tr>
 			<tr>
 				<td>Sub Total</td>
-				<td align="right">{{ $seguranca_social[$loop->index]+$s->sr->cash_receipt }}</td>
+				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}</td>
 			</tr>
 			<tr>
 				<td>Total Yang Diterima</td>

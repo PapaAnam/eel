@@ -119,6 +119,10 @@ class Attendance extends Model
 
     public function scopeOtRegular($q, $year, $month, $employee)
     {
+        $work_total = $q->workTotalInMonth($year, $month, $employee)['in_reg'];
+        if($work_total <= 0){
+            return '-';
+        }
         $ot_hol = $q->overTimeHolidayInMonth($year, $month, $employee)['in_reg'];
         return convertHour($q->workTotalInMonth($year, $month, $employee) - 176 - $ot_hol);
     }
@@ -131,19 +135,38 @@ class Attendance extends Model
     public function scopeOverTimeHolidayInMonth($q, $year, $month, $employee)
     {
         $attendances    = $q->inMonth($employee, $year, $month);
-        $ot_money       = 0;
+        // $ot_money       = 0;
         $ot_hours       = 0;
         // return $attendances;
         foreach ($attendances as $a) {
             if($a['is_holiday']){
-                $ot_money += $a['over_time_in_money'];
+                // $ot_money += $a['over_time_in_money'];
                 $ot_hours += $a['over_time_in_hours'];
             }
         }
         return [
-            'in_money'      => $ot_money,
+            // 'in_money'      => $ot_money,
             'in_hours'      => convertHour($ot_hours),
             'in_reg'        => $ot_hours,
+        ];
+    }
+
+    public function scopeOverTimeRegularInMonth($q, $year, $month, $employee)
+    {
+        $work_total = $q->workTotalInMonth($year, $month, $employee)['in_reg'];
+        if($work_total <= 0){
+            return [
+            // 'in_money'      => 0,
+            'in_hours'      => '-',
+            'in_reg'        => 0,
+        ];
+        }
+        $ot_hol = $q->overTimeHolidayInMonth($year, $month, $employee)['in_reg'];
+        $otr = $work_total - 176 - $ot_hol;
+        return [
+            // 'in_money'      => 0,
+            'in_hours'      => convertHour($otr),
+            'in_reg'        => $otr,
         ];
     }
 
@@ -250,6 +273,24 @@ class Attendance extends Model
     {
         $hari = date('l', strtotime($this->created_at));
         return $hari;
+    }
+
+    public function scopeTotalHariKerja($q, $year, $month, $employee)
+    {
+        return $q->where('employee', $employee)
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('status', 'Present')
+        ->count();
+    }
+
+    public function scopeAbsent($q, $year, $month, $employee)
+    {
+        return $q->where('employee', $employee)
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('status', 'Absent')
+        ->count();
     }
 
 }

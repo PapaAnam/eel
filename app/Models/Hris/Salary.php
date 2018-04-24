@@ -8,11 +8,8 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca'];
-	protected $appends = ['clear_salary', 'gross_salary', 
-	// 'ot_regular', 
-	// 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours'
-];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment'];
+	protected $appends = ['clear_salary', 'gross_salary', 'seguranca', 'total_potongan'];
 
 	public function emp()
 	{
@@ -32,7 +29,7 @@ class Salary extends Model
 			if(config('app.seguranca')){
 				$seguranca_social = $sr->basic_salary * 4 / 100;
 			}
-			return round($this->gross_salary - ($seguranca_social + $sr->cash_receipt), env('ROUND', 2));
+			return round($this->gross_salary - $this->total_potongan, env('ROUND', 2));
 		}
 		return 0;
 	}
@@ -41,33 +38,23 @@ class Salary extends Model
 	{
 		if($this->sr){
 			$sr = $this->sr;
-			return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->over_time;
+			return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->ot_regular+$this->ot_holiday;
 		}
 		return 0;
 	}
 
-	// public function getOtRegularAttribute()
-	// {
-	// 	$ot_reg = Attendance::otRegularInMonth($this->year, $this->month, $this->employee);
-	// 	$ot = round($this->sr->basic_salary/22/8*2*$ot_reg, env('ROUND', 2));
-	// 	return $ot;
-	// }
+	public function getSegurancaAttribute()
+	{
+		$sr = $this->sr;
+		$seguranca_social = $sr->seguranca;
+		if(config('app.seguranca')){
+			$seguranca_social = $sr->basic_salary * 4 / 100;
+		}
+		return $seguranca_social;
+	}
 
-	// public function getOtRegularInHoursAttribute()
-	// {
-	// 	$ot_reg = Attendance::otRegularInMonth($this->year, $this->month, $this->employee);
-	// 	return convertHour($ot_reg);
-	// }
-
-	// public function getOtHolidayAttribute()
-	// {
-	// 	$ot = Attendance::overTimeHolidayInMonth($this->year, $this->month, $this->employee);
-	// 	return $ot['in_money'];
-	// }
-
-	// public function getOtHolidayInHoursAttribute()
-	// {
-	// 	$ot = Attendance::overTimeHolidayInMonth($this->year, $this->month, $this->employee);
-	// 	return $ot['in_hours'];
-	// }
+	public function getTotalPotonganAttribute()
+	{
+		return $this->seguranca+$this->sr->cash_receipt+$this->absent_punishment;
+	}
 }
