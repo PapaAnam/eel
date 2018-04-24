@@ -105,7 +105,7 @@
 	<table>
 		<tbody>
 			<tr>
-				<td>{{ 'Dili '.date('F, Y-d') }}</td>
+				<td>{{ 'Dili '.date('F, Y-m-d') }}</td>
 			</tr>
 			<tr>
 				<td style="padding-bottom: 40px;">
