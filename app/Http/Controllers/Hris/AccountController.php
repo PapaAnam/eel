@@ -18,7 +18,7 @@ class AccountController extends Controller
     public function getData($id = null)
     {
         if($id)
-            return U::where('id', $id)->first();
+            return U::with('auth')->where('id', $id)->first();
         return U::all();
     }
 
