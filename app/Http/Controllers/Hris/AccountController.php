@@ -18,8 +18,8 @@ class AccountController extends Controller
     public function getData($id = null)
     {
         if($id)
-            return U::with(['emp.dep', 'emp.pos', 'auth'])->where('id', '!=', 1)->where('id', $id)->first();
-        return U::with(['emp.dep', 'emp.pos', 'auth'])->where('id', '!=', 1)->get();
+            return U::where('id', $id)->first();
+        return U::all();
     }
 
     private function data($id=null)
@@ -27,23 +27,13 @@ class AccountController extends Controller
         return U::data($id);
     }
 
-    // public function index(Request $r)
-    // {
-    //     if(!$r->ajax())
-    //         return redirect()->route('hris');
-    //     parent::check_authority('account');
-    //     return view('hris.accounts.index');
-    // }
-
     private function storeData($r)
     {
-        // $store['home']         =  $r->home!=null ? $r->home : 0;
         $store['department']      =  $r->department!=null ? $r->department : 0;
-        // $store['sub_department']  =  $r->sub_department!=null ? $r->sub_department : 0;
-        $store['job_title']        =  $r->job_title!=null ? $r->job_title : 0;
+        $store['job_title']       =  $r->job_title!=null ? $r->job_title : 0;
         $store['employee']        =  $r->employee_menu!=null ? $r->employee_menu : 0;
         $store['calendar']        =  $r->calendar!=null ? $r->calendar : 0;
-        $store['special_day']    =  $r->special_day!=null ? $r->special_day : 0;
+        $store['special_day']     =  $r->special_day!=null ? $r->special_day : 0;
         $store['attendance']      =  $r->attendance!=null ? $r->attendance : 0;
         $store['over_time']       =  $r->over_time!=null ? $r->over_time : 0;
         $store['official_travel'] =  $r->official_travel!=null ? $r->official_travel : 0;
@@ -62,12 +52,8 @@ class AccountController extends Controller
             'username'      => 'required|unique:hris_users|min:6|max:20|alpha',
             'password'      => 'required|min:6|max:20|alpha_num|confirmed',
             'level'         => 'required',
-            // 'employee'      => 'required'
         ];
         $this->validate($r, $rules);
-        // if(U::where('employee', $r->employee)->count()){
-        //     return response('the select employee already has account. employee just only have at least 1 account', 409);
-        // }
         $error = true;
         if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
             $error = false;
@@ -77,7 +63,6 @@ class AccountController extends Controller
             'username' => $r->username,
             'password' => bcrypt($r->password),
             'level'    => $r->level,
-            // 'employee' => $r->employee
         ]);
         $store             = $this->storeData($r);
         $store['user']     = $U->id;
@@ -119,7 +104,6 @@ class AccountController extends Controller
         U::find($r->id)->update($storeData);
         $store = $this->storeData($r);
         $store['user'] = $r->id;
-        // $store['employee'] = $r->employee;
         A::where('user', $r->id)->update($store);
         parent::create_activity('Updated user account');
         return 'account success updated';

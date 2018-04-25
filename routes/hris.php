@@ -15,7 +15,7 @@ Route::prefix('setting')->group(function(){
 	Route::get('/seguranca', 'SettingController@seguranca');
 });
 
-#Mutation modul
+#MUTATION MODUL
 Route::group(['prefix' => 'mutations'], function() {
 	$c = 'MutationController@';
 	$r = 'mutation';
@@ -28,4 +28,9 @@ Route::group(['prefix' => 'mutations'], function() {
 	Route::get('/letter/pdf/{id}', $c.'letterpdf');
 	Route::post('refresh_mutation_id', $c.'refresh_mutation_id')->name($r.'.refresh_mutation_id');
 	Route::post('check_position_department', $c.'check_position_department')->name($r.'.check_position_department');
+});
+
+Route::group(['prefix' => 'user'], function() {
+	$c = 'UserController@';
+	Route::get('/active', $c.'active');
 });
