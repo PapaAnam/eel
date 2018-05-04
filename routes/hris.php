@@ -1,21 +1,24 @@
 <?php 
 
+# OVER TIME
 Route::prefix('over-time')->group(function(){
 	Route::get('/excel', 'OverTimeController@excel');
 	Route::get('/regular', 'OverTimeController@regular');
 	Route::get('/holiday', 'OverTimeController@holiday');
 });
 
+# SALARIES
 Route::prefix('salaries')->group(function(){
 	Route::get('/multiple-slip', 'PayrollSlipController@multipleSlip');
 	Route::get('/multiple-slip-pdf', 'PayrollSlipController@multipleSlipPDF');
 });
 
+# SETTING
 Route::prefix('setting')->group(function(){
 	Route::get('/seguranca', 'SettingController@seguranca');
 });
 
-#MUTATION MODUL
+# MUTATION MODUL
 Route::group(['prefix' => 'mutations'], function() {
 	$c = 'MutationController@';
 	$r = 'mutation';
@@ -33,4 +36,19 @@ Route::group(['prefix' => 'mutations'], function() {
 Route::group(['prefix' => 'user'], function() {
 	$c = 'UserController@';
 	Route::get('/active', $c.'active');
+});
+
+# ATTENDANCES MODUL
+Route::group(['prefix' => 'attendances'], function(){
+	Route::get('/filter', 'AttendanceController@filter');
+	Route::get('/example', 'AttendanceController@example');
+	Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
+	Route::get('/x100c-machine', 'X100CController@get');
+	Route::post('/x100c-machine/synchronize', 'X100CController@synchronize');
+	Route::post('/store', 'AttendanceController@store');
+	Route::put('/update/{id}', 'AttendanceController@update');
+	Route::delete('/delete/{id}', 'AttendanceController@delete');
+	Route::get('/print', 'AttendanceController@toPrint');
+	Route::get('/pdf', 'AttendanceController@pdf');
+	Route::get('/excel', 'AttendanceController@excel');
 });

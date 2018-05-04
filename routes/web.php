@@ -106,21 +106,6 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 		Route::get('/excel', 'AccountController@excel');
 	});
 
-	# ATTENDANCES MODUL
-	Route::group(['prefix' => 'attendances', 'namespace' => 'Hris'], function(){
-		// Route::get('/', 'AttendanceController@index');
-		Route::get('/filter', 'AttendanceController@filter');
-		Route::get('/example', 'AttendanceController@example');
-		Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
-		Route::get('/x100c', 'AttendanceController@x100c');
-		Route::post('/store', 'AttendanceController@store');
-		Route::put('/update/{id}', 'AttendanceController@update');
-		Route::delete('/delete/{id}', 'AttendanceController@delete');
-		Route::get('/print', 'AttendanceController@toPrint');
-		Route::get('/pdf', 'AttendanceController@pdf');
-		Route::get('/excel', 'AttendanceController@excel');
-	});
-
 	# SPECIAL DAY
 	Route::group(['prefix' => 'special-day', 'namespace' => 'Hris'], function(){
 		Route::get('/calendars', 'CalendarController@index')->name('calendars');
