@@ -36,9 +36,7 @@ class X100CController extends Controller
 						'end_break'		=> '13:00:00',
 						'enter'			=> $time,
 					]);
-				}
-			}else if($e){
-				if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
+				}else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,
 						'created_at'	=> $date,
