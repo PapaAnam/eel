@@ -21,6 +21,7 @@ class X100CController extends Controller
 	public function synchronize(Request $r)
 	{
 		$data = $this->get($r);
+		$date = null;
 		foreach ($data as $d) {
 			$u 		= $d->userInfo;
 			$date 	= substr($d->CHECKTIME, 0, 10);
@@ -35,6 +36,7 @@ class X100CController extends Controller
 						'break'			=> '12:00:00',
 						'end_break'		=> '13:00:00',
 						'enter'			=> $time,
+						'status'		=> 'Present',
 					]);
 				}else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
 					Attendance::updateOrCreate([
@@ -44,8 +46,24 @@ class X100CController extends Controller
 						'break'			=> '12:00:00',
 						'end_break'		=> '13:00:00',
 						'out'			=> $time,
+						'status'		=> 'Present',
 					]);
 				}
+			}
+		}
+		$employees = Employee::all();
+		foreach ($employees as $e) {
+			if(!Attendance::where('employee', $e->id)->exists()){
+				Attendance::updateOrCreate([
+					'employee'		=> $e->id,
+					'created_at'	=> $date,
+				], [
+					'enter'			=> null,
+					'break'			=> null,
+					'end_break'		=> null,
+					'out'			=> null,
+					'status'		=> 'Absent',
+				]);
 			}
 		}
 		return 'Synchronize attendances from x100c successfull';
