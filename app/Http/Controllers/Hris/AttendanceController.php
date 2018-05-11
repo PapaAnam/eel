@@ -14,6 +14,7 @@ use App\Models\Hris\OverTime            as O;
 use App\Models\Hris\LeavePeriod         as LP;
 use App\Models\Hris\Department          as D;
 use App\Models\Absensi\CheckInOut;
+use App\Models\Hris\Calendar;
 use Excel;
 use Storage;
 
@@ -126,13 +127,26 @@ class AttendanceController extends Controller
         $end_break      = $r->end_break;
         $out            = $r->out;
         $enter          = $r->enter;
-        A::find($id)->update([
-            'break'         => $break,
-            'end_break'     => $end_break,
-            'out'           => $out,
-            'enter'         => $enter,
-            'status'        => $r->status,
-        ]);
+        if(is_numeric($id)){
+            A::find($id)->update([
+                'break'         => $break,
+                'end_break'     => $end_break,
+                'out'           => $out,
+                'enter'         => $enter,
+                'status'        => $r->status,
+            ]); 
+        }else{
+            A::updateOrCreate([
+                'employee'      => $r->query('employee'),
+                'created_at'    => $r->query('date'),
+            ], [
+                'break'         => $break,
+                'end_break'     => $end_break,
+                'out'           => $out,
+                'enter'         => $enter,
+                'status'        => $r->status,
+            ]);
+        }
         return 'Attendance updated';
     }
 
@@ -204,9 +218,37 @@ class AttendanceController extends Controller
         return parent::created();
     }
 
-    public function api($id)
+    public function api($id, Request $r)
     {
-        return A::with('emp')->where('id', $id)->first();
+        if(is_numeric($id)){
+            return A::with('emp')->where('id', $id)->first();
+        }
+        $date = $r->query('date');
+        $libur = Calendar::where('month', substr($date, 5, 2))
+        ->where('date', substr($date, 8, 2))
+        ->exists() || date('l', strtotime($date)) === 'Sunday';
+        $e = E::find($r->query('employee'));
+        return [
+            "id"                        => $id,
+            "employee"                  => $r->query('employee'),
+            "created_at"                => $r->query('date'),
+            "enter"                     => null,
+            "break"                     => null,
+            "end_break"                 => null,
+            "out"                       => null,
+            "status"                    => 'Absent',
+            "over_time_in_week"         => null,
+            "work_total_in_week"        => null,
+            "stat"                      => null,
+            "work_total"                => null,
+            "over_time"                 => null,
+            "work_total_in_hours"       => null,
+            "is_holiday"                => null,
+            "over_time_in_hours"        => null,
+            "over_time_in_money"        => null,
+            "day"                       => date('l', strtotime($r->query('date'))),
+            "emp"                       => $e,
+        ];
     }
 
     public function break(Request $r)
@@ -234,52 +276,6 @@ class AttendanceController extends Controller
             'status'        => $r->status,
         ]);
         return 'Attendance success created';
-    }
-
-    public function breakUpdate(Request $r)
-    {
-        A::find($r->id)->update(['break'=>$r->break]);
-
-        return parent::updated();
-    }
-
-    public function endBreak(Request $r)
-    {
-        $id = $r->id;
-        $data = $this->data($id);
-        $oper = array(
-            'data'          => $data
-        );
-        return view('hris.attendances.end_break', $oper);
-    }
-
-    public function endBreakUpdate(Request $r)
-    {
-        A::find($r->id)->update(['end_break'=>$r->end_break]);
-
-        return parent::updated();
-    }
-
-    public function out(Request $r)
-    {
-        $id = $r->id;
-        $data = $this->data($id);
-        $oper = array(
-            'data'          => $data
-        );
-        return view('hris.attendances.out', $oper);
-    }
-
-    public function outUpdate(Request $r)
-    {
-        A::find($r->id)->update(['out'=>$r->out]);
-        if(strtotime($r->out)>strtotime('18:00:00')){
-            O::create([
-                'created_at'      => date('Y-m-d'),
-                'employee'  => A::find($r->id)->employee
-            ]);
-        }
-        return parent::updated();
     }
 
     public function remove(Request $r)
