@@ -25,20 +25,32 @@
 		</tr>
 	</thead>
 	<tbody>
-		<?php $no = 1; ?>
 		@foreach($data as $d)
+		@if(is_array($d))
 		<tr>
-			<td>{{ $no }}</td>
+			<td>{{ $loop->iteration }}</td>
+			<td>{{ '('.$d['emp']['nin'].') '.$d['emp']['name'] }}</td>
+			<td>{{ english_date($d['created_at']) }}</td>
+			<td>{{ $d['status'] }}</td>
+			<td>{{ $d['enter'] }}</td>
+			<td>{{ $d['break'] }}</td>
+			<td>{{ $d['end_break'] }}</td>
+			<td>{{ $d['out'] }}</td>
+			<td>{{ $d['work_total'] }}</td>
+		</tr>
+		@else
+		<tr>
+			<td>{{ $loop->iteration }}</td>
 			<td>{{ '('.$d->emp->nin.') '.$d->emp->name }}</td>
 			<td>{{ english_date($d->created_at) }}</td>
-			<td>{{ absence_status($d->status) }}</td>
+			<td>{{ $d->status }}</td>
 			<td>{{ $d->enter }}</td>
 			<td>{{ $d->break }}</td>
 			<td>{{ $d->end_break }}</td>
 			<td>{{ $d->out }}</td>
 			<td>{{ $d->work_total }}</td>
 		</tr>
-		<?php $no++ ?>
+		@endif
 		@endforeach
 	</tbody>
 </table>

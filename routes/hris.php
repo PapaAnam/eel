@@ -42,6 +42,9 @@ Route::group(['prefix' => 'user'], function() {
 Route::group(['prefix' => 'attendances'], function(){
 	Route::get('/filter', 'AttendanceController@filter');
 	Route::get('/example', 'AttendanceController@example');
+	Route::get('/filter-employee/print', 'AttendanceController@printByEmployee');
+	Route::get('/filter-employee/excel', 'AttendanceController@excelByEmployee');
+	Route::get('/data/filter-employee', 'AttendanceController@filter');
 	Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
 	Route::get('/x100c-machine', 'X100CController@get');
 	Route::post('/x100c-machine/synchronize', 'X100CController@synchronize');

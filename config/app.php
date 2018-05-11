@@ -22,6 +22,7 @@ return [
         'author'        => env('META_AUTHOR', 'Hairul Anam'),
     ],
     'seguranca' => env('SEGURANCA', false),
+    'company_name'      => env('COMPANY_NAME', 'My Company'),
 
     /*
     |--------------------------------------------------------------------------

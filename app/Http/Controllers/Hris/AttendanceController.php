@@ -31,30 +31,6 @@ class AttendanceController extends Controller
         return CheckInOut::with('UserInfo')->get();
     }
 
-    private function create_dt($q)
-    {
-        $hint = 'data-role="hint" data-hint-background="bg-darkMagenta" data-hint-color="fg-white" data-hint-mode="2" data-hint-position="top"';
-        $data = array();
-        $no = 1;
-        foreach ($q as $d) {
-            $data[] = [
-                $no++,
-                '('.$d->emp->nin.') '.$d->emp->name,
-                english_date($d->created_at),
-                absence_status($d->status),
-                $d->enter,
-                $d->break,
-                $d->end_break,
-                $d->out,
-                '<a data-hint="Break" '.$hint.' href="#" onclick="addBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
-                <a data-hint="End Break" '.$hint.' href="#" onclick="addEndBreak(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>
-                <a data-hint="Out" '.$hint.' href="#" onclick="addOut(\''.$d->id.'\')" class="fg-white button cycle-button bg-darkMagenta"><span class="mif-bell"></span></a>'.
-                del_btn($d->id)
-            ];
-        }
-        return $data;
-    }
-
     public function dt()
     {
         return response(['data'=>$this->create_dt($this->data())], 200);
@@ -150,12 +126,6 @@ class AttendanceController extends Controller
         $end_break      = $r->end_break;
         $out            = $r->out;
         $enter          = $r->enter;
-        // if($r->status != 'Present'){
-        //     $break          = null;
-        //     $end_break      = null;
-        //     $out            = null;
-        //     $enter          = null;
-        // }
         A::find($id)->update([
             'break'         => $break,
             'end_break'     => $end_break,
@@ -378,9 +348,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                   'created_at' => $created_at, 
-                   'employee'   => $re 
-               ], [
+                 'created_at' => $created_at, 
+                 'employee'   => $re 
+             ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
                 'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
@@ -409,18 +379,26 @@ class AttendanceController extends Controller
 
     public function excel(Request $r)
     {
-        parent::check_authority('attendance');
-        Excel::create('lisun_hris_attendance_'.date('Y_m_d_h_i_s'), function($excel) use ($r){
-            $excel->setTitle('Lisun HRIS Attendance');
-            $excel->setCreator('Lisun')->setCompany('Lisun');
-            $excel->setDescription('Lisun HRIS Attendance');
+        Excel::create(config('app.company_name').' HRIS Attendance '.$r->query('date'), function($excel) use ($r){
+            $excel->setTitle(config('app.company_name').' HRIS Attendance per date');
+            $excel->setCreator(config('app.company_name'))->setCompany(config('app.company_name'));
+            $excel->setDescription(config('app.company_name').' HRIS Attendance per date');
             $excel->sheet('data', function($sheet) use ($r){
                 $datas = [];
-                foreach ($this->getData(null, $r->query('date')) as $d) {
+                $no = 1;
+                $cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+                foreach ($cells as $c) {
+                    $sheet->setBorder($c.($no), 'thin');
+                }
+                foreach (A::byMonth($r->query('date')) as $d) {
+                    foreach ($cells as $c) {
+                        $sheet->setBorder($c.($no+1), 'thin');
+                    }
                     $arr        = [
+                        '#'             => $no++,
                         'Employee'      => '('.$d->emp->nin.') '.$d->emp->name,
                         'Date'          => $d->created_at,
-                        'Status'        => absence_status($d->status),
+                        'Status'        => $d->status,
                         'Enter'         => $d->enter,
                         'Break'         => $d->break,
                         'End Break'     => $d->end_break,
@@ -432,6 +410,11 @@ class AttendanceController extends Controller
                 $sheet->with($datas);
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
+                });
+                $sheet->prependRow(1, ['Attendance '.$r->query('date')]);
+                $sheet->mergeCells('A1:I1');
+                $sheet->cell('A1', function($cell){
+                    $cell->setAlignment('center')->setBackground('#999999')->setFontSize(16)->setFontWeight('bold');
                 });
             });
         })->export('xlsx');
@@ -502,9 +485,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee_nin)->count()){
                 $re = E::where('nin', $row->employee_nin)->first()->id;
                 A::updateOrCreate([
-                   'created_at' => $created_at, 
-                   'employee'   => $re 
-               ], [
+                 'created_at' => $created_at, 
+                 'employee'   => $re 
+             ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
                 'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
@@ -561,6 +544,76 @@ class AttendanceController extends Controller
     public function filter(Request $r)
     {
         return A::inMonth($r->query('employee'), $r->query('year'), $r->query('month'));
+    }
+
+    public function printByEmployee(Request $r)
+    {
+        $data = A::inMonth($r->query('employee'), $r->query('year'), $r->query('month'));
+        return view('hris.attendances.export.print', [
+            'data' => $data
+        ]);
+    }
+
+    public function excelByEmployee(Request $r)
+    {
+        $emp = E::find($r->query('employee'));
+        Excel::create(config('app.company_name').' HRIS Attendance ['.$emp->nin.'] '.$emp->name.' '.$r->query('year').'-'.$r->query('month'), function($excel) use ($r, $emp){
+            $excel->setTitle(config('app.company_name').' HRIS Attendance per employee');
+            $excel->setCreator(config('app.company_name'))->setCompany(config('app.company_name'));
+            $excel->setDescription(config('app.company_name').' HRIS Attendance per employee');
+            $excel->sheet('data', function($sheet) use ($r, $emp){
+                $datas = [];
+                $data = A::inMonth($r->query('employee'), $r->query('year'), $r->query('month'));
+                $no = 1;
+                $cells = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+                foreach ($cells as $c) {
+                    $sheet->setBorder($c.($no), 'thin');
+                }
+                foreach ($data as $d) {
+                    foreach ($cells as $c) {
+                        $sheet->setBorder($c.($no+1), 'thin');
+                    }
+                    $arr = null;
+                    if(is_array($d)){
+                        $arr        = [
+                            '#'             => $no++,
+                            'Day'           => date('l', strtotime($d['created_at'])),
+                            'Date'          => $d['created_at'],
+                            'Status'        => $d['status'],
+                            'Enter'         => $d['enter'],
+                            'Break'         => $d['break'],
+                            'End Break'     => $d['end_break'],
+                            'Out'           => $d['out'],
+                            'Work Total'    => $d['work_total']
+                        ];   
+                    }else{
+                        $arr        = [
+                            '#'             => $no++,
+                            'Day'           => date('l', strtotime($d->created_at)),
+                            'Date'          => $d->created_at,
+                            'Status'        => $d->status,
+                            'Enter'         => $d->enter,
+                            'Break'         => $d->break,
+                            'End Break'     => $d->end_break,
+                            'Out'           => $d->out,
+                            'Work Total'    => $d->work_total
+                        ];   
+                    }
+                    array_push($datas, $arr);
+                }
+                $sheet->with($datas);
+                $sheet->row(1, function($row){
+                    $row->setFontWeight('bold');
+                });
+                $sheet->prependRow(1, [
+                    '['.$emp->nin.'] '.$emp->name.' '.$r->query('year').'-'.$r->query('month')
+                ]);
+                $sheet->mergeCells('A1:I1');
+                $sheet->cell('A1', function($cell){
+                    $cell->setAlignment('center')->setBackground('#999999')->setFontSize(16)->setFontWeight('bold');
+                });
+            });
+        })->export('xlsx');
     }
 }
 

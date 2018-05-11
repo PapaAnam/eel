@@ -4,6 +4,7 @@ namespace App\Models\Hris;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Hris\Calendar;
+use App\Models\Hris\Employee;
 
 class Attendance extends Model
 {
@@ -64,14 +65,14 @@ class Attendance extends Model
     public function getOverTimeInHoursAttribute()
     {
         // if($this->status === 'Over Time' || ($this->status === 'Present' && $this->is_holiday)){
-            if($this->out && $this->enter){
-                $break      = strtotime('12:00:00');
-                $end_break  = strtotime('13:00:00');
-                $enter      = strtotime($this->enter);
-                $out        = strtotime($this->out);
-                return (($break-$enter)+($out-$end_break))/3600;
-            }
-            return 0;
+        if($this->out && $this->enter){
+            $break      = strtotime('12:00:00');
+            $end_break  = strtotime('13:00:00');
+            $enter      = strtotime($this->enter);
+            $out        = strtotime($this->out);
+            return (($break-$enter)+($out-$end_break))/3600;
+        }
+        return 0;
         // }
         // if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
         //     return (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
@@ -163,9 +164,9 @@ class Attendance extends Model
         if($work_total <= 0){
             return [
             // 'in_money'      => 0,
-            'in_hours'      => '-',
-            'in_reg'        => 0,
-        ];
+                'in_hours'      => '-',
+                'in_reg'        => 0,
+            ];
         }
         $ot_hol = $q->overTimeHolidayInMonth($year, $month, $employee)['in_reg'];
         $otr = $work_total - 176 - $ot_hol;
@@ -187,6 +188,7 @@ class Attendance extends Model
         ->whereYear('created_at', $year)
         ->orderBy('created_at')
         ->get();
+        // return $att;
         $total = count($att);
         $total_in_week = [];
         $sum = 0;
@@ -244,7 +246,7 @@ class Attendance extends Model
             if($i < 10){
                 $i = '0'.$i;
             }
-            $bulan = '';
+            $bulan = $month;
             if($month < 10){
                 $bulan = '0'.$month;
             }
@@ -253,9 +255,11 @@ class Attendance extends Model
                 $libur = Calendar::where('month', substr($tgl, 5, 2))
                 ->where('date', substr($tgl, 8, 2))
                 ->exists() || date('l', strtotime($tgl)) === 'Sunday';
+                $peg = Employee::find($employee);
+                $adaatt = is_array($att);
                 $att_baru[] = [
                     "id"                        => str_random(12),
-                    "employee"                  => null,
+                    "employee"                  => $adaatt ? $att[0]->emp->id : $peg->id,
                     "created_at"                => $tgl,
                     "enter"                     => null,
                     "break"                     => null,
@@ -272,7 +276,7 @@ class Attendance extends Model
                     "over_time_in_hours"        => null,
                     "over_time_in_money"        => null,
                     "day"                       => date('l', strtotime($tgl)),
-                    "emp"                       => null,
+                    "emp"                       => $adaatt ? $att[0]->emp : $peg,
                 ];
             }
         }
@@ -301,6 +305,44 @@ class Attendance extends Model
         ->whereYear('created_at', $year)
         ->where('status', 'Absent')
         ->count();
+    }
+
+    public function scopeByMonth($q, $date)
+    {
+        $employees = Employee::all();
+        $data = [];
+        foreach ($employees as $e) {
+            $att = $q->where('created_at', $date)->where('employee', $e->id)->first();
+            $libur = Calendar::where('month', substr($date, 5, 2))
+            ->where('date', substr($date, 8, 2))
+            ->exists() || date('l', strtotime($date)) === 'Sunday';
+            if($att){
+                $data[] = $att;
+            }else{
+                $data[] = (Object) [
+                    "id"                        => str_random(12),
+                    "employee"                  => $e->id,
+                    "created_at"                => $date,
+                    "enter"                     => null,
+                    "break"                     => null,
+                    "end_break"                 => null,
+                    "out"                       => null,
+                    "status"                    => 'Absent',
+                    "over_time_in_week"         => null,
+                    "work_total_in_week"        => null,
+                    "stat"                      => null,
+                    "work_total"                => null,
+                    "over_time"                 => null,
+                    "work_total_in_hours"       => null,
+                    "is_holiday"                => $libur,
+                    "over_time_in_hours"        => null,
+                    "over_time_in_money"        => null,
+                    "day"                       => date('l', strtotime($date)),
+                    "emp"                       => $e,
+                ];
+            }
+        }
+        return $data;
     }
 
 }
