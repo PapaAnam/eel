@@ -307,7 +307,7 @@ class Attendance extends Model
         ->count();
     }
 
-    public function scopeByMonth($q, $date)
+    public function scopeByDate($q, $date)
     {
         $employees = Employee::all();
         $data = [];

@@ -23,7 +23,7 @@ class AttendanceController extends Controller
     public function getData($id = null, $date = null)
     {
         if($date)
-            return A::with('emp')->where('created_at', $date)->get();
+            return A::byDate($date);
         return A::with('emp')->where('created_at', date('Y-m-d'))->get();
     }
 
@@ -32,19 +32,8 @@ class AttendanceController extends Controller
         return CheckInOut::with('UserInfo')->get();
     }
 
-    public function dt()
-    {
-        return response(['data'=>$this->create_dt($this->data())], 200);
-    }
-
-    public function filter_dt($date)
-    {
-        return response(['data'=>$this->create_dt(A::whereCreatedAt($date)->get())], 200);
-    }
-
     public function index(Request $r)
     {
-        // dd(CheckInOut::all());
         if(!$r->ajax())
             return redirect()->route('hris');
         parent::check_authority('attendance');
@@ -62,7 +51,6 @@ class AttendanceController extends Controller
 
     public function create_multiply(Request $r)
     {
-        // dd($r->all());
         $sd = [
             'status'        => 'present',
             'created_at'    => $r->created_at
@@ -363,7 +351,7 @@ class AttendanceController extends Controller
     public function toPrint(Request $r)
     {
         return view('hris.attendances.export.print', [
-            'data' => $this->getData(null, $r->query('date'))
+            'data' => A::byDate($r->query('date'))
         ]);
     }
 
@@ -386,7 +374,7 @@ class AttendanceController extends Controller
                 foreach ($cells as $c) {
                     $sheet->setBorder($c.($no), 'thin');
                 }
-                foreach (A::byMonth($r->query('date')) as $d) {
+                foreach (A::byDate($r->query('date')) as $d) {
                     foreach ($cells as $c) {
                         $sheet->setBorder($c.($no+1), 'thin');
                     }
