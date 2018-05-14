@@ -307,12 +307,17 @@ class Attendance extends Model
         ->count();
     }
 
+    public function scopeA($q, $date, $emp)
+    {
+        return $q->where('created_at', $date)->where('employee', $emp)->first();
+    }
+
     public function scopeByDate($q, $date)
     {
         $employees = Employee::all();
         $data = [];
         foreach ($employees as $e) {
-            $att = $q->where('created_at', $date)->where('employee', $e->id)->first();
+            $att = $this->a($date, $e->id);
             $libur = Calendar::where('month', substr($date, 5, 2))
             ->where('date', substr($date, 8, 2))
             ->exists() || date('l', strtotime($date)) === 'Sunday';
