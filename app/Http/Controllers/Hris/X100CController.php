@@ -68,9 +68,5 @@ class X100CController extends Controller
 		}
 		return 'Synchronize attendances from x100c successfull';
 	}
-
-<<<<<<< HEAD
-=======
 // jangan dihapus
->>>>>>> perbarui repo krn rusak
 }
