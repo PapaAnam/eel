@@ -53,7 +53,7 @@ class X100CController extends Controller
 		}
 		$employees = Employee::all();
 		foreach ($employees as $e) {
-			if(!Attendance::where('employee', $e->id)->exists()){
+			if(!Attendance::where('employee', $e->id)->where('created_at', $r->query('date'))->exists()){
 				Attendance::updateOrCreate([
 					'employee'		=> $e->id,
 					'created_at'	=> $date,
