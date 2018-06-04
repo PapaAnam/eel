@@ -45,11 +45,6 @@ return [
             'driver' => 'token',
             'provider' => 'users',
         ],
-
-        'warehouse' => [
-            'driver' => 'session',
-            'provider' => 'warehouse_users'
-        ]
     ],
 
     /*
@@ -72,12 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\User::class,
-        ],
-
-        'warehouse_users' => [
-            'driver' => 'eloquent',
-            'model'  => App\Models\Warehouse\WarehouseUser::class,
+            'model' => App\User::class,
         ],
 
         // 'users' => [

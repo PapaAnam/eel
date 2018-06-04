@@ -1,9 +1,0 @@
-setelah git pull
-
-run 
-
-php artisan migrate
-
-jika ingin men generate data dummy untuk salary rule bisa run
-
-php artisan db:seed --class=HrisSalaryRuleTableSeeder

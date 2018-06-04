@@ -1,9 +1,0 @@
-run php artisan migrate
-
-untuk multiple slip pdf bisa running dengan click get slip
-
-jika menggunakan chrome atapun firefox setting sendiri ukuran kertasnya lalu save as pdf
-
-kenapa saya lakukan demikian? karena jika langsung export to pdf hasilnya kacau
-
-absensi menggunakan x100c masih dev

@@ -1,4 +1,0 @@
-setelah git pull
-
-jika ingin membuat data dummy untuk attendances dan over time bisa run >> 
-php artisan db:seed --class=HrisAttendanceTableSeeder

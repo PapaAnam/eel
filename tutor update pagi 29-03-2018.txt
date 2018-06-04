@@ -1,2 +1,0 @@
-sudah tambah etc, tidak dobel lagi eat cost
-run php artisan migrate
