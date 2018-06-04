@@ -93,6 +93,21 @@ return [
             'charset'  => 'utf8',
             'prefix'   => '',
         ],
+
+        'zt1300' => [
+            'driver' => 'mysql',
+            'host'     => env('ZT1300_DB_HOST', 'localhost'),
+            'port'     => env('ZT1300_DB_PORT', '3306'),
+            'database' => env('ZT1300_DB_DATABASE', 'forge'),
+            'username' => env('ZT1300_DB_USERNAME', 'forge'),
+            'password' => env('ZT1300_DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
     ],
 
     /*

@@ -48,6 +48,10 @@ Route::group(['prefix' => 'attendances'], function(){
 	Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
 	Route::get('/x100c-machine', 'X100CController@get');
 	Route::post('/x100c-machine/synchronize', 'X100CController@synchronize');
+	Route::namespace('Attendances')->group(function(){
+		Route::get('/zt1300-machine', 'Zt1300Controller@get');
+		Route::post('/zt1300-machine/synchronize', 'Zt1300Controller@synchronize');
+	});
 	Route::post('/store', 'AttendanceController@store');
 	Route::put('/update/{id}', 'AttendanceController@update');
 	Route::delete('/delete/{id}', 'AttendanceController@delete');
