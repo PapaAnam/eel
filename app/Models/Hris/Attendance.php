@@ -317,14 +317,15 @@ class Attendance extends Model
         $employees = Employee::all();
         $data = [];
         foreach ($employees as $e) {
-            $att = $this->a($date, $e->id);
+            $att = Attendance::where('created_at', $date)->where('employee', $e->id)->first();
             $libur = Calendar::where('month', substr($date, 5, 2))
             ->where('date', substr($date, 8, 2))
             ->exists() || date('l', strtotime($date)) === 'Sunday';
-            if($att){
-                $data[] = $att;
+            $dt = null;
+            if(!is_null($att)){
+                $dt = $att;
             }else{
-                $data[] = (Object) [
+                $dt = collect([
                     "id"                        => str_random(12),
                     "employee"                  => $e->id,
                     "created_at"                => $date,
@@ -344,8 +345,12 @@ class Attendance extends Model
                     "over_time_in_money"        => null,
                     "day"                       => date('l', strtotime($date)),
                     "emp"                       => $e,
-                ];
+                ]);
             }
+            // if($e->id == 57){
+            //     dd($dt);
+            // }
+            $data[] = $dt;
         }
         return $data;
     }

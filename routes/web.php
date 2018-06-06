@@ -1,6 +1,8 @@
 <?php
 // use App\User;
 Auth::routes();
+# RESET PASSWORD 
+Route::get('/hris/reset-password', 'Hris\ResetPasswordController');
 // Route::get('add/user', function(){
 // 	User::create(['username'=>'admin', 'password'=>bcrypt('admin'), 'level'=>1]);
 // });

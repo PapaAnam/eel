@@ -22,6 +22,7 @@ class AttendanceController extends Controller
 {
     public function getData($id = null, $date = null)
     {
+        // return A::where('created_at', $date)->where('employee', E::take(1)->first()->id)->first();
         if($date)
             return A::byDate($date);
         return A::with('emp')->where('created_at', date('Y-m-d'))->get();

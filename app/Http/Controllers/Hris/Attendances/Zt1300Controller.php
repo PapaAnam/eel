@@ -24,10 +24,12 @@ class Zt1300Controller extends Controller
 	{
 		$data = $this->get($r);
 		$date = $r->query('date');
+		$berhasil = 0;
 		foreach ($data as $d) {
 			$time 	= $d->Jam_Log;
 			$e 		= Employee::where('nin', $d->staff->NIK)->first();
-			if($e){
+			// return $e;
+			if(!is_null($e)){
 				if(strtotime($date.' '.$time) >= strtotime($date.' 08:00:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,
@@ -38,7 +40,8 @@ class Zt1300Controller extends Controller
 						'enter'			=> $time,
 						'status'		=> 'Present',
 					]);
-				}else if(strtotime($date.' '.$time) >= strtotime($date.' 17:00:00') && strtotime($date.' '.$time) < strtotime($date.' 23:59:00')){
+					$berhasil++;
+				}else if(strtotime($date.' '.$time) >= strtotime($date.' 17:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,
 						'created_at'	=> $date,
@@ -48,12 +51,14 @@ class Zt1300Controller extends Controller
 						'out'			=> $time,
 						'status'		=> 'Present',
 					]);
+					$berhasil++;
 				}
 			}
 		}
 		$employees = Employee::all();
 		foreach ($employees as $e) {
-			if(!Attendance::where('employee', $e->id)->where('created_at', $r->query('date'))->exists()){
+			$hi = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
+			if(is_null($hi)){
 				Attendance::updateOrCreate([
 					'employee'		=> $e->id,
 					'created_at'	=> $date,
@@ -66,6 +71,7 @@ class Zt1300Controller extends Controller
 				]);
 			}
 		}
+		// return $berhasil;
 		return 'Synchronize attendances from zt1300 successfull';
 	}
 
