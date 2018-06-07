@@ -346,6 +346,12 @@ class Attendance extends Model
                     "day"                       => date('l', strtotime($date)),
                     "emp"                       => $e,
                 ]);
+                $dt = Attendance::firstOrCreate([
+                    'created_at'        => $date,
+                    'employee'          => $e->id
+                ], [
+                    'status'            => 'Absent',
+                ]);
             }
             // if($e->id == 57){
             //     dd($dt);

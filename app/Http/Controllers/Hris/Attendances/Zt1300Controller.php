@@ -25,10 +25,12 @@ class Zt1300Controller extends Controller
 		$data = $this->get($r);
 		$date = $r->query('date');
 		$berhasil = 0;
+		$o = 0;
 		foreach ($data as $d) {
 			$time 	= $d->Jam_Log;
-			$e 		= Employee::where('nin', $d->staff->NIK)->first();
-			// return $e;
+			$nin = (String) $d->staff->NIK;
+			$e 		= Employee::where('nin', $nin)->orWhere('nin', (int) $nin)->first();
+			$o++;
 			if(!is_null($e)){
 				if(strtotime($date.' '.$time) >= strtotime($date.' 08:00:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
 					Attendance::updateOrCreate([
