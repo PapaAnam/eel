@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CheckInOut extends Model
 {
     protected $table = 'dbo.CHECKINOUT';
-    protected $connection = 'absensi';
+    protected $connection = 'x100c';
 
     public function UserInfo()
     {

@@ -2,6 +2,7 @@
 
 Route::get('/my-app-name', 'MyAppController@appName');
 Route::get('/hris-name', 'MyAppController@hrisName');
+Route::get('/animation-icon', 'SettingController@animationIcon');
 Route::namespace('Hris')->group(function(){
 	Route::get('/departments/{id?}', 'DepartmentController@api');
 

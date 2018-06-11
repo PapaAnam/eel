@@ -160,33 +160,6 @@ Route::group(['middleware' => 'auth', 'prefix'=>'hris'], function() {
 		Route::post('dt', $c.'dt')->name($r.'.dt');
 	});
 
-		#Attendance modul
-	// Route::get('/manage_attendances', 'Hris\AttendanceController@index')->name('attendances');
-	// Route::group(['prefix' => 'manage_attendance'], function() {
-	// 	$c = 'Hris\AttendanceController@';
-	// 	$r = 'attendance';
-	// 	Route::post('create', $c.'create')->name($r.'.create');
-	// 	Route::post('create_multiply', $c.'create_multiply')->name($r.'.create_multiply');
-	// 	Route::post('dt', $c.'dt')->name($r.'.dt');
-	// 	Route::post('/filter_dt/{date}', $c.'filter_dt')->name($r.'.filter_dt');
-
-	// 	Route::post('break', $c.'break')->name($r.'.break');
-	// 	Route::put('break/update', $c.'breakUpdate')->name($r.'.break_update');
-
-	// 	Route::post('end_break', $c.'endBreak')->name($r.'.end_break');
-	// 	Route::put('end_break/update', $c.'endBreakUpdate')->name($r.'.end_break_update');
-
-	// 	Route::post('out', $c.'out')->name($r.'.out');
-	// 	Route::put('out/update', $c.'outUpdate')->name($r.'.out_update');
-
-	// 	Route::delete('remove', $c.'remove')->name($r.'.remove');
-	// 	Route::post('detail', $c.'detail')->name($r.'.detail');
-	// 	Route::post('upload_attendance', $c.'upload_attendance')->name($r.'.upload_attendance');
-
-	// 	Route::post('create_by_excel', $c.'create_by_excel')->name($r.'.create_by_excel');			
-	// 	export_route($c, $r);
-	// });
-
 		#Over Time modul
 	Route::get('/over_times', 'Hris\OverTimeController@index')->name('overtimes');
 	Route::group(['prefix' => 'overtime'], function() {

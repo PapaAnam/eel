@@ -84,12 +84,12 @@ return [
             'table_prefix' => '',
         ],
 
-        'absensi' => [
+        'x100c' => [
             'driver'   => 'sqlsrv',
-            'host'     => env('ABSENSI_DB_HOST', 'localhost'),
-            'database' => env('ABSENSI_DB_DATABASE', 'forge'),
-            'username' => env('ABSENSI_DB_USERNAME', 'forge'),
-            'password' => env('ABSENSI_DB_PASSWORD', ''),
+            'host'     => env('X100C_DB_HOST', 'localhost'),
+            'database' => env('X100C_DB_DATABASE', 'forge'),
+            'username' => env('X100C_DB_USERNAME', 'forge'),
+            'password' => env('X100C_DB_PASSWORD', ''),
             'charset'  => 'utf8',
             'prefix'   => '',
         ],

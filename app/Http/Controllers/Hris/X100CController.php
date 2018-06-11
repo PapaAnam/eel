@@ -20,14 +20,13 @@ class X100CController extends Controller
 
 	public function synchronize(Request $r)
 	{
-		$data = $this->get($r);
-		$date = null;
+		$data 	= $this->get($r);
+		$date 	= $r->query('date');
 		foreach ($data as $d) {
 			$u 		= $d->userInfo;
-			$date 	= substr($d->CHECKTIME, 0, 10);
 			$time 	= substr($d->CHECKTIME, 11, 8);
-			$e 		= Employee::where('nin', $u->BADGENUMBER)->first();
-			if($e){
+			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->first();
+			if(!is_null($e)){
 				if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,
@@ -53,11 +52,10 @@ class X100CController extends Controller
 		}
 		$employees = Employee::all();
 		foreach ($employees as $e) {
-			if(!Attendance::where('employee', $e->id)->where('created_at', $r->query('date'))->exists()){
-				Attendance::updateOrCreate([
+			if(!Attendance::where('employee', $e->id)->where('created_at', $date)->exists()){
+				Attendance::create([
 					'employee'		=> $e->id,
 					'created_at'	=> $date,
-				], [
 					'enter'			=> null,
 					'break'			=> null,
 					'end_break'		=> null,
@@ -68,5 +66,5 @@ class X100CController extends Controller
 		}
 		return 'Synchronize attendances from x100c successfull';
 	}
-// jangan dihapus
+
 }

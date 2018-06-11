@@ -32,7 +32,18 @@ class Zt1300Controller extends Controller
 			$e 		= Employee::where('nin', $nin)->orWhere('nin', (int) $nin)->first();
 			$o++;
 			if(!is_null($e)){
-				if(strtotime($date.' '.$time) >= strtotime($date.' 08:00:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
+				if(strtotime($date.' '.$time) >= strtotime($date.' 05:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 07:59:00')){
+					Attendance::updateOrCreate([
+						'employee'		=> $e->id,
+						'created_at'	=> $date,
+					], [
+						'break'			=> '12:00:00',
+						'end_break'		=> '13:00:00',
+						'enter'			=> '08:30:00',
+						'status'		=> 'Present',
+					]);
+					$berhasil++;
+				}else if(strtotime($date.' '.$time) >= strtotime($date.' 08:00:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,
 						'created_at'	=> $date,
