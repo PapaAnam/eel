@@ -14,12 +14,12 @@ use Excel;
 
 class PositionController extends Controller
 {
-    public function __construct()
-    {
-        parent::set_table(P::class);
-        parent::__construct('positions', $this->data());
-        parent::set_add_oper(['lisun'=>false]);
-    }
+    // public function __construct()
+    // {
+    //     parent::set_table(P::class);
+    //     parent::__construct('positions', $this->data());
+    //     parent::set_add_oper(['lisun'=>false]);
+    // }
 
     public function getData($id = null)
     {
@@ -53,7 +53,7 @@ class PositionController extends Controller
     {
         if(!$r->ajax())
             return redirect()->route('hris');
-        parent::check_authority('position');
+        // parent::check_authority('position');
         $oper = array(
             'modul'         => 'position',
             'data'          => $this->data(),
@@ -81,7 +81,7 @@ class PositionController extends Controller
 
     public function edit(Request $r)
     {
-        parent::check_authority('position');
+        // parent::check_authority('position');
         $data = P::find($r->id);
         $oper = array(
             'modul'             => 'position',
@@ -100,13 +100,13 @@ class PositionController extends Controller
         // }
         $r->validate($rules);
         P::find($r->id)->update($r->all());
-        parent::create_activity('Update position');
+        // parent::create_activity('Update position');
         return 'position success updated';
     }
 
     public function delete($id)
     {
-        parent::check_authority('position');
+        // parent::check_authority('position');
         // $login = M::find($request->id)->login;
 
         // M::destroy($request->id);
@@ -135,13 +135,13 @@ class PositionController extends Controller
 
     public function pdf()
     {
-        parent::check_authority('position');
+        // parent::check_authority('position');
         return parent::pdfs('hris.positions', $this->data());
     }
 
     public function excel()
     {
-        parent::check_authority('position');
+        // parent::check_authority('position');
         $data = $this->data()->toArray();
         Excel::create('lisun_hris_positions_'.date('Y_m_d_h_i_s'), function($excel) use ($data) {
             $excel->setTitle('Lisun HRIS Positions');

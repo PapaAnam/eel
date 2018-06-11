@@ -43,6 +43,7 @@ class AccountController extends Controller
         $store['account']         =  $r->account!=null ? $r->account : 0;
         $store['mutation']        =  $r->mutation!=null ? $r->mutation : 0;
         $store['leave_period']    =  $r->leave_period!=null ? $r->leave_period : 0;
+        $store['attendance_edit']    =  $r->attendance_edit!=null ? $r->attendance_edit : 0;
         return $store;
     }
 
@@ -67,7 +68,7 @@ class AccountController extends Controller
         $store             = $this->storeData($r);
         $store['user']     = $U->id;
         A::create($store);
-        parent::create_activity('Added new user account');
+        // parent::create_activity('Added new user account');
         return 'new account success created';
     }
 
@@ -105,7 +106,7 @@ class AccountController extends Controller
         $store = $this->storeData($r);
         $store['user'] = $r->id;
         A::where('user', $r->id)->update($store);
-        parent::create_activity('Updated user account');
+        // parent::create_activity('Updated user account');
         return 'account success updated';
     }
 
@@ -128,7 +129,7 @@ class AccountController extends Controller
         A::where('user', $id)->delete();
         Ac::where('user', $id)->delete();
         $user->delete();
-        parent::create_activity('Deleted user account');
+        // parent::create_activity('Deleted user account');
         return 'account success deleted';
     }
 
@@ -151,13 +152,13 @@ class AccountController extends Controller
 
     public function pdf()
     {
-        parent::check_authority('account');
-        return parent::pdfs('hris.accounts.export', $this->data(), true);
+        // parent::check_authority('account');
+        // return parent::pdfs('hris.accounts.export', $this->data(), true);
     }
 
     public function excel()
     {
-        parent::check_authority('account');
+        // parent::check_authority('account');
         Excel::create('lisun_hris_accounts_'.date('Y_m_d_h_i_s'), function($excel){
             $excel->setTitle('Lisun HRIS Accounts');
             $excel->setCreator('Lisun')->setCompany('Lisun');
