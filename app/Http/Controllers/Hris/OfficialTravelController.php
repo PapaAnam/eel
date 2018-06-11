@@ -17,32 +17,32 @@ use PDF;
 class OfficialTravelController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->table = 'official_travels';
-        $data = array();
-        $no = 1;
-        foreach ($this->data() as $d) {
-            $data[] = [
-                $no++,
-                $d->sppd,
-                $d->d_name,
-                $d->sd_name,
-                $d->e_name,
-                $d->p_name,
-                english_date($d->start_date),
-                get_detail_button($d->id, route('official_travel.detail')).
-                get_edit_button($d->id, route('official_travel.edit')).
-                get_delete_button($d->id, route('official_travel.remove')).
-                '<a class="button cycle-button bg-steel fg-white" href="'.route('official_travel.warrant.print', $d->id).'" target="_blank" '.hint('Warrant Print', 'steel').'"><span class="mif-printer"></span></a>
-                <a class="button cycle-button bg-red fg-white" href="'.route('official_travel.warrant.pdf', $d->id).'" target="_blank" '.hint('Warrant PDF', 'red').'"><span class="mif-file-pdf"></span></a>
-                <a class="button cycle-button bg-green fg-white" href="'.route('official_travel.warrant.excel', $d->id).'" target="_blank" '.hint('Warrant Excel', 'green').'"><span class="mif-file-excel"></i></a>'
-            ];
-        }
-        parent::set_dt($data);
-        parent::__construct('official_travels', $this->data());
-        parent::set_add_oper(['lisun'=>false]);
-    }
+    // public function __construct()
+    // {
+    //     $this->table = 'official_travels';
+    //     $data = array();
+    //     $no = 1;
+    //     foreach ($this->data() as $d) {
+    //         $data[] = [
+    //             $no++,
+    //             $d->sppd,
+    //             $d->d_name,
+    //             $d->sd_name,
+    //             $d->e_name,
+    //             $d->p_name,
+    //             english_date($d->start_date),
+    //             get_detail_button($d->id, route('official_travel.detail')).
+    //             get_edit_button($d->id, route('official_travel.edit')).
+    //             get_delete_button($d->id, route('official_travel.remove')).
+    //             '<a class="button cycle-button bg-steel fg-white" href="'.route('official_travel.warrant.print', $d->id).'" target="_blank" '.hint('Warrant Print', 'steel').'"><span class="mif-printer"></span></a>
+    //             <a class="button cycle-button bg-red fg-white" href="'.route('official_travel.warrant.pdf', $d->id).'" target="_blank" '.hint('Warrant PDF', 'red').'"><span class="mif-file-pdf"></span></a>
+    //             <a class="button cycle-button bg-green fg-white" href="'.route('official_travel.warrant.excel', $d->id).'" target="_blank" '.hint('Warrant Excel', 'green').'"><span class="mif-file-excel"></i></a>'
+    //         ];
+    //     }
+    //     parent::set_dt($data);
+    //     parent::__construct('official_travels', $this->data());
+    //     parent::set_add_oper(['lisun'=>false]);
+    // }
 
     private function data($id = null)
     {
@@ -53,7 +53,7 @@ class OfficialTravelController extends Controller
     {
         if(!$r->ajax())
             return redirect()->route('hris');
-        parent::check_authority('official_travel');
+        // parent::check_authority('official_travel');
         return view('hris.official_travels.index');
     }
 
@@ -122,8 +122,8 @@ class OfficialTravelController extends Controller
             ]);
             $tm -= 86400;
         }
-        parent::create_activity('Added new official travel');
-        return parent::created();
+        // parent::create_activity('Added new official travel');
+        return 'New official travel has been added';
     }
 
     private function assignor_position($id)
@@ -156,7 +156,7 @@ class OfficialTravelController extends Controller
         $data['report_at'] = now();
         // dd($data);
         T::find($r->id)->update($data);
-        parent::create_activity('Updated official travel');
+        // parent::create_activity('Updated official travel');
         return 'official travel success updated';
     }
 
@@ -184,8 +184,8 @@ class OfficialTravelController extends Controller
             $tm -= 86400;
         }        
         $T->delete();
-        parent::create_activity('Deleted official travel');
-        return parent::deleted();
+        // parent::create_activity('Deleted official travel');
+        return 'Official travel has been deleted';
     }
 
     public function warrantPrint($id)
@@ -264,7 +264,7 @@ class OfficialTravelController extends Controller
             'end_date' => $ed,
         ];
         T::create($data);
-        parent::create_activity('Added new official travel');
+        // parent::create_activity('Added new official travel');
         return 'new official travel has been created';
     }
 
@@ -278,7 +278,7 @@ class OfficialTravelController extends Controller
 
     public function toPrint($data=null)
     {
-        parent::check_authority('official_travel');
+        // parent::check_authority('official_travel');
         return view('hris.official_travels.export.print', [
             'data' => T::getData()
         ]);
@@ -286,7 +286,7 @@ class OfficialTravelController extends Controller
 
     public function pdf()
     {
-        parent::check_authority('official_travel');
+        // parent::check_authority('official_travel');
         return PDF::loadView('hris.official_travels.export.print', [
             'data' => T::getData()
         ])
@@ -296,7 +296,7 @@ class OfficialTravelController extends Controller
 
     public function excel()
     {
-        parent::check_authority('official_travel');
+        // parent::check_authority('official_travel');
         Excel::create('lisun-hris-official-travel ['.now().']', function($excel){
             $excel->setTitle('Lisun HRIS Official Travel');
             $excel->setCreator('Lisun')->setCompany('Lisun');

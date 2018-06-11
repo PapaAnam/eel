@@ -18,7 +18,7 @@ class CalendarController extends Controller
     public function remove(Request $r)
     {
         C::find($r->id)->delete();
-        parent::create_activity('Delete special day');
+        // parent::create_activity('Delete special day');
         return 'Special day has success deleted';
     }
 
@@ -48,7 +48,7 @@ class CalendarController extends Controller
 
     public function add()
     {
-        parent::not_allowed('special_day');
+        // parent::not_allowed('special_day');
         $oper = array(
           'title'   => 'Add Special Day'.title(),
           'data'    => $this->data(),
@@ -75,7 +75,7 @@ class CalendarController extends Controller
             'event' => $r->event
         ];
         C::create($data);
-        parent::create_activity('Added new special day');
+        // parent::create_activity('Added new special day');
         return 'new event success added';
     }
 
@@ -104,7 +104,7 @@ class CalendarController extends Controller
             'month'     => substr($r->date_event, 0, 2),
             'date'      => substr($r->date_event, 3, 2)
         ]);
-        parent::create_activity('Updated special day');
+        // parent::create_activity('Updated special day');
         return 'Special day success updated';
     }
 }

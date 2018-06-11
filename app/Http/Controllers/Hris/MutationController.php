@@ -89,14 +89,14 @@ class MutationController extends Controller
     {
         $d = $this->data($r->id);
         $oper = [
-            'data'                   => $d,
-            'old_sub_department'     => parent::sub_department_name($d->old_department),
-            'old_department'         => parent::department_name(),
-            'old_position'           => parent::position_name($d->old_position),
-            'manager'                => parent::employee_name($d->manager),
-            'manager_position'       => parent::position_name(E::find($d->manager)->position),
-            'manager_department'     => parent::department_name(SD::find(E::find($d->manager)->department)->department),
-            'manager_sub_department' => parent::sub_department_name(E::find($d->manager)->department)
+            // 'data'                   => $d,
+            // 'old_sub_department'     => parent::sub_department_name($d->old_department),
+            // 'old_department'         => parent::department_name(),
+            // 'old_position'           => parent::position_name($d->old_position),
+            // 'manager'                => parent::employee_name($d->manager),
+            // 'manager_position'       => parent::position_name(E::find($d->manager)->position),
+            // 'manager_department'     => parent::department_name(SD::find(E::find($d->manager)->department)->department),
+            // 'manager_sub_department' => parent::sub_department_name(E::find($d->manager)->department)
         ];
         return view('hris.mutations.detail', $oper);
     }
@@ -186,11 +186,11 @@ class MutationController extends Controller
         $d = $this->data($id);
         $oper = [
             'data'           => $d,
-            'm'              => parent::employee_detail($d->manager),
+            // 'm'              => parent::employee_detail($d->manager),
             'old'            => (object) [
-                'position'       => parent::position_name($d->old_position),
-                'sub_department' => parent::sub_department_name($d->old_department),
-                'department'     => parent::department_name()
+                // 'position'       => parent::position_name($d->old_position),
+                // 'sub_department' => parent::sub_department_name($d->old_department),
+                // 'department'     => parent::department_name()
             ]
         ];
         return $oper;
@@ -208,14 +208,14 @@ class MutationController extends Controller
         $oper          = $this->letteroper($id);
         $oper['img']   = local_file('images/company/mutation_logo.jpg');
         $oper['lisun'] = false;
-        return parent::to_excel('Mutation Letter', 'hris.mutations.letter_excel', $oper);
+        // return parent::to_excel('Mutation Letter', 'hris.mutations.letter_excel', $oper);
     }
 
     public function letterpdf($id)
     {
         $oper['data'] = M::single($id);
         $oper['img'] = asset('images/company/mutation_logo.jpg');
-        return parent::to_pdf('Mutation Letter', 'hris.mutations.letter_pdf', $oper);
+        // return parent::to_pdf('Mutation Letter', 'hris.mutations.letter_pdf', $oper);
     }
 
     public function check_position_department(Request $r)

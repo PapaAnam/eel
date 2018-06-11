@@ -11,6 +11,7 @@ use App\Models\Hris\Position        as P;
 use App\Models\Hris\Activity;
 use App\Models\Hris\Employee        as E;
 use Excel;
+use PDF;
 
 class PositionController extends Controller
 {
@@ -135,26 +136,50 @@ class PositionController extends Controller
 
     public function pdf()
     {
-        // parent::check_authority('position');
-        return parent::pdfs('hris.positions', $this->data());
+        return PDF::loadView('hris.positions.print', [
+            'data' => P::orderBy('name', 'asc')->get()
+        ])->download('lisun-hris-job-title ['.now().'].pdf');
     }
 
     public function excel()
     {
         // parent::check_authority('position');
         $data = $this->data()->toArray();
-        Excel::create('lisun_hris_positions_'.date('Y_m_d_h_i_s'), function($excel) use ($data) {
-            $excel->setTitle('Lisun HRIS Positions');
+        Excel::create('lisun-hris-job-title ['.now().']', function($excel) use ($data) {
+            $excel->setTitle('Lisun HRIS Job Title');
             $excel->setCreator('Lisun')->setCompany('Lisun');
-            $excel->setDescription('Lisun HRIS Positions');
+            $excel->setDescription('Lisun HRIS Job Title');
             $excel->sheet('data', function($sheet) use ($data) {
-                for ($i=1; $i<=count($data); $i++) {
-                    $data[$i-1] = ['#'=>$i]+$data[$i-1];
+                $nd = [];
+                $i = 1;
+                foreach ($data as $d) {
+                    $sheet->cell('A'.$i, function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    $sheet->cell('B'.$i, function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    $nd[] = [
+                        '#'     => $i++,
+                        'Name'  => $d['name'],
+                    ];
                 }
-                $sheet->with($data);
+                $sheet->cell('A'.$i, function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                $sheet->cell('B'.$i, function($cell){
+                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                $sheet->with($nd);
                 // $sheet->row(1, ['#', 'name', 'department']);
+                $sheet->prependRow(['Job Title']);
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
+                });
+                $sheet->mergeCells('A1:B1');
+                $sheet->cell('A1', function($cell){
+                    $cell->setFontSize(16);
+                    $cell->setAlignment('center');
                 });
             });
         })->export('xlsx');

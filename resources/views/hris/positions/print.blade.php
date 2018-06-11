@@ -6,7 +6,7 @@
 			<img class="pull-left" width="100px" height="40px" src="{{ asset('images/company/lisun.jpg') }}">
 		</td>
 		<td>
-			<h3>Positions</h3>
+			<h3>Job Title</h3>
 		</td>
 	</tr>
 </table>

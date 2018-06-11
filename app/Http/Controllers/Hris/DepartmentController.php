@@ -63,7 +63,7 @@ class DepartmentController extends Controller
             }
             D::create($data);
         }
-        parent::create_activity('Added new department');
+        // parent::create_activity('Added new department');
         return response('Department success created', 200);
     }
 
@@ -91,7 +91,7 @@ class DepartmentController extends Controller
         ->update([
             'name'  => $r->name
         ]);
-        parent::create_activity('Edited department');
+        // parent::create_activity('Edited department');
         return response('Department success updated', 200);
     }
 
@@ -113,7 +113,7 @@ class DepartmentController extends Controller
 
     public function excel()
     {
-        parent::check_authority('department');
+        // parent::check_authority('department');
         Excel::create('lisun-hris-departments ['.now().']', function($excel){
             $excel->setTitle('Lisun HRIS Departments');
             $excel->setCreator('Lisun')->setCompany('Lisun');
@@ -152,7 +152,7 @@ class DepartmentController extends Controller
     // DEPRECATED
     public function disable(Request $request)
     {
-        parent::check_authority('department');
+        // parent::check_authority('department');
         D::destroy($request->id);
 
         return redirect()->back()->with('success', 'Data has been disabled');
@@ -160,7 +160,7 @@ class DepartmentController extends Controller
 
     public function disabled()
     {
-        parent::check_authority('department');
+        // parent::check_authority('department');
         $data = D::onlyTrashed()->get();
         $oper = array(
             'title'         => 'Disabled Departments'.title(),
@@ -175,7 +175,7 @@ class DepartmentController extends Controller
 
     public function enable(Request $request)
     {
-        parent::check_authority('department');
+        // parent::check_authority('department');
         D::withTrashed()->where('id',$request->id)->restore();
 
         return redirect()->back()->with('success', 'Data has been enabled');
@@ -216,14 +216,14 @@ class DepartmentController extends Controller
         public function restore(Request $r)
         {
             D::withTrashed()->where('id', $r->id)->restore();
-            parent::create_activity('Restore department');
-            return parent::restored();
+            // parent::create_activity('Restore department');
+            // return parent::restored();
         }
 
         public function permanent_delete(Request $r)
         {
             D::withTrashed()->where('id', $r->id)->forceDelete();
-            parent::create_activity('Permanent delete department');
-            return parent::permanent_deleted();
+            // parent::create_activity('Permanent delete department');
+            // return parent::permanent_deleted();
         }
     }

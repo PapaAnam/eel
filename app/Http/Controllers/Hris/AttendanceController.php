@@ -37,7 +37,7 @@ class AttendanceController extends Controller
     {
         if(!$r->ajax())
             return redirect()->route('hris');
-        parent::check_authority('attendance');
+        // parent::check_authority('attendance');
         return view('hris.attendances.index', ['CheckInOut' => CheckInOut::with('UserInfo')->get()]);
     }
 
@@ -68,7 +68,7 @@ class AttendanceController extends Controller
                     A::create($sd);
                 }
             }
-            parent::create_activity('Added new multiple attendance (All Department)');
+            // parent::create_activity('Added new multiple attendance (All Department)');
         }else{
             if($r->sub_department=='all'){
                 $errorMsg = [];
@@ -107,7 +107,7 @@ class AttendanceController extends Controller
                 }
             }
         }
-        return parent::created();
+        // return parent::created();
     }
 
     public function update($id, Request $r)
@@ -203,8 +203,8 @@ class AttendanceController extends Controller
             'enter'         => $r->enter
         ];
         A::create($sd);
-        parent::create_activity('Added new attendance');
-        return parent::created();
+        // parent::create_activity('Added new attendance');
+        // return parent::created();
     }
 
     public function api($id, Request $r)
@@ -304,8 +304,8 @@ class AttendanceController extends Controller
         }
         $A->delete();
 
-        parent::create_activity('Deleted attendance');
-        return parent::deleted();
+        // parent::create_activity('Deleted attendance');
+        // return parent::deleted();
     }
 
     public function delete($id)
@@ -358,8 +358,8 @@ class AttendanceController extends Controller
 
     public function pdf()
     {
-        parent::check_authority('attendance');
-        return parent::pdfs('hris.attendances.export', $this->data(), true);
+        // parent::check_authority('attendance');
+        // return parent::pdfs('hris.attendances.export', $this->data(), true);
     }
 
     public function excel(Request $r)

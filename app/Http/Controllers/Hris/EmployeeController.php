@@ -43,7 +43,7 @@ class EmployeeController extends Controller
     {
         if(!$r->ajax())
             return redirect()->route('hris');
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $departments = D::orderBy('name', 'asc')->get();
         $positions = P::all();
         $oper = array(
@@ -173,7 +173,7 @@ class EmployeeController extends Controller
 
     public function store(Request $r)
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $rules = $this->rules;
         $rules['nin'] = 'required|numeric|unique:hris_employees';
         $rules['birthdate'] = 'required|before:'.date('Y-m-d', strtotime('-15 years'));
@@ -200,13 +200,13 @@ class EmployeeController extends Controller
             'photo',
         ]) + $tambahan;
         E::create($sd+$tambahan);
-        parent::create_activity('Added new employee');
+        // parent::create_activity('Added new employee');
         return 'New employee success added';
     }
 
     public function edit(Request $r)
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $id         = $r->id;
         $E          = E::find($id);
         $department = SD::find($E->department)->department;
@@ -223,7 +223,7 @@ class EmployeeController extends Controller
 
     public function update($id, Request $r)
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $rules = $this->rules;
         if($r->nin!=$r->old_nin)
             $rules['nin'] = 'required|unique:hris_employees|numeric';
@@ -259,13 +259,13 @@ class EmployeeController extends Controller
         ]) + $tambahan;
         $data['department_id'] = $r->department;
         E::find($id)->update($data);
-        parent::create_activity('Update employee');
+        // parent::create_activity('Update employee');
         return 'employee success updated';
     }
 
     public function disable(Request $request)
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         E::destroy($request->id);
 
         return redirect()->route('employees')->with('success', 'Data has been disabled');
@@ -273,7 +273,7 @@ class EmployeeController extends Controller
 
     public function detail(Request $r)
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $oper = [
             'data'      => $this->data($r->id)
         ];
@@ -319,7 +319,7 @@ class EmployeeController extends Controller
             'non_active'        => $r->reason,
             'non_active_at'     => now()
         ]);
-        parent::create_activity('Non Activate employee');
+        // parent::create_activity('Non Activate employee');
         return 'Non activate employee succeded';
     }
 
@@ -479,8 +479,8 @@ class EmployeeController extends Controller
         SR::where('employee', $r->employee)->update(['status'=>0]);
         $SR = SR::firstOrCreate($data);
         E::find($r->employee)->update(['salary_rule'=>$SR->id]);
-        parent::create_activity('Created salary rule');
-        parent::created();
+        // parent::create_activity('Created salary rule');
+        // parent::created();
     }
 
     public function salary_rules_check(Request $r)
@@ -555,7 +555,7 @@ class EmployeeController extends Controller
 
     public function toPrint()
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         return view('hris.employees.export.print', [
             'data' => $this->getData()
         ]);
@@ -563,7 +563,7 @@ class EmployeeController extends Controller
 
     public function pdf()
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         return PDF::loadView('hris.employees.export.print', [
             'data' =>$this->getData()
         ])
@@ -572,7 +572,7 @@ class EmployeeController extends Controller
 
     public function excel()
     {
-        parent::check_authority('employee');
+        // parent::check_authority('employee');
         $data = $this->data();
         Excel::create('lisun-hris-employees ['.now().']', function($excel) use ($data) {
             $excel->setTitle('Lisun HRIS Employees');
