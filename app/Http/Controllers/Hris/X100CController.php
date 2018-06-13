@@ -28,15 +28,29 @@ class X100CController extends Controller
 			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->first();
 			if(!is_null($e)){
 				if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
-					Attendance::updateOrCreate([
-						'employee'		=> $e->id,
-						'created_at'	=> $date,
-					], [
-						'break'			=> '12:00:00',
-						'end_break'		=> '13:00:00',
-						'enter'			=> $time,
-						'status'		=> 'Present',
-					]);
+					if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
+						Attendance::updateOrCreate([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+						], [
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> '08:30:00',
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}else{
+						Attendance::updateOrCreate([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+						], [
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> $time,
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}
 				}else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
 					Attendance::updateOrCreate([
 						'employee'		=> $e->id,

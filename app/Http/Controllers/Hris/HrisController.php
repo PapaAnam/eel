@@ -9,6 +9,7 @@ class HrisController extends Controller
 {
     public function index()
     {
+    	// return 'eek';
     	return view('App.hris');
     }
 }

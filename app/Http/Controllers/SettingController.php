@@ -9,7 +9,8 @@ class SettingController extends Controller
 
 	public function animationIcon(Request $r)
 	{
-		if(!config('app.animation_icon', false)){
+		$status = config('app.animation_icon', false);
+		if($status){
 			return 1;
 		}
 		return 0;

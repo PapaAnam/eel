@@ -41,6 +41,26 @@ class RouteServiceProvider extends ServiceProvider
         ->namespace($this->namespace.'\Hris')
         ->group(base_path('routes/hris.php'));
 
+        Route::middleware(['web'])
+        ->prefix('warehouse')
+        ->namespace($this->namespace.'\Warehouse')
+        ->group(base_path('routes/warehouse.php'));
+
+        Route::middleware(['web'])
+        ->prefix('help-desk')
+        ->namespace($this->namespace.'\HelpDesk')
+        ->group(base_path('routes/help-desk.php'));
+
+        Route::middleware(['web'])
+        ->prefix('fleet-management')
+        ->namespace($this->namespace.'\Fleet')
+        ->group(base_path('routes/fleet.php'));
+
+        Route::middleware(['web'])
+        ->prefix('api')
+        ->namespace($this->namespace.'\Fleet')
+        ->group(base_path('routes/fleet_api.php'));
+
         $this->mapWebRoutes();
 
     }

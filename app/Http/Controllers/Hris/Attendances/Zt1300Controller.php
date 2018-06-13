@@ -41,6 +41,7 @@ class Zt1300Controller extends Controller
 						'end_break'		=> '13:00:00',
 						'enter'			=> '08:30:00',
 						'status'		=> 'Present',
+						'real_enter'	=> $time,
 					]);
 					$berhasil++;
 				}else if(strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
@@ -51,6 +52,7 @@ class Zt1300Controller extends Controller
 						'break'			=> '12:00:00',
 						'end_break'		=> '13:00:00',
 						'enter'			=> $time,
+						'real_enter'	=> $time,
 						'status'		=> 'Present',
 					]);
 					$berhasil++;

@@ -10,7 +10,7 @@ class Attendance extends Model
 {
 	protected $table = 'hris_attendances';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status'];
+	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status', 'real_enter'];
     protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money', 
     // 'over_time_in_week', 
     'day'];
