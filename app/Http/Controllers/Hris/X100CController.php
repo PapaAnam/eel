@@ -25,7 +25,7 @@ class X100CController extends Controller
 		foreach ($data as $d) {
 			$u 		= $d->userInfo;
 			$time 	= substr($d->CHECKTIME, 11, 8);
-			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->first();
+			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->orWhere('nin', $u->SSN)->orWhere('nin', (int) $u->SSN)->first();
 			if(!is_null($e)){
 				if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
 					if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
