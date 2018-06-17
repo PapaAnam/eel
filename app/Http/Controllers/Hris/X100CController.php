@@ -79,7 +79,7 @@ class X100CController extends Controller
 							]);	
 						}
 					}
-				}else if(strtotime($date.' '.$time) >= strtotime($date.' 17:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
+				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					if(is_null($att)){
 						Attendance::create([
 							'employee'		=> $e->id,
