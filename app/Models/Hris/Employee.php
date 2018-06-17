@@ -168,4 +168,9 @@ class Employee extends Model
         }
         return $q->with(['dep', 'pos'])->where('non_active', null)->get();
 	}
+
+	public function scopeActive($q)
+	{
+		return $q->whereNull('non_active_at')->get();
+	}
 }

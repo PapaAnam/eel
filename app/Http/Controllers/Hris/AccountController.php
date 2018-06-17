@@ -44,6 +44,7 @@ class AccountController extends Controller
         $store['mutation']        =  $r->mutation!=null ? $r->mutation : 0;
         $store['leave_period']    =  $r->leave_period!=null ? $r->leave_period : 0;
         $store['attendance_edit']    =  $r->attendance_edit!=null ? $r->attendance_edit : 0;
+        $store['attendance_delete']    =  $r->attendance_delete!=null ? $r->attendance_delete : 0;
         return $store;
     }
 

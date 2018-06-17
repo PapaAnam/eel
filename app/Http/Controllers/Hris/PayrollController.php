@@ -97,7 +97,7 @@ class PayrollController extends Controller
         return 'All employee success paid';
     }
 
-    public function filter(Request $r)
+    public function index(Request $r)
     {
         return S::with(['emp', 'sr' => function($q){
             $q->where('status', '1');

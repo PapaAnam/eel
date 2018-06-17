@@ -147,7 +147,9 @@ Route::group(['prefix' => 'attendances'], function(){
 	Route::get('/data/{id?}/{date?}', 'AttendanceController@getData');
 	Route::get('/x100c-machine', 'X100CController@get');
 	Route::post('/x100c-machine/synchronize', 'X100CController@synchronize');
+	Route::view('/by-employee', 'App.hris');
 	Route::namespace('Attendances')->group(function(){
+		Route::view('/zt1300', 'App.hris');
 		Route::get('/zt1300-machine', 'Zt1300Controller@get');
 		Route::post('/zt1300-machine/synchronize', 'Zt1300Controller@synchronize');
 	});
@@ -157,4 +159,11 @@ Route::group(['prefix' => 'attendances'], function(){
 	Route::get('/print', 'AttendanceController@toPrint');
 	Route::get('/pdf', 'AttendanceController@pdf');
 	Route::get('/excel', 'AttendanceController@excel');
+});
+
+# PAYROLL
+Route::prefix('payroll')->group(function(){
+	Route::view('/', 'App.hris');
+	Route::view('/new', 'App.hris');
+	Route::get('/all-slip', 'PayrollSlipController@all');
 });

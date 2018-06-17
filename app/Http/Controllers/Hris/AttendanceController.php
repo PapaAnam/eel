@@ -25,7 +25,9 @@ class AttendanceController extends Controller
         // return A::where('created_at', $date)->where('employee', E::take(1)->first()->id)->first();
         if($date)
             return A::byDate($date);
-        return A::with('emp')->where('created_at', date('Y-m-d'))->get();
+        return A::with(['emp'=>function($q){
+            $q->whereNull('non_active_at');
+        }])->where('created_at', date('Y-m-d'))->get();
     }
 
     public function x100c()
@@ -35,10 +37,12 @@ class AttendanceController extends Controller
 
     public function index(Request $r)
     {
-        if(!$r->ajax())
-            return redirect()->route('hris');
-        // parent::check_authority('attendance');
-        return view('hris.attendances.index', ['CheckInOut' => CheckInOut::with('UserInfo')->get()]);
+        return A::firstOrCreate([
+            'employee'      => $r->query('employee'),
+            'created_at'    => $r->query('created_at')
+        ], [
+            'status'        => 'Absent',
+        ]);
     }
 
     private $rules = [

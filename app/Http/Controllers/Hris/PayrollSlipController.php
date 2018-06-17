@@ -9,6 +9,7 @@ use App\Models\Hris\Salary;
 use Illuminate\Http\Request;
 use App\Models\Hris\Attendance;
 use App\Http\Controllers\Controller;
+use App\Models\Hris\Employee;
 
 class PayrollSlipController extends Controller
 {
@@ -165,7 +166,6 @@ class PayrollSlipController extends Controller
 			->where('year', $r->query('year'))
 			->first();
 			$this->getData($salary->id);
-			// return $this->s;
 			$salaries[] 						= $this->s;
 			$total_hari_kerja[]					= $this->total_hari_kerja;
 			$seguranca_social[]					= $this->seguranca_social;
@@ -187,5 +187,35 @@ class PayrollSlipController extends Controller
 		return PDF::loadView('hris/salaries/multiple-slip-pdf', $this->multipleSlipData($r))
 		->setPaper('A4')
 		->download('multiple slip period '.$r->query('year').'-'.$r->query('month').'.pdf');
+	}
+
+	public function all(Request $r)
+	{
+		$employees = Employee::active();
+		$salaries = [];
+		$total_hari_kerja					= [];
+		$total_over_time_money				= [];
+		$total_over_time_hours				= [];
+		$total_over_time_holiday_in_money	= [];
+		$total_over_time_holiday_in_hours	= [];
+		$seguranca_social					= [];
+		foreach ($employees as $e) {
+			$salary = Salary::where('employee', $e)
+			->where('month', $r->query('month'))
+			->where('year', $r->query('year'))
+			->first();
+			if(!is_null($salary)){
+				$this->getData($salary->id);
+				$salaries[] 						= $this->s;
+				$total_hari_kerja[]					= $this->total_hari_kerja;
+				$seguranca_social[]					= $this->seguranca_social;
+			}
+		}
+		$oper = [
+			'salaries'							=> $salaries,
+			'total_hari_kerja'					=> $total_hari_kerja,
+			'seguranca_social'					=> $seguranca_social,
+		];
+		return view('hris/salaries/multiple-slip', $oper);
 	}
 }

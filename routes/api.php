@@ -7,6 +7,7 @@ Route::namespace('Hris')->group(function(){
 	Route::get('/departments/{id?}', 'DepartmentController@api');
 
 	Route::prefix('attendances')->group(function(){
+		Route::get('/', 'AttendanceController@index');
 		Route::get('/{id}', 'AttendanceController@api');
 		Route::post('/store', 'AttendanceController@store');
 		Route::post('/store-multi', 'AttendanceController@storeMulti');
@@ -15,4 +16,9 @@ Route::namespace('Hris')->group(function(){
 	});
 
 	Route::get('/employees/{id?}', 'EmployeeController@api');
+
+	Route::prefix('payroll')->group(function(){
+		Route::get('/', 'PayrollController@index');
+		Route::post('/pay-all-employee', 'PayrollController@payAll');
+	});
 });

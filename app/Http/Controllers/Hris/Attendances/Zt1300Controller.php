@@ -10,7 +10,7 @@ use App\Models\Hris\Attendance;
 
 class Zt1300Controller extends Controller
 {
-    
+
 	public function get(Request $r)
 	{
 		$date = str_replace('-', '/', $r->query('date'));
@@ -32,40 +32,84 @@ class Zt1300Controller extends Controller
 			$e 		= Employee::where('nin', $nin)->orWhere('nin', (int) $nin)->first();
 			$o++;
 			if(!is_null($e)){
+				$att = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
 				if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
-					Attendance::updateOrCreate([
-						'employee'		=> $e->id,
-						'created_at'	=> $date,
-					], [
-						'break'			=> '12:00:00',
-						'end_break'		=> '13:00:00',
-						'enter'			=> '08:30:00',
-						'status'		=> 'Present',
-						'real_enter'	=> $time,
-					]);
+					if(is_null($att)){
+						Attendance::create([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> '08:30:00',
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}else{
+						if(is_null($att->enter) or $att->enter == '00:00:00'){
+							Attendance::where([
+								'employee'		=> $e->id,
+								'created_at'	=> $date,
+							])->update([
+								'break'			=> '12:00:00',
+								'end_break'		=> '13:00:00',
+								'enter'			=> '08:30:00',
+								'status'		=> 'Present',
+								'real_enter'	=> $time,
+							]);	
+						}
+					}
 					$berhasil++;
 				}else if(strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
-					Attendance::updateOrCreate([
-						'employee'		=> $e->id,
-						'created_at'	=> $date,
-					], [
-						'break'			=> '12:00:00',
-						'end_break'		=> '13:00:00',
-						'enter'			=> $time,
-						'real_enter'	=> $time,
-						'status'		=> 'Present',
-					]);
+					if(is_null($att)){
+						Attendance::create([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> $time,
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}else{
+						if(is_null($att->enter) or $att->enter == '00:00:00'){
+							Attendance::where([
+								'employee'		=> $e->id,
+								'created_at'	=> $date,
+							])->update([
+								'break'			=> '12:00:00',
+								'end_break'		=> '13:00:00',
+								'enter'			=> $time,
+								'status'		=> 'Present',
+								'real_enter'	=> $time,
+							]);	
+						}
+					}
 					$berhasil++;
 				}else if(strtotime($date.' '.$time) >= strtotime($date.' 17:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
-					Attendance::updateOrCreate([
-						'employee'		=> $e->id,
-						'created_at'	=> $date,
-					], [
-						'break'			=> '12:00:00',
-						'end_break'		=> '13:00:00',
-						'out'			=> $time,
-						'status'		=> 'Present',
-					]);
+					if(is_null($att)){
+						Attendance::create([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'out'			=> $time,
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}else{
+						if(is_null($att->out) or $att->out == '00:00:00'){
+							Attendance::where([
+								'employee'		=> $e->id,
+								'created_at'	=> $date,
+							])->update([
+								'break'			=> '12:00:00',
+								'end_break'		=> '13:00:00',
+								'out'			=> $time,
+								'status'		=> 'Present',
+								'real_enter'	=> $time,
+							]);	
+						}
+					}
 					$berhasil++;
 				}
 			}
@@ -74,14 +118,9 @@ class Zt1300Controller extends Controller
 		foreach ($employees as $e) {
 			$hi = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
 			if(is_null($hi)){
-				Attendance::updateOrCreate([
+				Attendance::create([
 					'employee'		=> $e->id,
 					'created_at'	=> $date,
-				], [
-					'enter'			=> null,
-					'break'			=> null,
-					'end_break'		=> null,
-					'out'			=> null,
 					'status'		=> 'Absent',
 				]);
 			}

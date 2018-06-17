@@ -314,7 +314,7 @@ class Attendance extends Model
 
     public function scopeByDate($q, $date)
     {
-        $employees = Employee::all();
+        $employees = Employee::whereNull('non_active_at')->get();
         $data = [];
         foreach ($employees as $e) {
             $att = Attendance::where('created_at', $date)->where('employee', $e->id)->first();
