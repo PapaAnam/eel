@@ -191,7 +191,7 @@ class PayrollSlipController extends Controller
 
 	public function all(Request $r)
 	{
-		$employees = Employee::active();
+		$employees = Employee::active()->pluck('id');
 		$salaries = [];
 		$total_hari_kerja					= [];
 		$total_over_time_money				= [];

@@ -92,7 +92,7 @@ class X100CController extends Controller
 							'real_out'	=> $time,
 						]);
 					}else{
-						if(is_null($att->out) or $att->out == '00:00:00'){
+						if(is_null($att->out) or $att->out == '00:00:00' or strtotime($date.' '.$att->out) < strtotime($date.' '.$time)){
 							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
