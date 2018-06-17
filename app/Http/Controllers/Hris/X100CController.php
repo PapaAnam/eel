@@ -28,59 +28,58 @@ class X100CController extends Controller
 			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->orWhere('nin', $u->SSN)->orWhere('nin', (int) $u->SSN)->first();
 			if(!is_null($e)){
 				$att = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
-				if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
-					if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
-						if(is_null($att)){
-							Attendance::create([
+				// if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
+				if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
+					if(is_null($att)){
+						Attendance::create([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> '08:30:00',
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
+					}else{
+						if(is_null($att->enter) or $att->enter == '00:00:00'){
+							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
+							])->update([
 								'break'			=> '12:00:00',
 								'end_break'		=> '13:00:00',
 								'enter'			=> '08:30:00',
 								'status'		=> 'Present',
 								'real_enter'	=> $time,
-							]);
-						}else{
-							if(is_null($att->enter) or $att->enter == '00:00:00'){
-								Attendance::where([
-									'employee'		=> $e->id,
-									'created_at'	=> $date,
-								])->update([
-									'break'			=> '12:00:00',
-									'end_break'		=> '13:00:00',
-									'enter'			=> '08:30:00',
-									'status'		=> 'Present',
-									'real_enter'	=> $time,
-								]);	
-							}
+							]);	
 						}
+					}
+				}else if(strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
+					if(is_null($att)){
+						Attendance::create([
+							'employee'		=> $e->id,
+							'created_at'	=> $date,
+							'break'			=> '12:00:00',
+							'end_break'		=> '13:00:00',
+							'enter'			=> $time,
+							'status'		=> 'Present',
+							'real_enter'	=> $time,
+						]);
 					}else{
-						if(is_null($att)){
-							Attendance::create([
+						if(is_null($att->enter) or $att->enter == '00:00:00'){
+							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
+							])->update([
 								'break'			=> '12:00:00',
 								'end_break'		=> '13:00:00',
 								'enter'			=> $time,
 								'status'		=> 'Present',
 								'real_enter'	=> $time,
-							]);
-						}else{
-							if(is_null($att->enter) or $att->enter == '00:00:00'){
-								Attendance::where([
-									'employee'		=> $e->id,
-									'created_at'	=> $date,
-								])->update([
-									'break'			=> '12:00:00',
-									'end_break'		=> '13:00:00',
-									'enter'			=> $time,
-									'status'		=> 'Present',
-									'real_enter'	=> $time,
-								]);	
-							}
+							]);	
 						}
 					}
-				}else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
+				}else if(strtotime($date.' '.$time) >= strtotime($date.' 17:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					if(is_null($att)){
 						Attendance::create([
 							'employee'		=> $e->id,
@@ -105,7 +104,11 @@ class X100CController extends Controller
 							]);	
 						}
 					}
+					
 				}
+				// }else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
+
+				// }
 			}
 		}
 		$employees = Employee::all();
