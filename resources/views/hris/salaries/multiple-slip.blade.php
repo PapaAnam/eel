@@ -11,9 +11,22 @@
 	td {
 		padding: 1px 5px;
 	}
+	.mi {
+		width: 45%; 
+		display: inline-block; 
+	}
+	.mi:nth-child(4n-3){
+		margin-bottom: 100px; 
+	}
+	.mi:nth-child(4n-2){
+		margin-bottom: 100px; 
+	}
+	.mi:nth-child(odd){
+		margin-right: 50px;
+	}
 </style>
 @foreach ($salaries as $s)
-<div style="width: 49%; display: inline-block; margin-bottom: 20px; margin-right: 5px;">
+<div class="mi">
 	<div style="display: block;">
 		<strong>Lisun Salary Slip</strong>
 		<br>
@@ -35,30 +48,36 @@
 		<tbody>
 			<tr>
 				<td width="250px">Basic Salary</td>
-				<td align="right">{{ $s->sr->basic_salary }}</td>
+				<td align="right">$</td>
+				<td width="50px" align="right">{{ $s->sr->basic_salary }}</td>
 			</tr>
 			<tr>
 				<td>Allowance</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->sr->allowance }}</td>
 			</tr>
-			<tr>
+			{{-- <tr>
 				<td>Total Work Day ({{ $total_hari_kerja[$loop->index] }} days)</td>
 				<td align="right"></td>
-			</tr>
+			</tr> --}}
 			<tr>
-				<td>Over Time Regular ({{ $s->ot_regular_in_hours }})</td>
+				<td>Over Time Regular {{-- ({{ $s->ot_regular_in_hours }}) --}}</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->ot_regular }}</td>
 			</tr>
 			<tr>
-				<td>Over Time Holiday ({{ $s->ot_holiday_in_hours }})</td>
+				<td>Over Time Holiday {{-- ({{ $s->ot_holiday_in_hours }}) --}}</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->ot_holiday }}</td>
 			</tr>
 			<tr>
-				<td>Incentive Sales</td>
+				<td>Incentive {{-- Sales --}}</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->sr->incentive }}</td>
 			</tr>
 			<tr>
-				<td>Eat Cost</td>
+				<td>Food Allowance</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->sr->eat_cost }}</td>
 			</tr>
 			{{-- <tr>
@@ -66,11 +85,19 @@
 				<td align="right">{{ $s->sr->etc }}</td>
 			</tr> --}}
 			<tr>
-				<td>Ritation</td>
+				<td>Retention</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->sr->ritation }}</td>
 			</tr>
 			<tr>
+				<td></td>
+				<td></td>
+				<td><hr></td>
+				<td>+</td>
+			</tr>
+			<tr>
 				<td>Sub Total</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->gross_salary }}</td>
 			</tr>
 		</tbody>
@@ -78,26 +105,37 @@
 	<table style="margin-bottom: 5px;">
 		<tbody>
 			<tr>
-				<td width="250px">Potongan</td>
+				<td width="250px"><u>Deduction</u></td>
 			</tr>
 			<tr>
-				<td>Pajak (Seguranca Social 4%)</td>
-				<td align="right">{{ $s->seguranca }}</td>
+				<td>Seguranca Social (4%)</td>
+				<td align="right">$</td>
+				<td width="50px" align="right">{{ $s->seguranca }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Kas Bon</td>
-				<td align="right">{{ $s->sr->cash_receipt }}</td>
+				<td>Cash Withdrawal</td>
+				<td align="right">$</td>
+				<td align="right">{{ $s->sr->cash_receipt }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
 				<td>Absent ({{ $s->absent }} days)</td>
-				<td align="right">{{ $s->absent_punishment }}</td>
+				<td align="right">$</td>
+				<td align="right">{{ $s->absent_punishment }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Sub Total</td>
-				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}</td>
+				<td></td>
+				<td></td>
+				<td><hr></td>
+				<td>+</td>
 			</tr>
 			<tr>
-				<td>Total Yang Diterima</td>
+				<td>Sub Total Deduction</td>
+				<td align="right">$</td>
+				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			</tr>
+			<tr>
+				<td>Total Received</td>
+				<td align="right">$</td>
 				<td align="right">{{ $s->clear_salary }}</td>
 			</tr>
 		</tbody>

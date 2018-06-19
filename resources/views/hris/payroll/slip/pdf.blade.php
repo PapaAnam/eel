@@ -1,4 +1,4 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head> --}}
 	{{-- <title>Salary Slip</title> --}}
@@ -42,10 +42,10 @@
 				<td>Allowance</td>
 				<td align="right">{{ $s->sr->allowance }}</td>
 			</tr>
-			<tr>
+			{{-- <tr>
 				<td>Total Work Day &nbsp;&nbsp;({{ $total_hari_kerja }} days)</td>
 				<td align="right"></td>
-			</tr>
+			</tr> --}}
 			<tr>
 				<td>Over Time Regular ({{ $s->ot_regular_in_hours }})</td>
 				<td align="right">{{ $s->ot_regular }}</td>
@@ -55,7 +55,7 @@
 				<td align="right">{{ $s->ot_holiday }}</td>
 			</tr>
 			<tr>
-				<td>Incentive Sales</td>
+				<td>Incentive {{-- Sales --}}</td>
 				<td align="right">{{ $s->sr->incentive }}</td>
 			</tr>
 			<tr>
@@ -124,4 +124,4 @@
 		</tbody>
 	</table>
 {{-- </body>
-</html> --}}
+</html>
