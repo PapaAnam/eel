@@ -28,11 +28,6 @@
   <style>
   .mac {
     position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: #cccccc;
     z-index: 2;
     display: none;
   }

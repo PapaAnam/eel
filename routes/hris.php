@@ -16,6 +16,7 @@ Route::group(['prefix' => 'departments'], function(){
 });
 
 # POSITIONS MODUL
+Route::view('/jobs', 'App.hris');
 Route::group(['prefix' => 'positions'], function(){
 	Route::view('/', 'App.hris');
 	Route::get('/data/{id?}', 'PositionController@getData');
