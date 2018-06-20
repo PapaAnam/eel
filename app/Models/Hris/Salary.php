@@ -8,7 +8,7 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment'];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment', 'tax_insurance', 'salary_group'];
 	protected $appends = ['clear_salary', 'gross_salary', 'seguranca', 'total_potongan'];
 
 	public function emp()
@@ -19,6 +19,11 @@ class Salary extends Model
 	public function sr()
 	{
 		return $this->belongsTo('App\Models\Hris\SalaryRule', 'salary_rule');
+	}
+
+	public function sg()
+	{
+		return $this->belongsTo('App\Models\Hris\SalaryGroup', 'salary_group');
 	}
 
 	public function getClearSalaryAttribute()
@@ -38,7 +43,7 @@ class Salary extends Model
 	{
 		if($this->sr){
 			$sr = $this->sr;
-			return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->ot_regular+$this->ot_holiday;
+			return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->ot_regular+$this->ot_holiday+$sr->rent_motorcycle;
 		}
 		return 0;
 	}
@@ -55,6 +60,6 @@ class Salary extends Model
 
 	public function getTotalPotonganAttribute()
 	{
-		return $this->seguranca+$this->sr->cash_receipt+$this->absent_punishment;
+		return $this->seguranca+$this->sr->cash_receipt+$this->absent_punishment+$this->tax_insurance;
 	}
 }

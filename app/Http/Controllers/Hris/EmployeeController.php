@@ -100,7 +100,7 @@ class EmployeeController extends Controller
             'u_year'          => $r->u_year,
             'type'            => $r->type,
             'e_from'          => $r->from,
-            // 'department'      => $r->sub_department,
+            'salary_group'      => $r->salary_group,
             'present_address' => $r->present_address,
             'handphone'       => $r->handphone,
             'joining_date'    => $r->joining_date,
@@ -110,21 +110,6 @@ class EmployeeController extends Controller
             'seguranca_social' => $r->seguranca_social,
         ];
         return $storeData;
-    }
-
-    public function checkSubDepartment(Request $r)
-    {
-        if(SD::where('department', $r->id)->count()<=0){
-            SD::create([
-                'name'              => '-',
-                'department'        => $r->id
-            ]);
-        }
-        $oper = '';
-        foreach(SD::where('department', $r->id)->get() as $sd){
-            $oper .= '<option value="'.$sd->id.'">'.$sd->name.'</option>';
-        }
-        return $oper;
     }
 
     public function fileRules($r)
@@ -202,23 +187,6 @@ class EmployeeController extends Controller
         E::create($sd+$tambahan);
         // parent::create_activity('Added new employee');
         return 'New employee success added';
-    }
-
-    public function edit(Request $r)
-    {
-        // parent::check_authority('employee');
-        $id         = $r->id;
-        $E          = E::find($id);
-        $department = SD::find($E->department)->department;
-        $image      = asset('images/employee/default.jpg');
-        if(file_exists(local_file('storage/'.$E->photo)))
-            $image = asset('storage/'.$E->photo);
-        $oper        = [
-            'data'       => $E,
-            'department' => $department,
-            'photo'      => $image
-        ];
-        return view('hris.employees.edit', $oper);
     }
 
     public function update($id, Request $r)

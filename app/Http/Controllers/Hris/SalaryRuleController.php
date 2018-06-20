@@ -42,10 +42,11 @@ class SalaryRuleController extends Controller
 			'etc' 				=> 'numeric|min:0|max:999999999',
 			'seguranca' 		=> 'numeric|min:0|max:999999999',
 			'cash_receipt'		=> 'numeric|min:0|max:999999999',
+			'rent_motorcycle'	=> 'numeric|min:0|max:999999999',
 		]);
 		SalaryRule::whereEmployee($r->employee)->update(['status' => 0]);
 		SalaryRule::create($r->except(['name'])+['status'=>1]);
-		return 'salary rule success created';
+		return 'Salary Rule success created';
 	}
 
 	public function toPrint()

@@ -31,6 +31,9 @@ Route::group(['prefix' => 'positions'], function(){
 # EMPLOYEES MODUL
 Route::group(['prefix' => 'employees'], function(){
 	Route::view('/', 'App.hris');
+	Route::view('/new', 'App.hris');
+	Route::view('/edit/{id}', 'App.hris');
+	Route::view('/detail/{id}', 'App.hris');
 	Route::get('/data/{id?}', 'EmployeeController@getData');
 	Route::post('/store', 'EmployeeController@store');
 	Route::put('/update/{id}', 'EmployeeController@update');
@@ -164,6 +167,14 @@ Route::group(['prefix' => 'attendances'], function(){
 
 # PAYROLL
 Route::prefix('payroll')->group(function(){
+	Route::view('/', 'App.hris');
+	Route::view('/new', 'App.hris');
+	Route::get('/all-slip', 'PayrollSlipController@all');
+	Route::get('/slip/excel/{id}', 'PayrollSlipController@excelExport');
+});
+
+# SALARY GROUP
+Route::prefix('salary-group')->group(function(){
 	Route::view('/', 'App.hris');
 	Route::view('/new', 'App.hris');
 	Route::get('/all-slip', 'PayrollSlipController@all');

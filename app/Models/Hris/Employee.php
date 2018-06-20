@@ -14,9 +14,14 @@ class Employee extends Model
 	protected $table = 'hris_employees';
 	protected $dates = ['deleted_at'];
 	public $timestamps = false;
-	protected $fillable = ['name', 'nin', 'gender', 'born_in', 'birthdate', 'position', 'login', 'father', 'mother', 'husband', 'wife', 'son', 'daughter', 'elementary', 'el_year', 'junior', 'jun_year', 'senior', 'sen_year', 'university', 'u_year', 'elektoral', 'cartao_rdtl', 'certidao_baptismo', 'elektoral_path', 'cartao_rdtl_path', 'certidao_baptismo_path', 'type', 'e_from', 'department', 'photo', 'marital_status', 'present_address', 'handphone', 'joining_date', 'non_active', 'non_active_at', 'bri_account', 'salary_rule', 'department_id', 'seguranca_social'];
+	protected $fillable = ['name', 'nin', 'gender', 'born_in', 'birthdate', 'position', 'login', 'father', 'mother', 'husband', 'wife', 'son', 'daughter', 'elementary', 'el_year', 'junior', 'jun_year', 'senior', 'sen_year', 'university', 'u_year', 'elektoral', 'cartao_rdtl', 'certidao_baptismo', 'elektoral_path', 'cartao_rdtl_path', 'certidao_baptismo_path', 'type', 'e_from', 'department', 'photo', 'marital_status', 'present_address', 'handphone', 'joining_date', 'non_active', 'non_active_at', 'bri_account', 'salary_rule', 'department_id', 'seguranca_social', 'salary_group'];
 	protected $hidden = ['salary_rule', 'login', 'deleted_at'];
 	protected $appends = ['bd', 'e_type', 'marry', 'join_date', 'p_name', 'non_act', 'non_act_date'];
+
+	public function sg()
+	{
+		return $this->belongsTo('App\Models\Hris\SalaryGroup', 'salary_group');
+	}
 
 	public static function permanent_employee_count()
 	{
@@ -164,7 +169,7 @@ class Employee extends Model
 	public function scopeData($q, $id = null)
 	{
 		if($id){
-            return $q->with(['dep', 'pos'])->where('id', $id)->first();
+            return $q->with(['dep', 'pos', 'sg'])->where('id', $id)->first();
         }
         return $q->with(['dep', 'pos'])->where('non_active', null)->get();
 	}

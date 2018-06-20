@@ -21,4 +21,11 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'PayrollController@index');
 		Route::post('/pay-all-employee', 'PayrollController@payAll');
 	});
+
+	Route::prefix('salary-group')->group(function(){
+		Route::get('/', 'SalaryGroupController@index');
+		Route::post('/', 'SalaryGroupController@store');
+		Route::put('/{id}', 'SalaryGroupController@update');
+		Route::delete('/{id}', 'SalaryGroupController@delete');
+	});
 });
