@@ -194,13 +194,12 @@ class Attendance extends Model
                 $q->with(['sr'=>function($k){
                     $k->where('status', '1');
                 }]);
-            }])->where('employee', $employee)
+            }])
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->orderBy('created_at')
             ->get();
         }
-        // return $att;
         $total = count($att);
         $total_in_week = [];
         $sum = 0;
@@ -251,55 +250,56 @@ class Attendance extends Model
         }else{
             $pegawai = Employee::where('id', $employee)->get();
         }
-        foreach ($pegawai as $pp) {
-            foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
-                $ada = false;
-                foreach ($att as $a) {
-                    if(substr($a->created_at, 8, 2) == $i){
-                        $att_baru[] = $a;
-                        $ada = true;
-                        break;
-                    }
-                }
-                if($i < 10){
-                    $i = '0'.$i;
-                }
-                $bulan = $month;
-                if($month < 10){
-                    $bulan = '0'.$month;
-                }
-                $tgl = $year.'-'.$bulan.'-'.$i;
-                if(!$ada){
-                    $libur = Calendar::where('month', substr($tgl, 5, 2))
-                    ->where('date', substr($tgl, 8, 2))
-                    ->exists() || date('l', strtotime($tgl)) === 'Sunday';
-                    $peg = Employee::find($pp->id);
-                    $adaatt = is_array($att);
-                    $att_baru[] = [
-                        "id"                        => str_random(12),
-                        "employee"                  => $peg->id,
-                        "created_at"                => $tgl,
-                        "enter"                     => null,
-                        "break"                     => null,
-                        "end_break"                 => null,
-                        "out"                       => null,
-                        "status"                    => null,
-                        "over_time_in_week"         => null,
-                        "work_total_in_week"        => null,
-                        "stat"                      => null,
-                        "work_total"                => null,
-                        "over_time"                 => null,
-                        "work_total_in_hours"       => null,
-                        "is_holiday"                => $libur,
-                        "over_time_in_hours"        => null,
-                        "over_time_in_money"        => null,
-                        "day"                       => date('l', strtotime($tgl)),
-                        "emp"                       => $adaatt ? $att[0]->emp : $peg,
-                    ];
-                }
-            }
-        }
-        return $att_baru;
+        // foreach ($pegawai as $pp) {
+        //     foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
+        //         $ada = false;
+        //         foreach ($att as $a) {
+        //             if(substr($a->created_at, 8, 2) == $i){
+        //                 $att_baru[] = $a;
+        //                 $ada = true;
+        //                 break;
+        //             }
+        //         }
+        //         if($i < 10){
+        //             $i = '0'.$i;
+        //         }
+        //         $bulan = $month;
+        //         if($month < 10){
+        //             $bulan = '0'.$month;
+        //         }
+        //         $tgl = $year.'-'.$bulan.'-'.$i;
+        //         if(!$ada){
+        //             $libur = Calendar::where('month', substr($tgl, 5, 2))
+        //             ->where('date', substr($tgl, 8, 2))
+        //             ->exists() || date('l', strtotime($tgl)) === 'Sunday';
+        //             $peg = Employee::find($pp->id);
+        //             $adaatt = is_array($att);
+        //             $att_baru[] = [
+        //                 "id"                        => str_random(12),
+        //                 "employee"                  => $peg->id,
+        //                 "created_at"                => $tgl,
+        //                 "enter"                     => null,
+        //                 "break"                     => null,
+        //                 "end_break"                 => null,
+        //                 "out"                       => null,
+        //                 "status"                    => null,
+        //                 "over_time_in_week"         => null,
+        //                 "work_total_in_week"        => null,
+        //                 "stat"                      => null,
+        //                 "work_total"                => null,
+        //                 "over_time"                 => null,
+        //                 "work_total_in_hours"       => null,
+        //                 "is_holiday"                => $libur,
+        //                 "over_time_in_hours"        => null,
+        //                 "over_time_in_money"        => null,
+        //                 "day"                       => date('l', strtotime($tgl)),
+        //                 "emp"                       => $adaatt ? $att[0]->emp : $peg,
+        //             ];
+        //         }
+        //     }
+        // }
+        // return $att_baru;
+        return $att;
     }
 
     public function getDayAttribute($q)

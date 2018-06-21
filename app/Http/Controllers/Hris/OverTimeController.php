@@ -88,6 +88,31 @@ class OverTimeController extends Controller
         $year       = $r->query('year');
         $month      = $r->query('month');
         $employee   = E::find($emp);
+        // if($emp == 'all'){
+        //     $b=[];
+        //     foreach(E::active() as $e){
+        //         foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
+        //             if($i < 10){
+        //                 $i = '0'.$i;
+        //             }
+        //             $bulan = $month;
+        //             if($month < 10){
+        //                 $bulan = '0'.$month;
+        //             }
+        //             $tgl = $year.'-'.$bulan.'-'.$i;
+        //             if(!Attendance::where('created_at', $tgl)->where('employee', $e->id)->exists()){
+        //                 $b[] = [
+        //                     'status'        => 'Absent',
+        //                     'employee'      => $e->id,
+        //                     'created_at'    => $tgl,
+        //                 ];
+        //             }
+        //         }
+        //     }
+        //     foreach(collect($b)->chunk(200)->values()->all() as $c){
+        //         Attendance::insert(collect($c)->values()->toArray());
+        //     }
+        // }
         $title = 'Over Time All Employee in '.$year.'-'.$month.' ['.now().']';
         if($emp != 'all'){
             $title = 'Over Time '.$employee->name.' in '.$year.'-'.$month.' ['.now().']';
@@ -184,6 +209,11 @@ class OverTimeController extends Controller
                     if($a['is_holiday']){
                         $sheet->row($baris, function($row){
                             $row->setBackground('#ff0055');
+                        });
+                    }
+                    if($a['status'] == 'Absent'){
+                        $sheet->row($baris, function($row){
+                            $row->setFontColor('#ff0000')->setFontWeight('bold');
                         });
                     }
                     $baris++;
