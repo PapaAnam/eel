@@ -42,11 +42,18 @@
 				<td>NIN</td>
 				<td>: {{ $s->emp->nin }}</td>
 			</tr>
+			<tr>
+				<td>Job Title</td>
+				<td>: {{ $s->emp->pos->name }}</td>
+			</tr>
 		</tbody>
 	</table>
 	@if($s->sg)
 	<table style="margin-bottom: 5px;">
 		<tbody>
+			<tr>
+				<td>Component Salary (A)</td>
+			</tr>
 			@if($s->sg->basic_salary == 1)
 			<tr>
 				<td width="250px">Basic Salary</td>
@@ -125,54 +132,67 @@
 			</tr>
 		</tbody>
 	</table>
-	<table style="margin-bottom: 5px;">
+	<table style="width: 90%;">
 		<tbody>
 			<tr>
-				<td width="180px"><u>Deduction</u></td>
+				<td width="116px"><u>Deduction (B)</u></td>
+				<td></td>
+				<td></td>
+				<td></td>
 			</tr>
 			@if($s->sg->seguranca_social == 1)
 			<tr>
-				<td>Seguranca Social (4%)</td>
+				<td width="116px">Seguranca Social (4%)</td>
 				<td align="right">$</td>
 				<td width="50px" align="right">{{ $s->seguranca }}</td>
+				<td></td>
 			</tr>
 			@endif
 			@if($s->sg->cash_withdrawal == 1)
 			<tr>
-				<td>Cash Withdrawal</td>
+				<td width="116px">Cash Withdrawal</td>
 				<td align="right">$</td>
 				<td align="right">{{ $s->sr->cash_receipt }}</td>
+				<td></td>
 			</tr>
 			@endif
 			@if($s->sg->absent == 1)
 			<tr>
-				<td>Absent ({{ $s->absent }} days)</td>
+				<td width="116px">Absent ({{ $s->absent }} days)</td>
 				<td align="right">$</td>
 				<td align="right">{{ $s->absent_punishment }}</td>
+				<td></td>
 			</tr>
 			@endif
 			@if($s->sg->tax_insurance == 1)
 			<tr>
-				<td>Tax Insurance</td>
+				<td width="116px">Tax Insurance</td>
 				<td align="right">$</td>
 				<td align="right">{{ $s->tax_insurance }}</td>
+				<td></td>
 			</tr>
 			@endif
 			<tr>
-				<td></td>
+				<td width="116px"></td>
 				<td></td>
 				<td><hr></td>
 				<td>+</td>
 			</tr>
 			<tr>
-				<td>Sub Total Deduction</td>
+				<td width="116px">Sub Total Deduction</td>
 				<td align="right">$</td>
-				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}</td>
+				<td></td>
 			</tr>
+		</tbody>
+	</table>
+	<table style="margin-bottom: 5px;">
+		<tbody>
 			<tr>
-				<td>Total Received</td>
+				<td width="250px">Total Received (A-B)</td>
 				<td align="right">$</td>
-				<td align="right">{{ $s->clear_salary }}</td>
+				<td width="50px" align="right">{{ $s->clear_salary }}</td>
+				<td>&nbsp;&nbsp;</td>
 			</tr>
 		</tbody>
 	</table>

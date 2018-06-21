@@ -88,11 +88,15 @@ class OverTimeController extends Controller
         $year       = $r->query('year');
         $month      = $r->query('month');
         $employee   = E::find($emp);
-        Excel::create('Over Time '.$employee->name.' '.$year.'-'.$month.' ['.now().']', function($excel) use ($emp, $year, $month){
+        $title = 'Over Time All Employee in '.$year.'-'.$month.' ['.now().']';
+        if($emp != 'all'){
+            $title = 'Over Time '.$employee->name.' in '.$year.'-'.$month.' ['.now().']';
+        }
+        Excel::create($title, function($excel) use ($emp, $year, $month, $employee){
             $excel->setTitle('Lisun HRIS Over Time');
             $excel->setCreator('Lisun')->setCompany('Lisun');
             $excel->setDescription('Lisun HRIS Over Time');
-            $excel->sheet('data', function($sheet) use ($emp, $year, $month){
+            $excel->sheet('data', function($sheet) use ($emp, $year, $month, $employee){
                 $datas = [];
                 $i = 1;
                 $attendances = Attendance::inMonth($emp, $year, $month);
@@ -110,7 +114,8 @@ class OverTimeController extends Controller
                     $arr         = [
                         '#'                 => $i++,
                         'Employee'          => $a['emp']['nin'].$a['emp']['name'],
-                        'Date'              => $a['day'].' '.$a['created_at'],
+                        'Day'               => $a['day'],
+                        'Date'              => $a['created_at'],
                         'Status'            => $a['status'],
                         'Enter At'          => $a['enter'],
                         'Break'             => $a['break'],
@@ -126,45 +131,47 @@ class OverTimeController extends Controller
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
-                $sheet->cell('G'.($total_data+2), 'Total');
-                $sheet->cell('G'.($total_data+2), function($cell){
-                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
-                });
-                $sheet->cell('H'.($total_data+2), convertHour($total));
-                $sheet->cell('H'.($total_data+2), function($cell){
-                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
-                });
-                $sheet->cell('G'.($total_data+3), 'Standart Time Work / Month');
-                $sheet->cell('G'.($total_data+3), function($cell){
-                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
-                });
-                $sheet->cell('H'.($total_data+3), '176 hours');
-                $sheet->cell('H'.($total_data+3), function($cell){
-                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
-                });
-                $ot_regular = $total - 176 - $ot_holiday;
-                $sheet->cell('G'.($total_data+4), 'Over Time Regular');
-                $sheet->cell('G'.($total_data+4), function($cell){
-                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
-                });
-                $sheet->cell('H'.($total_data+4), convertHour($ot_regular));
-                $sheet->cell('H'.($total_data+4), function($cell){
-                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
-                });
-                $sheet->cell('G'.($total_data+5), 'Over Time Holiday');
-                $sheet->cell('G'.($total_data+5), function($cell){
-                    $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
-                });
-                $sheet->cell('H'.($total_data+5), convertHour($ot_holiday));
-                $sheet->cell('H'.($total_data+5), function($cell){
-                    $cell->setBorder('thin', 'thin', 'thin', 'thin');
-                });
-                // set border to all active cell
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-                foreach ($kolom as $k) {
-                    $sheet->cell($k.'1', function($cell){
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
+                if($emp != 'all'){
+                    $sheet->cell('G'.($total_data+2), 'Total');
+                    $sheet->cell('G'.($total_data+2), function($cell){
+                        $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                    });
+                    $sheet->cell('H'.($total_data+2), convertHour($total));
+                    $sheet->cell('H'.($total_data+2), function($cell){
                         $cell->setBorder('thin', 'thin', 'thin', 'thin');
-                    });   
+                    });
+                    $sheet->cell('G'.($total_data+3), 'Standart Time Work / Month');
+                    $sheet->cell('G'.($total_data+3), function($cell){
+                        $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                    });
+                    $sheet->cell('H'.($total_data+3), '176 hours');
+                    $sheet->cell('H'.($total_data+3), function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    $ot_regular = $total - 176 - $ot_holiday;
+                    $sheet->cell('G'.($total_data+4), 'Over Time Regular');
+                    $sheet->cell('G'.($total_data+4), function($cell){
+                        $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                    });
+                    $sheet->cell('H'.($total_data+4), convertHour($ot_regular));
+                    $sheet->cell('H'.($total_data+4), function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    $sheet->cell('G'.($total_data+5), 'Over Time Holiday');
+                    $sheet->cell('G'.($total_data+5), function($cell){
+                        $cell->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin')->setAlignment('center');
+                    });
+                    $sheet->cell('H'.($total_data+5), convertHour($ot_holiday));
+                    $sheet->cell('H'.($total_data+5), function($cell){
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    // set border to all active cell
+                    foreach ($kolom as $k) {
+                        $sheet->cell($k.'1', function($cell){
+                            $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                        });   
+                    }
                 }
                 $baris = 2;
                 foreach ($attendances as $a) { 
@@ -180,6 +187,15 @@ class OverTimeController extends Controller
                     }
                     $baris++;
                 }
+                $title = 'Over Time All Employee in '.english_month_name($month).' '.$year;
+                if($emp != 'all'){
+                    $title = 'Over Time '.$employee->name.' in '.english_month_name($month).' '.$year;
+                }
+                $sheet->prependRow(1, [$title]);
+                $sheet->mergeCells('A1:K1');
+                $sheet->cell('A1', function($cell){
+                    $cell->setAlignment('center')->setBackground('#999999')->setFontSize(16)->setFontWeight('bold');
+                });
             });
 })->export('xlsx');
 }

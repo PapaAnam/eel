@@ -1,1 +1,0 @@
-{{ select('sub_department', '', $data) }}

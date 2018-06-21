@@ -22,13 +22,13 @@ class X100CController extends Controller
 	{
 		$data 	= $this->get($r);
 		$date 	= $r->query('date');
+		$berhasil = 0;
 		foreach ($data as $d) {
 			$u 		= $d->userInfo;
 			$time 	= substr($d->CHECKTIME, 11, 8);
 			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->orWhere('nin', $u->SSN)->orWhere('nin', (int) $u->SSN)->first();
 			if(!is_null($e)){
 				$att = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
-				// if($d->CHECKTYPE == 'I' or $d->CHECKTYPE == 'i'){
 				if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
 					if(is_null($att)){
 						Attendance::create([
@@ -51,9 +51,10 @@ class X100CController extends Controller
 								'enter'			=> '08:30:00',
 								'status'		=> 'Present',
 								'real_enter'	=> $time,
-							]);	
+							]);
 						}
 					}
+					$berhasil++;
 				}else if(strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
 					if(is_null($att)){
 						Attendance::create([
@@ -76,9 +77,10 @@ class X100CController extends Controller
 								'enter'			=> $time,
 								'status'		=> 'Present',
 								'real_enter'	=> $time,
-							]);	
+							]);
 						}
 					}
+					$berhasil++;
 				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					if(is_null($att)){
 						Attendance::create([
@@ -101,14 +103,11 @@ class X100CController extends Controller
 								'out'			=> $time,
 								'status'		=> 'Present',
 								'real_enter'	=> $time,
-							]);	
+							]);
 						}
 					}
-					
+					$berhasil++;
 				}
-				// }else if($d->CHECKTYPE == '1' or $d->CHECKTYPE == 1){
-
-				// }
 			}
 		}
 		$employees = Employee::all();
@@ -121,6 +120,7 @@ class X100CController extends Controller
 				]);
 			}
 		}
+		// return $berhasil;
 		return 'Synchronize attendances from x100c successfull';
 	}
 

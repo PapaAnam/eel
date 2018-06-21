@@ -18,7 +18,7 @@ class PayrollSlipController extends Controller
 
 	public function getData($id)
 	{
-		$s = $this->s = Salary::with(['sg', 'emp', 'sr'=>function($q){
+		$s = $this->s = Salary::with(['sg', 'emp.pos', 'sr'=>function($q){
 			$q->where('status', '1');
 		}])->where('id', $id)->first();
 		$this->total_hari_kerja = Attendance::totalHariKerja($s->year, $s->month, $s->emp->id);
