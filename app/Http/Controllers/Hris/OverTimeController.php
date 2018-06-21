@@ -113,7 +113,8 @@ class OverTimeController extends Controller
                     }
                     $arr         = [
                         '#'                 => $i++,
-                        'Employee'          => $a['emp']['nin'].$a['emp']['name'],
+                        'NIN'               => $a['emp']['nin'],
+                        'Employee'          => $a['emp']['name'],
                         'Day'               => $a['day'],
                         'Date'              => $a['created_at'],
                         'Status'            => $a['status'],
@@ -131,7 +132,7 @@ class OverTimeController extends Controller
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
                 if($emp != 'all'){
                     $sheet->cell('G'.($total_data+2), 'Total');
                     $sheet->cell('G'.($total_data+2), function($cell){
