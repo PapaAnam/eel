@@ -197,7 +197,7 @@ class Attendance extends Model
             }])
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
-            ->orderBy('created_at')
+            ->orderBy('employee', 'created_at')
             ->get();
         }
         $total = count($att);

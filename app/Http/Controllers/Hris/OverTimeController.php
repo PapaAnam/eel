@@ -88,31 +88,31 @@ class OverTimeController extends Controller
         $year       = $r->query('year');
         $month      = $r->query('month');
         $employee   = E::find($emp);
-        // if($emp == 'all'){
-        //     $b=[];
-        //     foreach(E::active() as $e){
-        //         foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
-        //             if($i < 10){
-        //                 $i = '0'.$i;
-        //             }
-        //             $bulan = $month;
-        //             if($month < 10){
-        //                 $bulan = '0'.$month;
-        //             }
-        //             $tgl = $year.'-'.$bulan.'-'.$i;
-        //             if(!Attendance::where('created_at', $tgl)->where('employee', $e->id)->exists()){
-        //                 $b[] = [
-        //                     'status'        => 'Absent',
-        //                     'employee'      => $e->id,
-        //                     'created_at'    => $tgl,
-        //                 ];
-        //             }
-        //         }
-        //     }
-        //     foreach(collect($b)->chunk(200)->values()->all() as $c){
-        //         Attendance::insert(collect($c)->values()->toArray());
-        //     }
-        // }
+        if($emp == 'all'){
+            $b=[];
+            foreach(E::active() as $e){
+                foreach (range(1, cal_days_in_month(CAL_GREGORIAN, $month, $year)) as $i) {
+                    if($i < 10){
+                        $i = '0'.$i;
+                    }
+                    $bulan = $month;
+                    if($month < 10){
+                        $bulan = '0'.$month;
+                    }
+                    $tgl = $year.'-'.$bulan.'-'.$i;
+                    if(!Attendance::where('created_at', $tgl)->where('employee', $e->id)->exists()){
+                        $b[] = [
+                            'status'        => 'Absent',
+                            'employee'      => $e->id,
+                            'created_at'    => $tgl,
+                        ];
+                    }
+                }
+            }
+            foreach(collect($b)->chunk(200)->values()->all() as $c){
+                Attendance::insert(collect($c)->values()->toArray());
+            }
+        }
         $title = 'Over Time All Employee in '.$year.'-'.$month.' ['.now().']';
         if($emp != 'all'){
             $title = 'Over Time '.$employee->name.' in '.$year.'-'.$month.' ['.now().']';
@@ -223,7 +223,7 @@ class OverTimeController extends Controller
                     $title = 'Over Time '.$employee->name.' in '.english_month_name($month).' '.$year;
                 }
                 $sheet->prependRow(1, [$title]);
-                $sheet->mergeCells('A1:K1');
+                $sheet->mergeCells('A1:L1');
                 $sheet->cell('A1', function($cell){
                     $cell->setAlignment('center')->setBackground('#999999')->setFontSize(16)->setFontWeight('bold');
                 });
