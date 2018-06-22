@@ -28,4 +28,9 @@ Route::namespace('Hris')->group(function(){
 		Route::put('/{id}', 'SalaryGroupController@update');
 		Route::delete('/{id}', 'SalaryGroupController@delete');
 	});
+
+	Route::prefix('salary-rules')->group(function(){
+		Route::get('/', 'SalaryRuleController@index');
+		Route::post('/', 'SalaryRuleController@store');
+	});
 });

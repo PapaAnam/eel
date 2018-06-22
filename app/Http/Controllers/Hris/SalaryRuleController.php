@@ -11,11 +11,17 @@ use Excel;
 
 class SalaryRuleController extends Controller
 {
+
+	public function index(Request $r)
+	{
+		return SalaryRule::with('emp')->where('employee', $r->employee)->where('status', '1')->first();
+	}
+
 	public function getData($employee)
 	{
 		$emp = Employee::find($employee);
 		$data = [
-			'data' => SalaryRule::whereEmployee($employee)->get()->toArray(),
+			'data' => SalaryRule::whereEmployee($employee)->orderBy('status', 'desc')->get()->toArray(),
 			'employee' => [
 				'id' => $emp->id,
 				'name' => $emp->name,
@@ -44,8 +50,22 @@ class SalaryRuleController extends Controller
 			'cash_receipt'		=> 'numeric|min:0|max:999999999',
 			'rent_motorcycle'	=> 'numeric|min:0|max:999999999',
 		]);
-		SalaryRule::whereEmployee($r->employee)->update(['status' => 0]);
-		SalaryRule::create($r->except(['name'])+['status'=>1]);
+		$data = $r->except(['name', 'tipe']);
+		$sr = SalaryRule::whereEmployee($r->query('employee'))->where('status', '1')->first();
+		$sr = collect($sr);
+		if($r->tipe == 1){
+			if($sr){
+				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status')->toArray();
+			}
+		}else{
+			if($sr){
+				$data = $data + $sr->only('basic_salary', 'allowance', 'status')->toArray();
+			}
+		}
+		$data = $data + ['status'=>'1'];
+		// return $data;
+		SalaryRule::whereEmployee($r->query('employee'))->update(['status' => 0]);
+		SalaryRule::create($data);
 		return 'Salary Rule success created';
 	}
 
