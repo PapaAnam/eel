@@ -6,15 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use App\Models\Hris\Position            as P;
-use App\Models\Hris\Absence             as A;
-use App\Models\Hris\SubDepartment       as SD;
 use App\Models\Hris\Salary              as S;
 use App\Models\Hris\Department          as D;
 use App\Models\Hris\Employee            as E;
 use App\Models\Hris\Work                as W;
 use App\Models\Hris\SalaryRule;
 use App\Models\Hris\Attendance;
+use Excel;
 
 class PayrollController extends Controller
 {
@@ -113,6 +111,105 @@ class PayrollController extends Controller
             $q->where('status', '1');
         }])->where('month', $r->month)->where('year', $r->year)->latest()->get();
     }
-}
 
+    public function globalReport(Request $r)
+    {
+        $month_name = english_month_name($r->query("month"));
+        $month = $r->query("month");
+        $year = $r->query('year');
+        $salaries = S::with('emp.pos', 'emp.dep')->where('month', $month)->where('year', $year)->get();
+        $title = 'Global report period '.$month_name.' '.$year;
+        Excel::create($title, function($excel) use ($year, $month, $salaries){
+            $excel->setTitle('Lisun HRIS Global Report');
+            $excel->setCreator('Lisun')->setCompany('Lisun');
+            $excel->setDescription('Lisun HRIS Global Report');
+            $excel->sheet('data', function($sheet) use ($year, $month, $salaries){
+                $arr = [];
+                foreach ($salaries as $a) {
+                    $total_hari_kerja = Attendance::totalHariKerja($year, $month, $a->emp->id);
+                    $work_total = Attendance::workTotalInMonth($year, $month, $a->emp->id);
+                    $arr[]         = [
+                        'NIN'                                               => $a->emp->nin,
+                        'Seguranca ID'                                      => $a->emp->seguranca_social,
+                        'Employee Name'                                     => $a->emp->name,
+                        'Group'                                             => config('app.group', 'mix'),
+                        'Department'                                        => $a->emp->dep->name,
+                        'Job Title'                                         => $a->emp->pos->name,
+                        'Basic Salary'                                      => $a->sr->basic_salary,
+                        'Allowance'                                         => $a->sr->allowance,
+                        'Days Work Total'                                   => $total_hari_kerja,
+                        'Cuti Taken'                                        => '',
+                        'Sick Leave take'                                   => '',
+                        'Days Absent Total'                                 => $a->absent,
+                        'Total Working Hours'                               => convertHour($work_total),
+                        'Overtime Hours (x1.5)'                             => $a->ot_regular_in_hours,
+                        'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
+                        'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
+                        'Total Overtime Hours (x2)'                         => $a->ot_holiday,
+                        'Retention Number'                                  => '',
+                        'Retention Amount'                                  => $a->sr->ritation,
+                        'Incentive Amount'                                  => $a->sr->incentive,
+                        'Total'                                             => $a->gross_salary,
+                        'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
+                        'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
+                        'Cash Withdrawal'                                   => $a->sr->cash_reecipt,
+                        'Deduct Absent $'                                   => $a->absent_punishment,
+                        'Total To Pay $'                                    => $a->clear_salary,
+                        'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
+                        'Declared Basic Salary Less Absence'                => '',
+
+                    ];
+                }
+                $sheet->with($arr);
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'];
+                // set border to all active cell
+                foreach ($kolom as $k) {
+                    foreach (range(1, count($arr)+1) as $b) {
+                        $sheet->cell($k.$b, function($cell){
+                            $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                        });   
+                    }
+                }
+                $sheet->row(1, function($row){
+                    $row->setFontWeight('bold');
+                });
+                $ijo = ['G','H','P','Q','S','T','U'];
+                foreach ($ijo as $k) {
+                    $sheet->cell($k.'1', function($cell){
+                        $cell->setBackground('#44bb33');
+                    });
+                }
+                $kuning = ['V','W','X','Y'];
+                foreach ($kuning as $k) {
+                    $sheet->cell($k.'1', function($cell){
+                        $cell->setBackground('#ffff33');
+                    });
+                }
+                $sheet->cell('Z1', function($cell){
+                    $cell->setBackground('#0044ff');
+                });
+                $sheet->prependRow(1, []);
+                foreach ($ijo as $k) {
+                    $sheet->cell($k.'1', '+');
+                    $sheet->cell($k.'1', function($cell){
+                        $cell->setBackground('#44bb33')->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                }
+                foreach ($kuning as $k) {
+                    $sheet->cell($k.'1', '-');
+                    $sheet->cell($k.'1', function($cell){
+                        $cell->setBackground('#ffff33')->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                }
+                $sheet->mergeCells('AA1:AB1');
+                $sheet->cell('AA1', 'Apply to form');
+                $sheet->cell('AA1', function($cell){
+                    $cell->setAlignment('center')->setBorder('thin', 'thin', 'thin', 'thin');
+                });
+                $sheet->prependRow(1, ['GLOBAL REPORT']);
+                $sheet->mergeCells('A1:C1');
+            });
+})->export('xlsx');
+}
+}
 

@@ -24,6 +24,7 @@ return [
     'seguranca' => env('SEGURANCA', false),
     'company_name'      => env('COMPANY_NAME', 'My Company'),
     'animation_icon'    => env('ANIMATION_ICON', false),
+    'group' => env('GROUP_NAME', 'mix'),
 
     /*
     |--------------------------------------------------------------------------

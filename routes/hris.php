@@ -171,6 +171,7 @@ Route::prefix('payroll')->group(function(){
 	Route::view('/new', 'App.hris');
 	Route::get('/all-slip', 'PayrollSlipController@all');
 	Route::get('/slip/excel/{id}', 'PayrollSlipController@excelExport');
+	Route::get('/global-report', 'PayrollController@globalReport');
 });
 
 # SALARY GROUP
