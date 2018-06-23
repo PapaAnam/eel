@@ -46,6 +46,10 @@
 				<td>Job Title</td>
 				<td>: {{ $s->emp->pos->name }}</td>
 			</tr>
+			<tr>
+				<td>Period</td>
+				<td>: {{ english_month_name($s->month).' '.$s->year }}</td>
+			</tr>
 		</tbody>
 	</table>
 	@if($s->sg)
