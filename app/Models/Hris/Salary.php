@@ -62,4 +62,9 @@ class Salary extends Model
 	{
 		return $this->seguranca+$this->sr->cash_receipt+$this->absent_punishment+$this->tax_insurance;
 	}
+
+	public function getTaxInsuranceAttribute($value)
+	{
+		return round($value, 2);
+	}
 }

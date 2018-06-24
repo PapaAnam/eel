@@ -185,7 +185,7 @@
 			<tr>
 				<td width="116px">Sub Total Deduction</td>
 				<td align="right">$</td>
-				<td align="right">{{ $s->seguranca+$s->sr->cash_receipt }}</td>
+				<td align="right">{{ $s->total_potongan }}</td>
 				<td></td>
 			</tr>
 		</tbody>
