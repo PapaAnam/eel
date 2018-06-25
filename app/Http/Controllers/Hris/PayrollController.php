@@ -54,9 +54,9 @@ class PayrollController extends Controller
                 $otr = Attendance::overTimeRegularInMonth($r->year, $r->month, $e->id);
                 $ot_regular = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
 
-                if($e->id == 80){
-                    return $e->salary_group;
-                }
+                // if($e->id == 80){
+                //     return $e->salary_group;
+                // }
                 // menghitung absent
                 $absent = Attendance::absent($r->year, $r->month, $e->id);
                 $absent_punishment = $absent * ($sr->basic_salary / 22);
