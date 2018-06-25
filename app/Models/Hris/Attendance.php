@@ -134,7 +134,7 @@ class Attendance extends Model
 
     public function scopeOtHoliday($q, $year, $month, $employee)
     {
-        return $q->overTimeHolidayInMonth($year, $month, $employee)['in_hours'];
+        return $q->overTimeHolidayInMonth($year, $month, $employee)['in_hours']+$q->overTimeEventHolidayInMonth($year, $month, $employee)['in_hours'];
     }
 
     public function scopeOverTimeHolidayInMonth($q, $year, $month, $employee)
