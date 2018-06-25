@@ -199,19 +199,16 @@ class Attendance extends Model
 
     public function scopeOverTimeRegularInMonth($q, $year, $month, $employee)
     {
-        $work_total = Attendance::workTotalInMonth($year, $month, $employee);//['in_reg'];
-        // return $work_total;
+        $work_total = Attendance::workTotalInMonth($year, $month, $employee);
         if($work_total <= 0){
             return [
-            // 'in_money'      => 0,
                 'in_hours'      => '-',
                 'in_reg'        => 0,
             ];
         }
-        $ot_hol = $q->overTimeHolidayInMonth($year, $month, $employee)['in_reg'];
+        $ot_hol = $q->overTimeSundayInMonth($year, $month, $employee)['in_reg']+$q->overTimeEventInMonth($year, $month, $employee)['in_reg'];
         $otr = $work_total - 176 - $ot_hol;
         return [
-            // 'in_money'      => 0,
             'in_hours'      => convertHour($otr),
             'in_reg'        => $otr,
         ];
