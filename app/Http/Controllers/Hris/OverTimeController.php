@@ -23,7 +23,6 @@ class OverTimeController extends Controller
 
     public function holiday(Request $r)
     {
-        // return $oth = Attendance::overTimeHolidayInMonth($r->query('year'), $r->query('month'), $r->query('employee'));
         return Attendance::otHoliday($r->query('year'), $r->query('month'), $r->query('employee'));
     }
 

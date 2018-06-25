@@ -62,7 +62,6 @@ class Attendance extends Model
 
     public function getOverTimeInHoursAttribute()
     {
-        // if($this->status === 'Over Time' || ($this->status === 'Present' && $this->is_holiday)){
         if($this->out && $this->enter){
             $break      = strtotime('12:00:00');
             $end_break  = strtotime('13:00:00');
@@ -71,11 +70,6 @@ class Attendance extends Model
             return (($break-$enter)+($out-$end_break))/3600;
         }
         return 0;
-        // }
-        // if(strtotime($this->out) > strtotime(env('OVER_TIME', '17:00:00'))){
-        //     return (strtotime($this->out)-strtotime(env('OVER_TIME', '17:00:00')))/3600;
-        // }
-        // return 0;
     }
 
     public function getIsHolidayAttribute()
@@ -96,7 +90,6 @@ class Attendance extends Model
                 if($this->is_holiday){
                     $mul = 2;
                 }
-                // return round($basic_salary/22/8*$mul*$this->over_time_in_hours, 2);
                 return round($basic_salary/22/8*$mul*$this->over_time_in_hours, env('ROUND', 2));
             }
         }
@@ -165,12 +158,11 @@ class Attendance extends Model
     public function scopeOverTimeEventInMonth($q, $year, $month, $employee)
     {
         $attendances    = $q->inMonth($employee, $year, $month);
-        $ot_hours       = 0;
-        foreach ($attendances as $a) {
+        $ot_hours       = $attendances->sum(function($item){
             if($a['is_event_holiday'] && $a['day'] != 'Sunday'){
-                $ot_hours += $a['over_time_in_hours'];
+                return $a['over_time_in_hours'];
             }
-        }
+        });
         return [
             'in_hours'      => convertHour($ot_hours),
             'in_reg'        => $ot_hours,
@@ -316,8 +308,8 @@ class Attendance extends Model
 
     public function getIsEventHolidayAttribute(){
         return Calendar::where('month', substr($this->created_at, 5, 2))
-            ->where('date', substr($this->created_at, 8, 2))
-            ->exists();
+        ->where('date', substr($this->created_at, 8, 2))
+        ->exists();
     }
 
     public function scopeByDate($q, $date)
@@ -361,9 +353,6 @@ class Attendance extends Model
                     'status'            => 'Absent',
                 ]);
             }
-            // if($e->id == 57){
-            //     dd($dt);
-            // }
             $data[] = $dt;
         }
         return $data;
