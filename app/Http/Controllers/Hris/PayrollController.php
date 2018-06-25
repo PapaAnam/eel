@@ -39,7 +39,7 @@ class PayrollController extends Controller
                 });
 
                 // // menghitung ot holiday
-                $oth = Attendance::overTimeHolidayInMonth($r->year, $r->month, $e->id);
+                $oth = Attendance::overTimeSundayInMonth($r->year, $r->month, $e->id);
                 $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
                 $ot_holiday_hours = $oth['in_hours'];
                 // foreach ($attendances as $a) {
@@ -50,7 +50,7 @@ class PayrollController extends Controller
                 // }
 
                 // // menghitung ot holiday
-                $oteh = Attendance::overTimeEventHolidayInMonth($r->year, $r->month, $e->id);
+                $oteh = Attendance::overTimeEventInMonth($r->year, $r->month, $e->id);
                 $ot_event_holiday_money = $sr->basic_salary/22/8*$oth['in_reg'];
                 $ot_event_holiday_hours = $oth['in_hours'];
                 // foreach ($attendances as $a) {

@@ -134,7 +134,7 @@ class Attendance extends Model
 
     public function scopeOtHoliday($q, $year, $month, $employee)
     {
-        return $q->overTimeHolidayInMonth($year, $month, $employee)['in_hours']+$q->overTimeEventHolidayInMonth($year, $month, $employee)['in_hours'];
+        return convertHour($q->overTimeHolidayInMonth($year, $month, $employee)['in_reg']+$q->overTimeEventHolidayInMonth($year, $month, $employee)['in_reg']);
     }
 
     public function scopeOverTimeHolidayInMonth($q, $year, $month, $employee)
@@ -143,6 +143,36 @@ class Attendance extends Model
         $ot_hours       = 0;
         foreach ($attendances as $a) {
             if($a['is_holiday'] && !$a['is_event_holiday']){
+                $ot_hours += $a['over_time_in_hours'];
+            }
+        }
+        return [
+            'in_hours'      => convertHour($ot_hours),
+            'in_reg'        => $ot_hours,
+        ];
+    }
+
+    public function scopeOverTimeSundayInMonth($q, $year, $month, $employee)
+    {
+        $attendances    = $q->inMonth($employee, $year, $month);
+        $ot_hours       = 0;
+        foreach ($attendances as $a) {
+            if($a['is_holiday'] && $a['day'] == 'Sunday'){
+                $ot_hours += $a['over_time_in_hours'];
+            }
+        }
+        return [
+            'in_hours'      => convertHour($ot_hours),
+            'in_reg'        => $ot_hours,
+        ];
+    }
+
+    public function scopeOverTimeEventInMonth($q, $year, $month, $employee)
+    {
+        $attendances    = $q->inMonth($employee, $year, $month);
+        $ot_hours       = 0;
+        foreach ($attendances as $a) {
+            if($a['is_event_holiday'] && $a['day'] != 'Sunday'){
                 $ot_hours += $a['over_time_in_hours'];
             }
         }
