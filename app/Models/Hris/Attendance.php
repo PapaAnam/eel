@@ -159,8 +159,8 @@ class Attendance extends Model
     {
         $attendances    = $q->inMonth($employee, $year, $month);
         $ot_hours       = $attendances->sum(function($item){
-            if($a['is_event_holiday'] && $a['day'] != 'Sunday'){
-                return $a['over_time_in_hours'];
+            if($item['is_event_holiday'] && $item['day'] != 'Sunday'){
+                return $item['over_time_in_hours'];
             }
         });
         return [
@@ -195,6 +195,9 @@ class Attendance extends Model
         }
         $ot_hol = $q->overTimeSundayInMonth($year, $month, $employee)['in_reg']+$q->overTimeEventInMonth($year, $month, $employee)['in_reg'];
         $otr = $work_total - 176 - $ot_hol;
+        if($otr < 0){
+            $otr = 0;
+        }
         return [
             'in_hours'      => convertHour($otr),
             'in_reg'        => $otr,

@@ -53,7 +53,7 @@ class Salary extends Model
 		$sr = $this->sr;
 		$seguranca_social = $sr->seguranca;
 		if(config('app.seguranca')){
-			$seguranca_social = $sr->basic_salary * 4 / 100;
+			$seguranca_social = ($sr->basic_salary - $this->absent_punishment) * 4 / 100;
 		}
 		return $seguranca_social;
 	}

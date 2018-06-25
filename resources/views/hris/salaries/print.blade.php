@@ -25,9 +25,7 @@
 		margin-right: 50px;
 	}
 </style>
-@foreach ($salaries as $s)
 @include('hris.salaries.slip', ['s'=>$s])
-@endforeach
 <script>
 	window.print();
 </script>

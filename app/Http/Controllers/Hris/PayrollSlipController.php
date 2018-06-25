@@ -218,4 +218,13 @@ class PayrollSlipController extends Controller
 		];
 		return view('hris/salaries/multiple-slip', $oper);
 	}
+
+
+	public function print($id)
+	{
+		return view('hris.salaries.print', [
+			's'	=> Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $id)->first()
+		]);
+	}
+
 }
