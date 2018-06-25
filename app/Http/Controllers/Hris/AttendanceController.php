@@ -464,7 +464,7 @@ class AttendanceController extends Controller
     public function storeExcel(Request $r)
     {
         Storage::deleteDirectory('attendances');
-        $file_path = $r->file('attendance_excel')->store('attendances');
+        $file_path = $r->file('attendance_excel')->store('public/attendances');
         $file_path = explode('/', $file_path);
         $file_name = end($file_path);
         $rows = Excel::load('public/storage/attendances/'.$file_name)->get();

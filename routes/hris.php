@@ -181,3 +181,8 @@ Route::prefix('salary-group')->group(function(){
 	Route::get('/all-slip', 'PayrollSlipController@all');
 	Route::get('/slip/excel/{id}', 'PayrollSlipController@excelExport');
 });
+
+# LEAVE PERIOD
+Route::prefix('leave-period')->group(function(){
+	Route::view('/', 'App.hris');
+});

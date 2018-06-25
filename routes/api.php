@@ -33,4 +33,10 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'SalaryRuleController@index');
 		Route::post('/', 'SalaryRuleController@store');
 	});
+
+	Route::prefix('leave-period')->group(function(){
+		Route::get('/', 'LeavePeriodRuleController@index');
+		Route::get('/id', 'LeavePeriodRuleController@show');
+		Route::put('/', 'LeavePeriodRuleController@store');
+	});
 });
