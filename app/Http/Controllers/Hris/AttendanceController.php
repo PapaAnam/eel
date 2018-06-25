@@ -337,9 +337,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                 'created_at' => $created_at, 
-                 'employee'   => $re 
-             ], [
+                   'created_at' => $created_at, 
+                   'employee'   => $re 
+               ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
                 'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
@@ -473,16 +473,30 @@ class AttendanceController extends Controller
             $created_at = is_string($row->created_at) ? $row->created_at : $row->created_at->format('Y-m-d');
             if(E::where('nin', $row->employee_nin)->count()){
                 $re = E::where('nin', $row->employee_nin)->first()->id;
-                A::updateOrCreate([
-                 'created_at' => $created_at, 
-                 'employee'   => $re 
-             ], [
-                'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
-                'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
-                'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
-                'out'        => is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s')),
-                'status'     => ucwords($row->status),
-            ]);
+                $a = A::where('created_at', $created_at)->where('employee', $re)->first();
+                if(is_null($a)){
+                    A::create([
+                        'created_at' => $created_at, 
+                        'employee'   => $re ,
+                        'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
+                        'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
+                        'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
+                        'out'        => is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s')),
+                        'status'     => ucwords($row->status),
+                    ]);
+                }else{
+                    if(is_null($a->enter) or $a->enter == '00:00:00'){
+                        A::create([
+                            'created_at' => $created_at, 
+                            'employee'   => $re ,
+                            'enter'      => is_null($row->enter) ? '00:00:00' : (is_string($row->enter) ? $row->enter : $row->enter->format('H:i:s')),
+                            'break'      => is_null($row->break) ? '00:00:00' : (is_string($row->break) ? $row->break : $row->break->format('H:i:s')),
+                            'end_break'  => is_null($row->end_break) ? '00:00:00' : (is_string($row->end_break) ? $row->end_break : $row->end_break->format('H:i:s')),
+                            'out'        => is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s')),
+                            'status'     => ucwords($row->status),
+                        ]);
+                    }
+                }
             }
         });
         return response('Import and attendance success');

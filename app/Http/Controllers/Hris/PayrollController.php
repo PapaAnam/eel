@@ -49,6 +49,17 @@ class PayrollController extends Controller
                 //     }
                 // }
 
+                // // menghitung ot holiday
+                $oteh = Attendance::overTimeEventHolidayInMonth($r->year, $r->month, $e->id);
+                $ot_event_holiday_money = $sr->basic_salary/22/8*$oth['in_reg'];
+                $ot_event_holiday_hours = $oth['in_hours'];
+                // foreach ($attendances as $a) {
+                //     if($a->is_holiday){
+                //         $ot_holiday_money += $a->over_time_in_money;
+                //         $ot_holiday_hours += $a->over_time_in_hours;
+                //     }
+                // }
+
 
                 // menghitung ot regular
                 $otr = Attendance::overTimeRegularInMonth($r->year, $r->month, $e->id);
@@ -74,7 +85,7 @@ class PayrollController extends Controller
                     'department'            => $e->dep->id,
                     'position'              => $e->pos->id,
                     'ot_regular'            => round($ot_regular, env('ROUND', 2)),
-                    'ot_holiday'            => round($ot_holiday_money, env('ROUND', 2)),
+                    'ot_holiday'            => round($ot_holiday_money + $ot_event_holiday_money, env('ROUND', 2)),
                     'ot_regular_in_hours'   => $otr['in_hours'],
                     'ot_holiday_in_hours'   => $ot_holiday_hours,
                     'absent'                => $absent,

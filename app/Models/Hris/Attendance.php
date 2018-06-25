@@ -11,9 +11,7 @@ class Attendance extends Model
 	protected $table = 'hris_attendances';
 	public $timestamps = false;
 	protected $fillable = ['employee', 'created_at', 'enter', 'break', 'end_break', 'out', 'status', 'real_enter'];
-    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money', 
-    // 'over_time_in_week', 
-    'day'];
+    protected $appends = ['stat', 'work_total', 'over_time', 'work_total_in_hours', 'is_holiday', 'over_time_in_hours', 'over_time_in_money', 'day', 'is_event_holiday'];
 
     public function emp()
     {
@@ -142,17 +140,28 @@ class Attendance extends Model
     public function scopeOverTimeHolidayInMonth($q, $year, $month, $employee)
     {
         $attendances    = $q->inMonth($employee, $year, $month);
-        // $ot_money       = 0;
         $ot_hours       = 0;
-        // return $attendances;
         foreach ($attendances as $a) {
-            if($a['is_holiday']){
-                // $ot_money += $a['over_time_in_money'];
+            if($a['is_holiday'] && !$a['is_event_holiday']){
                 $ot_hours += $a['over_time_in_hours'];
             }
         }
         return [
-            // 'in_money'      => $ot_money,
+            'in_hours'      => convertHour($ot_hours),
+            'in_reg'        => $ot_hours,
+        ];
+    }
+
+    public function scopeOverTimeEventHolidayInMonth($q, $year, $month, $employee)
+    {
+        $attendances    = $q->inMonth($employee, $year, $month);
+        $ot_hours       = 0;
+        foreach ($attendances as $a) {
+            if($a['is_event_holiday']){
+                $ot_hours += $a['over_time_in_hours'];
+            }
+        }
+        return [
             'in_hours'      => convertHour($ot_hours),
             'in_reg'        => $ot_hours,
         ];
@@ -281,6 +290,12 @@ class Attendance extends Model
     public function scopeA($q, $date, $emp)
     {
         return $q->where('created_at', $date)->where('employee', $emp)->first();
+    }
+
+    public function getIsEventHolidayAttribute(){
+        return Calendar::where('month', substr($this->created_at, 5, 2))
+            ->where('date', substr($this->created_at, 8, 2))
+            ->exists();
     }
 
     public function scopeByDate($q, $date)
