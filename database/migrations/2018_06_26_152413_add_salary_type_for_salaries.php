@@ -15,7 +15,7 @@ class AddSalaryTypeForSalaries extends Migration
     {
         Schema::table('hris_salaries', function (Blueprint $table) {
             $table->string('salary_type')->default('standart');
-            $table->tinyInteger('present_total', 2);
+            $table->integer('present_total', 2);
         });
     }
 
