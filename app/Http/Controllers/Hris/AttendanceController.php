@@ -13,6 +13,7 @@ use App\Models\Hris\Employee            as E;
 use App\Models\Hris\OverTime            as O;
 use App\Models\Hris\LeavePeriod         as LP;
 use App\Models\Hris\Department          as D;
+use App\Models\Hris\SalaryRule          as SR;
 use App\Models\Absensi\CheckInOut;
 use App\Models\Hris\Calendar;
 use Excel;
@@ -337,9 +338,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                 'created_at' => $created_at, 
-                 'employee'   => $re 
-             ], [
+                   'created_at' => $created_at, 
+                   'employee'   => $re 
+               ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
                 'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
@@ -475,8 +476,11 @@ class AttendanceController extends Controller
                 $employee = E::where('nin', $row->employee_nin)->first();
                 $a = A::where('created_at', $created_at)->where('employee', $employee->id)->first();
                 $out = is_null($row->out) ? '00:00:00' : (is_string($row->out) ? $row->out : $row->out->format('H:i:s'));
-                if($employee->salary_type == 'driver' || $employee->salary_type == 'sales'){
-                    $out = '17:00:00';
+                $sr = SR::where('employee', $employee->id)->where('status', '1')->first();
+                if(!is_null($sr)){
+                    if($sr->salary_type == 'driver' || $sr->salary_type == 'sales'){
+                        $out = '17:00:00';
+                    }   
                 }
                 if(is_null($a)){
                     A::create([

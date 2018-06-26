@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Absensi\CheckInOut;
 use App\Models\Hris\Employee;
 use App\Models\Hris\Attendance;
+use App\Models\Hris\SalaryRule          as SR;
 
 class X100CController extends Controller
 {
@@ -86,8 +87,11 @@ class X100CController extends Controller
 					$berhasil++;
 				}else if($isOutTime){
 					$out = $time;
-					if($e->salary_type == 'driver' || $e->salary_type == 'sales'){
-						$out = '17:00:00';
+					$sr = SR::where('employee', $employee->id)->where('status', '1')->first();
+					if(!is_null($sr)){
+						if($sr->salary_type == 'driver' || $sr->salary_type == 'sales'){
+							$out = '17:00:00';
+						}   
 					}
 					if(is_null($att)){
 						Attendance::create([

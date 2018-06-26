@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Hris\Attendance;
 use App\Http\Controllers\Controller;
 use App\Models\Hris\Employee;
+use App\Models\Hris\SalaryGroup;
 
 class PayrollSlipController extends Controller
 {
@@ -23,45 +24,6 @@ class PayrollSlipController extends Controller
 		}])->where('id', $id)->first();
 		$this->total_hari_kerja = Attendance::totalHariKerja($s->year, $s->month, $s->emp->id);
 		$this->file_name = 'slip ('.$s->emp->nin.') '.$s->emp->name.' ['.now().']';
-		// $att = Attendance::with(['emp' => function($q){
-		// 	$q->with(['sr'=>function($k){
-		// 		$k->where('status', '1');
-		// 	}]);
-		// }])->where('employee', $s->employee)
-		// ->whereMonth('created_at', $s->month)
-		// ->whereYear('created_at', $s->year)
-		// ->latest()
-		// ->get();
-		// $biasa = $att->where('is_holiday', false)->values();
-		// $this->total_over_time_money = 0;
-		// foreach($biasa as $item){
-		// 	$this->total_over_time_money += $item['over_time_in_money'];
-		// }
-		// $this->total_over_time_money = round($this->total_over_time_money, env('ROUND', 2));
-		// $this->total_over_time_hours = 0;
-		// foreach($biasa as $item){
-		// 	$this->total_over_time_hours += $item['over_time_in_hours'];
-		// }
-		// $this->total_over_time_hours = convertHour($this->total_over_time_hours);
-
-		// total over time pada hari libur (duit)
-		// $holiday = $att->where('is_holiday', true)->values();
-		// $this->total_over_time_holiday_in_money = 0;
-		// foreach($holiday as $item){
-		// 	$this->total_over_time_holiday_in_money += $item['over_time_in_money'];
-		// }
-
-		// $this->total_over_time_holiday_in_money = round($this->total_over_time_holiday_in_money, env('ROUND', 2));
-
-		// total over time pada hari libur (jam)
-		// $this->total_over_time_holiday_in_hours = 0;
-		// foreach($holiday as $item){
-		// 	$this->total_over_time_holiday_in_hours += $item['over_time_in_hours'];
-		// }
-		// $this->total_over_time_holiday_in_hours = convertHour($this->total_over_time_holiday_in_hours);
-
-		// menghitung seguranca social
-		// $this->seguranca_social = $this->s->sr->basic_salary*4/100;
 	}
 
 	public function generate($id, $type)
@@ -140,13 +102,7 @@ class PayrollSlipController extends Controller
 		return PDF::loadView('hris.payroll.slip.pdf', [
 			's'									=> $this->s,
 			'total_hari_kerja'					=> $this->total_hari_kerja,
-			// 'total_over_time_money'				=> $this->total_over_time_money, 
-			// 'total_over_time_hours'				=> $this->total_over_time_hours, 
-			// 'total_over_time_holiday_in_money'	=> $this->total_over_time_holiday_in_money, 
-			// 'total_over_time_holiday_in_hours'	=> $this->total_over_time_holiday_in_hours,
-			// 'seguranca_social'					=> $this->seguranca_social,
 		])->setPaper('A4')
-		// ->stream();
 		->download($this->file_name.'.pdf');
 	}
 
@@ -225,6 +181,21 @@ class PayrollSlipController extends Controller
 		return view('hris.salaries.print', [
 			's'	=> Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $id)->first()
 		]);
+	}
+
+	public function byGroup($id)
+	{
+		return view('hris.salaries.multiple-slip', [
+			'salaries'	=> Salary::with(['sg', 'emp.pos', 'sr'])->where('salary_group', $id)->get()
+		]);
+	}
+
+	public function byGroupPdf($id)
+	{
+		$salaries = Salary::with(['sg', 'emp.pos', 'sr'])->where('salary_group', $id)->get();
+		return PDF::loadView('hris.salaries.multiple-slip', [
+			'salaries'	=> $salaries
+		])->download('slip for '.$salaries[0]->sg->name.' group.pdf');
 	}
 
 }

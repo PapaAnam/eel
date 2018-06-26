@@ -14,7 +14,13 @@ class SalaryRuleController extends Controller
 
 	public function index(Request $r)
 	{
-		return SalaryRule::with('emp')->where('employee', $r->employee)->where('status', '1')->first();
+		if($r->query('type')){
+			return SalaryRule::with('emp')->where('salary_type', $r->query('type'))->where('status', '1')->get();
+		}
+		if($r->query('array')){
+			return SalaryRule::with('emp')->where('employee', $r->query('employee'))->where('status', '1')->get();
+		}
+		return SalaryRule::with('emp')->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
 
 	public function getData($employee)
@@ -59,18 +65,17 @@ class SalaryRuleController extends Controller
 		$sr = collect($sr);
 		if($r->tipe == 1){
 			if($sr){
-				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status')->toArray();
+				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status', 'salary_type')->toArray();
 			}
 		}else{
 			if($sr){
-				$data = $data + $sr->only('basic_salary', 'allowance', 'status')->toArray();
+				$data = $data + $sr->only('basic_salary', 'allowance', 'status', 'salary_type')->toArray();
 			}
 		}
 		$data = $data + ['status'=>'1'];
-		// return $data;
 		SalaryRule::whereEmployee($r->query('employee'))->update(['status' => 0]);
 		SalaryRule::create($data);
-		return 'Salary Rule success created';
+		return 'Salary Rule success';
 	}
 
 	public function toPrint()

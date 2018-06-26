@@ -173,6 +173,8 @@ Route::prefix('payroll')->group(function(){
 	Route::get('/slip/excel/{id}', 'PayrollSlipController@excelExport');
 	Route::get('/slip/print/{id}', 'PayrollSlipController@print');
 	Route::get('/global-report', 'PayrollController@globalReport');
+	Route::get('/slip/by-group/pdf/{id}', 'PayrollSlipController@byGroupPdf');
+	Route::get('/slip/by-group/{id}', 'PayrollSlipController@byGroup');
 });
 
 # SALARY GROUP
