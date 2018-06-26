@@ -8,7 +8,7 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment', 'tax_insurance', 'salary_group'];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment', 'tax_insurance', 'salary_group', 'salary_type', 'present_total'];
 	protected $appends = ['clear_salary', 'gross_salary', 'seguranca', 'total_potongan'];
 
 	public function emp()
@@ -41,6 +41,9 @@ class Salary extends Model
 
 	public function getGrossSalaryAttribute()
 	{
+		if($this->salary_type == 'driver' or $this->salary_type == 'sales'){
+			return rount($this->basic_salary * $this->present_total, 2);
+		}
 		if($this->sr){
 			$sr = $this->sr;
 			return $sr->basic_salary+$sr->incentive+$sr->eat_cost+$sr->allowance+$sr->ritation+$sr->etc+$this->ot_regular+$this->ot_holiday+$sr->rent_motorcycle;

@@ -29,7 +29,10 @@ class X100CController extends Controller
 			$e 		= Employee::where('nin', $u->BADGENUMBER)->orWhere('nin', (int) $u->BADGENUMBER)->orWhere('nin', $u->SSN)->orWhere('nin', (int) $u->SSN)->first();
 			if(!is_null($e)){
 				$att = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
-				if(strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00')){
+				$isLowerThanEight = strtotime($date.' '.$time) >= strtotime($date.' 03:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 08:30:00');
+				$isNormalEnter = strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00');
+				$isOutTime = strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00');
+				if($isLowerThanEight){
 					if(is_null($att)){
 						Attendance::create([
 							'employee'		=> $e->id,
@@ -55,7 +58,7 @@ class X100CController extends Controller
 						}
 					}
 					$berhasil++;
-				}else if(strtotime($date.' '.$time) > strtotime($date.' 08:30:00') && strtotime($date.' '.$time) < strtotime($date.' 11:59:00')){
+				}else if($isNormalEnter){
 					if(is_null($att)){
 						Attendance::create([
 							'employee'		=> $e->id,
@@ -81,28 +84,31 @@ class X100CController extends Controller
 						}
 					}
 					$berhasil++;
-				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
+				}else if($isOutTime){
+					$out = $time;
+					if($e->salary_type == 'driver' || $e->salary_type == 'sales'){
+						$out = '17:00:00';
+					}
 					if(is_null($att)){
 						Attendance::create([
 							'employee'		=> $e->id,
 							'created_at'	=> $date,
 							'break'			=> '12:00:00',
 							'end_break'		=> '13:00:00',
-							'out'			=> $time,
+							'out'			=> $out,
 							'status'		=> 'Present',
-							'real_out'	=> $time,
 						]);
 					}else{
-						if(is_null($att->out) or $att->out == '00:00:00' or strtotime($date.' '.$att->out) < strtotime($date.' '.$time)){
+						$ambilOutTerlama = is_null($att->out) or $att->out == '00:00:00' or strtotime($date.' '.$att->out) < strtotime($date.' '.$time);
+						if($ambilOutTerlama){
 							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
 							])->update([
 								'break'			=> '12:00:00',
 								'end_break'		=> '13:00:00',
-								'out'			=> $time,
+								'out'			=> $out,
 								'status'		=> 'Present',
-								'real_enter'	=> $time,
 							]);
 						}
 					}
@@ -120,7 +126,6 @@ class X100CController extends Controller
 				]);
 			}
 		}
-		// return $berhasil;
 		return 'Synchronize attendances from x100c successfull';
 	}
 

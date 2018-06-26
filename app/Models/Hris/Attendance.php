@@ -361,4 +361,12 @@ class Attendance extends Model
         return $data;
     }
 
+    public function scopePresentTotalInMonth($q, $e, $y, $m){
+        return $q->where('employee', $e)
+        ->whereYear('created_at', $y)
+        ->whereMonth('created_at', $m)
+        ->where('status', 'Present')
+        ->count();
+    }
+
 }

@@ -21,7 +21,11 @@ class SalaryRuleController extends Controller
 	{
 		$emp = Employee::find($employee);
 		$data = [
-			'data' => SalaryRule::whereEmployee($employee)->orderBy('status', 'desc')->get()->toArray(),
+			'data' => SalaryRule::whereEmployee($employee)
+			->where('status', '1')
+			->orderBy('status', 'desc')
+			->get()
+			->toArray(),
 			'employee' => [
 				'id' => $emp->id,
 				'name' => $emp->name,

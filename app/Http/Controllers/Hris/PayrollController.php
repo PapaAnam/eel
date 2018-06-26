@@ -31,43 +31,20 @@ class PayrollController extends Controller
                 ->whereYear('created_at', $r->year)
                 ->get();
 
-                // menghitung work total
-                $work_total = $attendances->sum(function($item){
-                    if($item['work_total_in_hours'] !== '-'){
-                        return $item['work_total_in_hours'];
-                    }
-                });
-
-                // // menghitung ot holiday
+                // menghitung ot holiday
                 $oth = Attendance::overTimeSundayInMonth($r->year, $r->month, $e->id);
                 $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
                 $ot_holiday_hours = $oth['in_hours'];
-                // foreach ($attendances as $a) {
-                //     if($a->is_holiday){
-                //         $ot_holiday_money += $a->over_time_in_money;
-                //         $ot_holiday_hours += $a->over_time_in_hours;
-                //     }
-                // }
 
-                // // menghitung ot holiday
+                // menghitung ot holiday
                 $oteh = Attendance::overTimeEventInMonth($r->year, $r->month, $e->id);
                 $ot_event_holiday_money = $sr->basic_salary/22/8*$oth['in_reg'];
                 $ot_event_holiday_hours = $oth['in_hours'];
-                // foreach ($attendances as $a) {
-                //     if($a->is_holiday){
-                //         $ot_holiday_money += $a->over_time_in_money;
-                //         $ot_holiday_hours += $a->over_time_in_hours;
-                //     }
-                // }
-
 
                 // menghitung ot regular
                 $otr = Attendance::overTimeRegularInMonth($r->year, $r->month, $e->id);
                 $ot_regular = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
 
-                // if($e->id == 80){
-                //     return $e->salary_group;
-                // }
                 // menghitung absent
                 $absent = Attendance::absent($r->year, $r->month, $e->id);
                 $absent_punishment = $absent * ($sr->basic_salary / 22);
@@ -75,6 +52,8 @@ class PayrollController extends Controller
                 // menghitung tax_insurance
                 $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
                 $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 0.1 : 0;
+
+                $present_total = Attendance::presentInMonth($e->id, $r->year, $r->month);
                 
                 S::updateOrCreate([
                     'employee'      => $e->id,
@@ -92,6 +71,8 @@ class PayrollController extends Controller
                     'absent_punishment'     => round($absent_punishment, env('ROUND', 2)),
                     'tax_insurance'         => $tax_insurance,
                     'salary_group'          => $e->salary_group,
+                    'present_total'         => $present_total,
+                    'salary_type'           => $e->salary_type,
                 ]);
                 $total_success++;
             }else{
