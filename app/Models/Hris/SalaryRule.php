@@ -8,7 +8,7 @@ class SalaryRule extends Model
 {
 	protected $table = 'hris_salary_rules';
 	protected $appends = ['month_name', 'year'];
-	protected $guarded = [];
+	protected $guarded = ['month_name', 'year'];
 
 	public function emp()
 	{
