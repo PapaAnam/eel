@@ -30,6 +30,13 @@ class PayrollController extends Controller
                 ->whereMonth('created_at', $r->month)
                 ->whereYear('created_at', $r->year)
                 ->get();
+                foreach ($attendances as $a) {
+                    if($a->is_holiday && $a->status == 'Absent'){
+                        Attendance::find($a->id)->update([
+                            'status'    => null,
+                        ]);
+                    }
+                }
 
                 // menghitung ot holiday
                 $oth = Attendance::overTimeSundayInMonth($r->year, $r->month, $e->id);
