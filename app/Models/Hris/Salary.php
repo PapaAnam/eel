@@ -42,11 +42,9 @@ class Salary extends Model
 	public function getGrossSalaryAttribute()
 	{
 		if($this->sr){
-			if($this->sr->salary_type == 'driver' or $this->sr->salary_type == 'sales'){
+			if($this->sr->salary_type == 'freelance'){
 				return round($this->basic_salary * $this->present_total, 2);
 			}	
-		}
-		if($this->sr){
 			$sr = $this->sr;
 			$sg = $this->sg;
 			$bs = 0;
