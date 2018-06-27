@@ -38,8 +38,11 @@ class PayrollController extends Controller
 
                 // menghitung ot holiday
                 $oteh = Attendance::overTimeEventInMonth($r->year, $r->month, $e->id);
-                $ot_event_holiday_money = $sr->basic_salary/22/8*$oth['in_reg'];
-                $ot_event_holiday_hours = $oth['in_hours'];
+                if($e->id == 8){
+                    return $oth;
+                }
+                $ot_event_holiday_money = $sr->basic_salary/22/8*$oteh['in_reg'];
+                $ot_event_holiday_hours = $oteh['in_hours'];
 
                 // menghitung ot regular
                 $otr = Attendance::overTimeRegularInMonth($r->year, $r->month, $e->id);
@@ -53,7 +56,7 @@ class PayrollController extends Controller
                 $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
                 $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 0.1 : 0;
 
-                $present_total = Attendance::presentInMonth($e->id, $r->year, $r->month);
+                $present_total = Attendance::presentTotalInMonth($e->id, $r->year, $r->month);
                 
                 S::updateOrCreate([
                     'employee'      => $e->id,

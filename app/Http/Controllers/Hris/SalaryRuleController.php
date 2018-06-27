@@ -15,6 +15,9 @@ class SalaryRuleController extends Controller
 	public function index(Request $r)
 	{
 		if($r->query('type')){
+			if($r->query('type') == 'all'){
+				return SalaryRule::with('emp')->where('status', '1')->get();
+			}
 			return SalaryRule::with('emp')->where('salary_type', $r->query('type'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
@@ -103,19 +106,22 @@ class SalaryRuleController extends Controller
 		return $pdf->download('salary-rules-of-employees ['.now().'].pdf');
 	}
 
-	public function excel()
+	public function excel(Request $r)
 	{
-		Excel::create('lisun-hris-salary-rules ['.now().']', function($excel){
+		$data = [];
+		$data = SalaryRule::excel($r->query('type'));
+		$fn = 'lisun hris salary rules '.$r->query('type').' type';
+		Excel::create($fn, function($excel) use ($data){
 			$excel->setTitle('Lisun HRIS Salary Rules');
 			$excel->setCreator('Lisun')->setCompany('Lisun');
 			$excel->setDescription('Lisun HRIS Salary Rules');
-			$excel->sheet('data', function($sheet){
-				$sheet->fromArray(SalaryRule::excel());
+			$excel->sheet('data', function($sheet) use ($data){
+				$sheet->fromArray($data);
 				$sheet->row(1, function($row){
 					$row->setFontWeight('bold');
 				});
 				$sheet->prependRow(['Salary Rules']);
-				$sheet->mergeCells('A1:I1');
+				$sheet->mergeCells('A1:N1');
 				$sheet->cell('A1', function($cell){
 					$cell->setFontSize(16);
 					$cell->setAlignment('center');
