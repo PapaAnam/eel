@@ -38,5 +38,6 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'LeavePeriodRuleController@index');
 		Route::get('/id', 'LeavePeriodRuleController@show');
 		Route::put('/', 'LeavePeriodRuleController@store');
+		Route::get('/left', 'LeavePeriodLeftController@index');
 	});
 });

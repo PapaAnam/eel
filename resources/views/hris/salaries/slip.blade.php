@@ -34,14 +34,14 @@
 		<tr>
 			<td width="250px">Basic Salary</td>
 			<td align="right">$</td>
-			<td width="50px" align="right">{{ $s->sr->basic_salary }}</td>
+			<td width="50px" align="right">{{ $s->sr ? $s->sr->basic_salary : 'Not Set' }}</td>
 		</tr>
 		@endif
 		@if($s->sg->basic_salary == 1)
 		<tr>
 			<td>Allowance</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->allowance }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->allowance : 'Not Set' }}</td>
 		</tr>
 		@endif
 		{{-- <tr>
@@ -67,32 +67,32 @@
 		<tr>
 			<td>Incentive {{-- Sales --}}</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->incentive }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->incentive : 'Not Set' }}</td>
 		</tr>
 		@endif
 		@if($s->sg->food_allowance == 1)
 		<tr>
 			<td>Food Allowance</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->eat_cost }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->eat_cost : 'Not Set' }}</td>
 		</tr>
 		@endif
 		@if($s->sg->rent_motorcycle == 1)
 		<tr>
 			<td>Rent Motorcycle</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->rent_motorcycle }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->rent_motorcycle : 'Not Set' }}</td>
 		</tr>
 		@endif
 		{{-- <tr>
 			<td>ETC</td>
-			<td align="right">{{ $s->sr->etc }}</td>
+			<td align="right">{{ $s->sr ? $s->sr-> : 'Not Set'etc }}</td>
 		</tr> --}}
 		@if($s->sg->retention == 1)
 		<tr>
 			<td>Retention</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->ritation }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->ritation : 'Not Set' }}</td>
 		</tr>
 		@endif
 		<tr>
@@ -136,7 +136,7 @@
 		<tr>
 			<td width="116px">Cash Withdrawal</td>
 			<td align="right">$</td>
-			<td align="right">{{ $s->sr->cash_receipt }}</td>
+			<td align="right">{{ $s->sr ? $s->sr->cash_receipt : 'Not Set' }}</td>
 			<td></td>
 		</tr>
 		@endif

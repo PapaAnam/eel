@@ -86,7 +86,16 @@ class Salary extends Model
 
 	public function getSegurancaAttribute()
 	{
+		if(is_null($this->seguranca_id) or $this->seguranca_id == ''){
+			return 0;
+		}
+		if(is_null($this->sg['seguranca_social']) || $this->sg['seguranca_social'] == '0'){
+			return 0;
+		}
 		$sr = $this->sr;
+		if(is_null($sr)){
+			return 0;
+		}
 		$seguranca_social = $sr->seguranca;
 		if(config('app.seguranca')){
 			$seguranca_social = ($sr->basic_salary - $this->absent_punishment) * 4 / 100;
@@ -105,7 +114,7 @@ class Salary extends Model
 		}
 		$cash = 0;
 		if($this->sg['cash_withdrawal'] == 1){
-			$cash = $this->sr->cash_receipt;
+			$cash = is_null($this->sr) ? 0 : $this->sr->cash_receipt;
 		}
 		$absent_punishment = 0;
 		if($this->sg['absent'] == 1){

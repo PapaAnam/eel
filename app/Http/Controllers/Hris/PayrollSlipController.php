@@ -173,15 +173,27 @@ class PayrollSlipController extends Controller
 
 	public function print($id)
 	{
+		$s = Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $id)->first();
+		if(is_null($s)){
+			return 'not available';
+		}
 		return view('hris.salaries.print', [
-			's'	=> Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $id)->first()
+			's'	=> $s
 		]);
 	}
 
-	public function byGroup($id)
+	public function byGroup(Request $r, $id)
 	{
+		$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+		->where('month', $r->query('month'))
+		->where('year', $r->query('year'))
+		->where('salary_group', $id)
+		->get();
+		if(count($salaries) <= 0){
+			return 'not available';
+		}
 		return view('hris.salaries.multiple-slip', [
-			'salaries'	=> Salary::with(['sg', 'emp.pos', 'sr'])->where('salary_group', $id)->get()
+			'salaries'	=> $salaries
 		]);
 	}
 
