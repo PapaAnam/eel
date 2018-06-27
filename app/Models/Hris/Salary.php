@@ -50,7 +50,6 @@ class Salary extends Model
 			$sr = $this->sr;
 			$sg = $this->sg;
 			$bs = 0;
-			// dd($sg['basic_salary'] == 1);
 			if($sg['basic_salary'] == 1){
 				$bs = $sr->basic_salary;
 			}
