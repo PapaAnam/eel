@@ -121,15 +121,10 @@ class PayrollSlipController extends Controller
 			->where('month', $r->query('month'))
 			->where('year', $r->query('year'))
 			->first();
-			// $this->getData($salary->id);
 			$salaries[] 						= Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $salary->id)->first();
-			// $total_hari_kerja[]					= $this->total_hari_kerja;
-			// $seguranca_social[]					= $this->seguranca_social;
 		}
 		return [
 			'salaries'							=> $salaries,
-			// 'total_hari_kerja'					=> $total_hari_kerja,
-			// 'seguranca_social'					=> $seguranca_social,
 		];
 	}
 
