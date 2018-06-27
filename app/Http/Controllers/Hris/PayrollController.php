@@ -104,7 +104,7 @@ class PayrollController extends Controller
     {
         return S::with(['emp', 'sr' => function($q){
             $q->where('status', '1');
-        }])->where('month', $r->month)->where('year', $r->year)->latest()->get();
+        }, 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get();
     }
 
     public function globalReport(Request $r)

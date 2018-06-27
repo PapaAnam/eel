@@ -50,35 +50,35 @@ class Salary extends Model
 			$sr = $this->sr;
 			$sg = $this->sg;
 			$bs = 0;
-			if($sg->basic_salary == 1){
+			if($sg['basic_salary'] == 1){
 				$bs = $sr->basic_salary;
 			}
 			$incentive = 0;
-			if($sg->incentive == 1){
+			if($sg['incentive'] == 1){
 				$incentive = $sr->incentive;
 			}
 			$food = 0;
-			if($sg->food_allowance == 1){
+			if($sg['food_allowance'] == 1){
 				$food = $sr->eat_cost;
 			}
 			$allowance = 0;
-			if($sg->allowance == 1){
+			if($sg['allowance'] == 1){
 				$allowance = $sr->allowance;
 			}
 			$retention = 0;
-			if($sg->retention == 1){
+			if($sg['retention'] == 1){
 				$retention = $sr->ritation;
 			}
 			$ot_regular = 0;
-			if($sg->ot_regular == 1){
+			if($sg['ot_regular'] == 1){
 				$ot_regular = $this->ot_regular;
 			}
 			$ot_holiday = 0;
-			if($sg->ot_holiday == 1){
+			if($sg['ot_holiday'] == 1){
 				$ot_holiday = $this->ot_holiday;
 			}
 			$rent_motorcycle = 0;
-			if($sg->rent_motorcycle == 1){
+			if($sg['rent_motorcycle'] == 1){
 				$rent_motorcycle = $sr->rent_motorcycle;
 			}
 			return $bs+$incentive+$food+$allowance+$retention+$sr->etc+$ot_regular+$ot_holiday+$rent_motorcycle;
@@ -102,19 +102,19 @@ class Salary extends Model
 		if(is_null($this->seguranca_id) or $this->seguranca_id == ''){
 			$sg = 0;
 		}
-		if(is_null($this->sg->seguranca_social) || $this->sg->seguranca_social == '0'){
+		if(is_null($this->sg['seguranca_social']) || $this->sg['seguranca_social'] == '0'){
 			$sg = 0;
 		}
 		$cash = 0;
-		if($this->sg->cash_withdrawal == 1){
+		if($this->sg['cash_withdrawal'] == 1){
 			$cash = $this->sr->cash_receipt;
 		}
 		$absent_punishment = 0;
-		if($this->sg->absent == 1){
+		if($this->sg['absent'] == 1){
 			$absent_punishment = $this->absent_punishment;
 		}
 		$tax_insurance = 0;
-		if($this->sg->tax_insurance == 1){
+		if($this->sg['tax_insurance'] == 1){
 			$tax_insurance = $this->tax_insurance;
 		}
 		return $sg+$cash+$absent_punishment+$tax_insurance;
