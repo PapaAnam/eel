@@ -118,7 +118,7 @@
 		</tr>
 		@if($s->sg->tax_insurance == 1)
 		<tr>
-			<td width="116px">Tax Insurance</td>
+			<td width="116px">Income Tax (10%)</td>
 			<td align="right">$</td>
 			<td align="right">{{ $s->tax_insurance }}</td>
 			<td></td>
