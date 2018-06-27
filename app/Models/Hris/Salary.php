@@ -8,7 +8,7 @@ class Salary extends Model
 {
 	protected $table = 'hris_salaries';
 	public $timestamps = false;
-	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment', 'tax_insurance', 'salary_group', 'present_total'];
+	protected $fillable = ['employee', 'created_at', 'month', 'year', 'department', 'salary_rule', 'position', 'over_time', 'ot_regular', 'ot_holiday', 'ot_regular_in_hours', 'ot_holiday_in_hours', 'seguranca', 'absent', 'absent_punishment', 'tax_insurance', 'salary_group', 'present_total', 'seguranca_id'];
 	protected $appends = ['clear_salary', 'gross_salary', 'seguranca', 'total_potongan'];
 
 	public function emp()
@@ -65,7 +65,11 @@ class Salary extends Model
 
 	public function getTotalPotonganAttribute()
 	{
-		return $this->seguranca+$this->sr->cash_receipt+$this->absent_punishment+$this->tax_insurance;
+		$sg = $this->seguranca;
+		if(is_null($this->seguranca_id) or $this->seguranca_id == ''){
+			$sg = 0;
+		}
+		return $sg+$this->sr->cash_receipt+$this->absent_punishment+$this->tax_insurance;
 	}
 
 	public function getTaxInsuranceAttribute($value)

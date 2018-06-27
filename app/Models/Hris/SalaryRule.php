@@ -7,6 +7,7 @@ use App\Models\Hris\Employee;
 class SalaryRule extends Model
 {
 	protected $table = 'hris_salary_rules';
+	protected $appends = ['month_name', 'year'];
 	protected $guarded = [];
 
 	public function emp()
@@ -56,5 +57,15 @@ class SalaryRule extends Model
 			$data[] = $a;
 		}
 		return $data;
+	}
+
+	public function getMonthNameAttribute()
+	{
+		return english_month_name(substr($this->created_at, 5, 2));
+	}
+
+	public function getYearAttribute()
+	{
+		return substr($this->created_at, 0, 4);
 	}
 }

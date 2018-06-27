@@ -75,6 +75,7 @@ class PayrollController extends Controller
                     'tax_insurance'         => $tax_insurance,
                     'salary_group'          => $e->salary_group,
                     'present_total'         => $present_total,
+                    'seguranca_id'         => $e->seguranca_social,
                 ]);
                 $total_success++;
             }else{
