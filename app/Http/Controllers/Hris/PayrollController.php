@@ -38,9 +38,9 @@ class PayrollController extends Controller
 
                 // menghitung ot holiday
                 $oteh = Attendance::overTimeEventInMonth($r->year, $r->month, $e->id);
-                if($e->id == 8){
-                    return $oth;
-                }
+                // if($e->id == 8){
+                //     return $oth;
+                // }
                 $ot_event_holiday_money = $sr->basic_salary/22/8*$oteh['in_reg'];
                 $ot_event_holiday_hours = $oteh['in_hours'];
 
