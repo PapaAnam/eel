@@ -50,6 +50,7 @@ class Salary extends Model
 			$sr = $this->sr;
 			$sg = $this->sg;
 			$bs = 0;
+			// dd($sg['basic_salary'] == 1);
 			if($sg['basic_salary'] == 1){
 				$bs = $sr->basic_salary;
 			}
@@ -93,7 +94,7 @@ class Salary extends Model
 		if(config('app.seguranca')){
 			$seguranca_social = ($sr->basic_salary - $this->absent_punishment) * 4 / 100;
 		}
-		return $seguranca_social;
+		return round($seguranca_social, 2);
 	}
 
 	public function getTotalPotonganAttribute()
