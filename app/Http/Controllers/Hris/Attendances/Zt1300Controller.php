@@ -46,7 +46,7 @@ class Zt1300Controller extends Controller
 							'real_enter'	=> $time,
 						]);
 					}else{
-						if(is_null($att->enter) or $att->enter == '00:00:00'){
+						if(is_null($att->enter) || $att->enter == '00:00:00'){
 							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
@@ -72,7 +72,7 @@ class Zt1300Controller extends Controller
 							'real_enter'	=> $time,
 						]);
 					}else{
-						if(is_null($att->enter) or $att->enter == '00:00:00'){
+						if(is_null($att->enter) || $att->enter == '00:00:00'){
 							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
@@ -88,7 +88,7 @@ class Zt1300Controller extends Controller
 					$berhasil++;
 				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					$out = $time;
-					$sr = SR::where('employee', $employee->id)->where('status', '1')->first();
+					$sr = SR::where('employee', $e->id)->where('status', '1')->first();
 					if(!is_null($sr)){
 						if($sr->salary_type == 'driver' || $sr->salary_type == 'sales'){
 							$out = '17:00:00';
@@ -104,7 +104,7 @@ class Zt1300Controller extends Controller
 							'status'		=> 'Present',
 						]);
 					}else{
-						if(is_null($att->out) or $att->out == '00:00:00' or strtotime($date.' '.$att->out) < strtotime($date.' '.$time)){
+						if(is_null($att->out) || $att->out == '00:00:00' || strtotime($date.' '.$att->out) < strtotime($date.' '.$time)){
 							Attendance::where([
 								'employee'		=> $e->id,
 								'created_at'	=> $date,
