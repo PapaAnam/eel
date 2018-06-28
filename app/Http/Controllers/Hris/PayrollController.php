@@ -65,8 +65,8 @@ class PayrollController extends Controller
                 $absent_punishment = $absent * ($sr->basic_salary / 22);
 
                 // menghitung tax_insurance
-                $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
-                $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 0.1 : 0;
+                $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_event_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
+                $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 10 / 100 : 0;
 
                 $present_total = Attendance::presentTotalInMonth($e->id, $year, $month);
                 
