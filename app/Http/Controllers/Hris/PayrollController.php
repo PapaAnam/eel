@@ -35,12 +35,6 @@ class PayrollController extends Controller
                             'status'    => null,
                         ]);
                     }
-                    // memflatkan pekerja standart yg <= 17:25
-                    // if(strtotime($a->created_at.' '.$a->out) <= strtotime($a->created_at.' 17:25:00') && $sr->salary_type == 'standart'){
-                    //     Attendance::find($a->id)->update([
-                    //         'out'    => '17:00:00',
-                    //     ]);
-                    // }
                 }
 
                 // menghitung ot holiday
@@ -64,10 +58,6 @@ class PayrollController extends Controller
                 $absent = Attendance::absent($year, $month, $e->id);
                 $absent_punishment = $absent * ($sr->basic_salary / 22);
 
-                // menghitung tax_insurance
-                $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_event_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
-                $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 10 / 100 : 0;
-
                 $present_total = Attendance::presentTotalInMonth($e->id, $year, $month);
                 
                 S::updateOrCreate([
@@ -84,7 +74,6 @@ class PayrollController extends Controller
                     'ot_holiday_in_hours'   => $ot_holiday_hours,
                     'absent'                => $absent,
                     'absent_punishment'     => round($absent_punishment, env('ROUND', 2)),
-                    'tax_insurance'         => $tax_insurance,
                     'salary_group'          => $e->salary_group,
                     'present_total'         => $present_total,
                     'seguranca_id'          => $e->seguranca_social,
