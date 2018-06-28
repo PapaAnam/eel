@@ -12,3 +12,7 @@ Homestead.yaml
 *.sql
 package.json
 package-lock.json
+eel.bat
+eelp.bat
+optimize.bat
+prod.bat
