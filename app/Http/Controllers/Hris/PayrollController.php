@@ -35,11 +35,12 @@ class PayrollController extends Controller
                             'status'    => null,
                         ]);
                     }
-                    if(strtotime($a->created_at.' '.$a->out) <= strtotime($a->created_at.' 17:25:00') && $sr->salary_type == 'standart'){
-                        Attendance::find($a->id)->update([
-                            'out'    => '17:00:00',
-                        ]);
-                    }
+                    // memflatkan pekerja standart yg <= 17:25
+                    // if(strtotime($a->created_at.' '.$a->out) <= strtotime($a->created_at.' 17:25:00') && $sr->salary_type == 'standart'){
+                    //     Attendance::find($a->id)->update([
+                    //         'out'    => '17:00:00',
+                    //     ]);
+                    // }
                 }
 
                 // menghitung ot holiday
