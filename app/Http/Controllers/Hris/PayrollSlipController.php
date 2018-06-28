@@ -182,6 +182,29 @@ class PayrollSlipController extends Controller
 		]);
 	}
 
+	public function slip(Request $r)
+	{
+		$salaries = [];
+		if($r->query('month') == 'all'){
+			$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+			->where('year', $r->query('year'))
+			->where('employee', $r->query('employee'))
+			->get();
+		}else{
+			$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+			->where('month', $r->query('month'))
+			->where('year', $r->query('year'))
+			->where('employee', $r->query('employee'))
+			->get();
+		}
+		if(count($salaries) <= 0){
+			return 'not available';
+		}
+		return view('hris.salaries.multiple-slip', [
+			'salaries'	=> $salaries
+		]);
+	}
+
 	public function byGroup(Request $r, $id)
 	{
 		$salaries = Salary::with(['sg', 'emp.pos', 'sr'])

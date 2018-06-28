@@ -100,7 +100,13 @@ class PayrollController extends Controller
         $month      = $r->month;
         $employee   = $r->employee;
         $emp = E::where('id', $employee)->get();
-        $this->payThat($emp, $year, $month);
+        if($month == 'all'){
+            foreach (range(1,12) as $m) {
+                $this->payThat($emp, $year, $m);
+            }
+        }else{
+            $this->payThat($emp, $year, $month);
+        }
         if($this->sr_not_set){
             return response('Salary Rule not set yet', 419);
         }
@@ -129,13 +135,18 @@ class PayrollController extends Controller
 
     public function index(Request $r)
     {
-        $s = S::with(['emp', 'sr' => function($q){
-            $q->where('status', '1');
-        }, 'sg'])->where('month', $r->month)->where('year', $r->year);
+        $s = [];
         if($r->query('employee')){
-            $s = $s->where('employee', $r->query('employee'));
+            if($r->query('month') == 'all'){
+                S::where('month', '0')->orWhere('month', 0)->delete();
+                $s = S::with(['emp', 'sr', 'sg'])->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
+            }else{
+                $s = S::with(['emp', 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
+            }
+        }else{
+            $s = S::with(['emp', 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get();
         }
-        return $s->latest()->get();
+        return $s;
     }
 
     public function globalReport(Request $r)

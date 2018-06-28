@@ -322,27 +322,6 @@ class Attendance extends Model
             if(!is_null($att)){
                 $dt = $att;
             }else{
-                $dt = collect([
-                    "id"                        => str_random(12),
-                    "employee"                  => $e->id,
-                    "created_at"                => $date,
-                    "enter"                     => null,
-                    "break"                     => null,
-                    "end_break"                 => null,
-                    "out"                       => null,
-                    "status"                    => 'Absent',
-                    "over_time_in_week"         => null,
-                    "work_total_in_week"        => null,
-                    "stat"                      => null,
-                    "work_total"                => null,
-                    "over_time"                 => null,
-                    "work_total_in_hours"       => null,
-                    "is_holiday"                => $libur,
-                    "over_time_in_hours"        => null,
-                    "over_time_in_money"        => null,
-                    "day"                       => date('l', strtotime($date)),
-                    "emp"                       => $e,
-                ]);
                 $dt = Attendance::firstOrCreate([
                     'created_at'        => $date,
                     'employee'          => $e->id
