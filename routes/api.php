@@ -20,6 +20,7 @@ Route::namespace('Hris')->group(function(){
 	Route::prefix('payroll')->group(function(){
 		Route::get('/', 'PayrollController@index');
 		Route::post('/pay-all-employee', 'PayrollController@payAll');
+		Route::post('/pay', 'PayrollController@pay');
 	});
 
 	Route::prefix('salary-group')->group(function(){

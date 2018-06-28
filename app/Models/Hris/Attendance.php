@@ -271,12 +271,6 @@ class Attendance extends Model
             }
             return $item;
         })->values();
-        $att_baru = [];
-        if($employee == 'all'){
-            $pegawai = Employee::active();
-        }else{
-            $pegawai = Employee::where('id', $employee)->get();
-        }
         return $att;
     }
 

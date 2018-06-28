@@ -17,18 +17,17 @@ use Excel;
 class PayrollController extends Controller
 {
 
-    public function payAll(Request $r)
-    {
-        $emp = E::with(['dep', 'pos'])->get();
-        $sr_not_set = [];
-        $total_success = 0;
+    private $sr_not_set = false;
+    private $total_success = 0;
+
+    private function payThat($emp, $year, $month){
         foreach ($emp as $e) {
             if(SalaryRule::where('employee', $e->id)->where('status', '1')->exists()){
                 $sr = SalaryRule::where('employee', $e->id)->where('status', '1')->first();
                 $over_time = 0;
                 $attendances = Attendance::where('employee', $e->id)
-                ->whereMonth('created_at', $r->month)
-                ->whereYear('created_at', $r->year)
+                ->whereMonth('created_at', $month)
+                ->whereYear('created_at', $year)
                 ->get();
                 foreach ($attendances as $a) {
                     if($a->is_holiday && $a->status == 'Absent'){
@@ -39,12 +38,12 @@ class PayrollController extends Controller
                 }
 
                 // menghitung ot holiday
-                $oth = Attendance::overTimeSundayInMonth($r->year, $r->month, $e->id);
+                $oth = Attendance::overTimeSundayInMonth($year, $month, $e->id);
                 $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
                 $ot_holiday_hours = $oth['in_hours'];
 
                 // menghitung ot holiday
-                $oteh = Attendance::overTimeEventInMonth($r->year, $r->month, $e->id);
+                $oteh = Attendance::overTimeEventInMonth($year, $month, $e->id);
                 // if($e->id == 8){
                 //     return $oth;
                 // }
@@ -52,23 +51,23 @@ class PayrollController extends Controller
                 $ot_event_holiday_hours = $oteh['in_hours'];
 
                 // menghitung ot regular
-                $otr = Attendance::overTimeRegularInMonth($r->year, $r->month, $e->id);
+                $otr = Attendance::overTimeRegularInMonth($year, $month, $e->id);
                 $ot_regular = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
 
                 // menghitung absent
-                $absent = Attendance::absent($r->year, $r->month, $e->id);
+                $absent = Attendance::absent($year, $month, $e->id);
                 $absent_punishment = $absent * ($sr->basic_salary / 22);
 
                 // menghitung tax_insurance
                 $gross_salary = ($sr->basic_salary + $sr->allowance + $ot_holiday_money + $ot_regular + $sr->incentive + $sr->eat_cost + $sr->ritation + $sr->rent_motorcycle);
                 $tax_insurance = $gross_salary > 500 ? ($gross_salary - 500) * 0.1 : 0;
 
-                $present_total = Attendance::presentTotalInMonth($e->id, $r->year, $r->month);
+                $present_total = Attendance::presentTotalInMonth($e->id, $year, $month);
                 
                 S::updateOrCreate([
                     'employee'      => $e->id,
-                    'month'         => $r->month,
-                    'year'          => $r->year,
+                    'month'         => $month,
+                    'year'          => $year,
                 ], [
                     'salary_rule'           => $sr->id,
                     'department'            => $e->dep->id,
@@ -82,18 +81,39 @@ class PayrollController extends Controller
                     'tax_insurance'         => $tax_insurance,
                     'salary_group'          => $e->salary_group,
                     'present_total'         => $present_total,
-                    'seguranca_id'         => $e->seguranca_social,
+                    'seguranca_id'          => $e->seguranca_social,
                 ]);
-                $total_success++;
+                $this->total_success++;
             }else{
+                $this->sr_not_set = true;
                 $sr_not_set[] = [
                     'nin'       => $e->nin,
                     'name'      => $e->name,
                 ];
             }
         }
+    }
+
+    public function pay(Request $r)
+    {
+        $year       = $r->year;
+        $month      = $r->month;
+        $employee   = $r->employee;
+        $emp = E::where('id', $employee)->get();
+        $this->payThat($emp, $year, $month);
+        if($this->sr_not_set){
+            return response('Salary Rule not set yet', 419);
+        }
+        return 'Pay success';
+    }
+
+    public function payAll(Request $r)
+    {
+        $emp = E::with(['dep', 'pos'])->get();
+        $sr_not_set = [];
+        $this->payThat($emp, $r->year, $r->month);
         if(count($sr_not_set) > 0){
-            if($total_success > 0){
+            if($this->total_success > 0){
                 return response([
                     'msg'           => 'Some employees success paid but there are '.count($sr_not_set).' employees not yet set salary rule', 
                     'employee'      => $sr_not_set,
@@ -109,9 +129,13 @@ class PayrollController extends Controller
 
     public function index(Request $r)
     {
-        return S::with(['emp', 'sr' => function($q){
+        $s = S::with(['emp', 'sr' => function($q){
             $q->where('status', '1');
-        }, 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get();
+        }, 'sg'])->where('month', $r->month)->where('year', $r->year);
+        if($r->query('employee')){
+            $s = $s->where('employee', $r->query('employee'));
+        }
+        return $s->latest()->get();
     }
 
     public function globalReport(Request $r)
@@ -164,6 +188,7 @@ class PayrollController extends Controller
                 }
                 $sheet->with($arr);
                 $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'];
+                
                 // set border to all active cell
                 foreach ($kolom as $k) {
                     foreach (range(1, count($arr)+1) as $b) {
