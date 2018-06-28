@@ -129,6 +129,7 @@ class Salary extends Model
 
 	public function getTaxInsuranceAttribute($value)
 	{
-		return round($value, 2);
+		$tax = $this->gross_salary > 500 ? ($this->gross_salary - 500) * 10 / 100 : 0;
+		return round($tax, 2);
 	}
 }
