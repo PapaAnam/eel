@@ -626,5 +626,10 @@ class AttendanceController extends Controller
             });
         })->export('xlsx');
     }
+
+    public function workTotal(Request $r)
+    {
+        return convertHour(A::workTotalInMonth($r->query('year'), $r->query('month'), $r->query('employee')));
+    }
 }
 
