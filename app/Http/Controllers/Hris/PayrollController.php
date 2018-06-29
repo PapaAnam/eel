@@ -139,7 +139,9 @@ class PayrollController extends Controller
                 $s = S::with(['emp', 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
             }
         }else{
-            $s = S::with(['emp', 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get();
+            $s = S::with(['emp'=>function($q){
+                $q->whereNull('non_active');
+            }, 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get()->whereNotIn('emp', [null])->values();
         }
         return $s;
     }
