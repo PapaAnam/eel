@@ -27,6 +27,9 @@ class SalaryRule extends Model
 		$data = [];
 		$i = 1;
 		$MM = [];
+		if(is_null($type)){
+			$type = 'all';
+		}
 		if($type == 'all')
 			$MM = $this->export();
 		else
@@ -38,15 +41,15 @@ class SalaryRule extends Model
 				'#' 						=> $i++,
 				'NIN'						=> $d->nin,
 				'Employee'                  => $d->name,
-				'Department' 					=> $d->dep->name,
-				'Job Title'						=> $d->pos->name,
+				'Department' 				=> $d->dep->name,
+				'Job Title'					=> $d->pos->name,
 				'Basic Salary'              => $d->sr ? $d->sr->basic_salary : 'Not Set Yet',
 				'Allowance'                 => $d->sr ? $d->sr->allowance : 'Not Set Yet',
 				'Incentive'                 => $d->sr ? $d->sr->incentive : 'Not Set Yet',
-				'Food Allowance'                  => $d->sr ? $d->sr->eat_cost : 'Not Set Yet',
+				'Food Allowance'            => $d->sr ? $d->sr->eat_cost : 'Not Set Yet',
 				'Rent Motorcycle'           => $d->sr ? $d->sr->rent_motorcycle : 'Not Set Yet',
 				'Cash Withdrawal'           => $d->sr ? $d->sr->cash_receipt : 'Not Set Yet',
-				'Retention'           => $d->sr ? $d->sr->ritation : 'Not Set Yet',
+				'Retention'           		=> $d->sr ? $d->sr->ritation : 'Not Set Yet',
 				'Salary Type'				=> $d->sr ? $d->sr->salary_type : 'Not Set Yet',
 				// 'Active' => $d->sr ? (($d->sr->status == 0) ? 'N' : 'Y') : 'Not Set Yet',
 				'Last Updated' => $d->sr ? $d->sr->created_at : 'Not Set Yet'
