@@ -110,7 +110,7 @@ class PayrollController extends Controller
 
     public function payAll(Request $r)
     {
-        $emp = E::with(['dep', 'pos'])->get();
+        $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
         $sr_not_set = [];
         $this->payThat($emp, $r->year, $r->month);
         if(count($sr_not_set) > 0){
@@ -150,7 +150,7 @@ class PayrollController extends Controller
         $month = $r->query("month");
         $year = $r->query('year');
         $salaries = S::with(['emp'=>function($q){
-            $q->with('dep', 'post')->whereNull('non_active');
+            $q->with('dep', 'pos')->whereNull('non_active');
         }])->where('month', $month)->where('year', $year)->get();
         $title = 'Global report period '.$month_name.' '.$year;
         Excel::create($title, function($excel) use ($year, $month, $salaries){
@@ -160,39 +160,41 @@ class PayrollController extends Controller
             $excel->sheet('data', function($sheet) use ($year, $month, $salaries){
                 $arr = [];
                 foreach ($salaries as $a) {
-                    $total_hari_kerja = Attendance::totalHariKerja($year, $month, $a->emp->id);
-                    $work_total = Attendance::workTotalInMonth($year, $month, $a->emp->id);
-                    $arr[]         = [
-                        'NIN'                                               => $a->emp->nin,
-                        'Seguranca ID'                                      => $a->emp->seguranca_social,
-                        'Employee Name'                                     => $a->emp->name,
-                        'Group'                                             => config('app.group', 'mix'),
-                        'Department'                                        => $a->emp->dep->name,
-                        'Job Title'                                         => $a->emp->pos->name,
-                        'Basic Salary'                                      => $a->sr->basic_salary,
-                        'Allowance'                                         => $a->sr->allowance,
-                        'Days Work Total'                                   => $total_hari_kerja,
-                        'Cuti Taken'                                        => '',
-                        'Sick Leave take'                                   => '',
-                        'Days Absent Total'                                 => $a->absent,
-                        'Total Working Hours'                               => convertHour($work_total),
-                        'Overtime Hours (x1.5)'                             => $a->ot_regular_in_hours,
-                        'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
-                        'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
-                        'Total Overtime Hours (x2)'                         => $a->ot_holiday,
-                        'Retention Number'                                  => '',
-                        'Retention Amount'                                  => $a->sr->ritation,
-                        'Incentive Amount'                                  => $a->sr->incentive,
-                        'Total'                                             => $a->gross_salary,
-                        'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
-                        'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
-                        'Cash Withdrawal'                                   => $a->sr->cash_reecipt,
-                        'Deduct Absent $'                                   => $a->absent_punishment,
-                        'Total To Pay $'                                    => $a->clear_salary,
-                        'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
-                        'Declared Basic Salary Less Absence'                => '',
+                    if(!is_null($a->emp)){
+                        $total_hari_kerja = Attendance::totalHariKerja($year, $month, $a->emp->id);
+                        $work_total = Attendance::workTotalInMonth($year, $month, $a->emp->id);
+                        $arr[]         = [
+                            'NIN'                                               => $a->emp->nin,
+                            'Seguranca ID'                                      => $a->emp->seguranca_social,
+                            'Employee Name'                                     => $a->emp->name,
+                            'Group'                                             => config('app.group', 'mix'),
+                            'Department'                                        => $a->emp->dep->name,
+                            'Job Title'                                         => $a->emp->pos->name,
+                            'Basic Salary'                                      => $a->sr->basic_salary,
+                            'Allowance'                                         => $a->sr->allowance,
+                            'Days Work Total'                                   => $total_hari_kerja,
+                            'Cuti Taken'                                        => '',
+                            'Sick Leave take'                                   => '',
+                            'Days Absent Total'                                 => $a->absent,
+                            'Total Working Hours'                               => convertHour($work_total),
+                            'Overtime Hours (x1.5)'                             => $a->ot_regular_in_hours,
+                            'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
+                            'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
+                            'Total Overtime Hours (x2)'                         => $a->ot_holiday,
+                            'Retention Number'                                  => '',
+                            'Retention Amount'                                  => $a->sr->ritation,
+                            'Incentive Amount'                                  => $a->sr->incentive,
+                            'Total'                                             => $a->gross_salary,
+                            'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
+                            'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
+                            'Cash Withdrawal'                                   => $a->sr->cash_reecipt,
+                            'Deduct Absent $'                                   => $a->absent_punishment,
+                            'Total To Pay $'                                    => $a->clear_salary,
+                            'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
+                            'Declared Basic Salary Less Absence'                => '',
 
-                    ];
+                        ];
+                    }
                 }
                 $sheet->with($arr);
                 $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'];
