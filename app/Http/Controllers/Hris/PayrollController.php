@@ -149,7 +149,9 @@ class PayrollController extends Controller
         $month_name = english_month_name($r->query("month"));
         $month = $r->query("month");
         $year = $r->query('year');
-        $salaries = S::with('emp.pos', 'emp.dep')->where('month', $month)->where('year', $year)->get();
+        $salaries = S::with(['emp'=>function($q){
+            $q->with('dep', 'post')->whereNull('non_active');
+        }])->where('month', $month)->where('year', $year)->get();
         $title = 'Global report period '.$month_name.' '.$year;
         Excel::create($title, function($excel) use ($year, $month, $salaries){
             $excel->setTitle('Lisun HRIS Global Report');
