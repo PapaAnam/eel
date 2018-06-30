@@ -132,4 +132,12 @@ class Salary extends Model
 		$tax = $this->gross_salary > 500 ? ($this->gross_salary - 500) * 10 / 100 : 0;
 		return round($tax, 2);
 	}
+
+	public function getOtRegularAttribute($value)
+	{
+		if($this->sr->salary_type == 'sales' || $this->sr->salary_type == 'driver'){
+			return 0;
+		}
+		return $value;
+	}
 }
