@@ -33,6 +33,7 @@ class SalaryGroupController extends Controller
 			'seguranca_social'	=> $r->seguranca_social,
 			'cash_withdrawal'	=> $r->cash_withdrawal,
 			'absent'			=> $r->absent,
+			'etc'			=> $r->etc,
 		]);
 		return 'Salary Group success created';
 	}
@@ -56,6 +57,7 @@ class SalaryGroupController extends Controller
 			'seguranca_social'	=> $r->seguranca_social,
 			'cash_withdrawal'	=> $r->cash_withdrawal,
 			'absent'			=> $r->absent,
+			'etc'			=> $r->etc,
 		]);
 		return 'Salary Group success updated';
 	}

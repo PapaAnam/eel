@@ -84,10 +84,12 @@
 			<td align="right">{{ $s->sr ? $s->sr->rent_motorcycle : 'Not Set' }}</td>
 		</tr>
 		@endif
-		{{-- <tr>
+		@if($s->sg->etc == 1)
+		<tr>
 			<td>ETC</td>
-			<td align="right">{{ $s->sr ? $s->sr-> : 'Not Set'etc }}</td>
-		</tr> --}}
+			<td align="right">{{ $s->sr ? $s->sr->etc : 'Not Set' }}</td>
+		</tr>
+		@endif
 		@if($s->sg->retention == 1)
 		<tr>
 			<td>Retention</td>

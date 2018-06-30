@@ -187,6 +187,7 @@ class PayrollController extends Controller
                             'Retention Number'                                  => '',
                             'Retention Amount'                                  => $a->sr->ritation,
                             'Incentive Amount'                                  => $a->sr->incentive,
+                            'ETC'                                               => $a->sr->etc,
                             'Total'                                             => $a->gross_salary,
                             'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
                             'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
@@ -200,7 +201,7 @@ class PayrollController extends Controller
                     }
                 }
                 $sheet->with($arr);
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'];
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC'];
                 
                 // set border to all active cell
                 foreach ($kolom as $k) {
@@ -213,7 +214,7 @@ class PayrollController extends Controller
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
                 });
-                $ijo = ['G','H','P','Q','S','T','U'];
+                $ijo = ['G','H','P','Q','S','T','U', 'V'];
                 foreach ($ijo as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#44bb33');

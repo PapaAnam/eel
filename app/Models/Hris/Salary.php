@@ -79,7 +79,11 @@ class Salary extends Model
 			if($sg['rent_motorcycle'] == 1){
 				$rent_motorcycle = $sr->rent_motorcycle;
 			}
-			return $bs+$incentive+$food+$allowance+$retention+$sr->etc+$ot_regular+$ot_holiday+$rent_motorcycle;
+			$etc = 0;
+			if($sg['etc'] == 1){
+				$etc = $sr->etc;
+			}
+			return $bs+$incentive+$food+$allowance+$retention+$sr->etc+$ot_regular+$ot_holiday+$rent_motorcycle+$etc;
 		}
 		return 0;
 	}
