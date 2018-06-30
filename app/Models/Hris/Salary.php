@@ -83,7 +83,7 @@ class Salary extends Model
 			if($sg['etc'] == 1){
 				$etc = $sr->etc;
 			}
-			return $bs+$incentive+$food+$allowance+$retention+$sr->etc+$ot_regular+$ot_holiday+$rent_motorcycle+$etc;
+			return $bs+$incentive+$food+$allowance+$retention+$ot_regular+$ot_holiday+$rent_motorcycle+$etc;
 		}
 		return 0;
 	}
