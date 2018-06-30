@@ -15,6 +15,7 @@ use App\Models\Hris\SalaryGroup;
 class PayrollSlipController extends Controller
 {
 
+// 
 	private $total_hari_kerja, $s, $file_name, $total_over_time_money, $total_over_time_hours, $total_over_time_holiday_in_money, $total_over_time_holiday_in_hours, $seguranca_social;
 
 	public function getData($id)
