@@ -153,8 +153,9 @@ class PayrollController extends Controller
         $year = $r->query('year');
         $salaries = S::with(['emp'=>function($q){
             $q->with('dep', 'pos')->whereNull('non_active');
-        }])->where('month', $month)->where('year', $year)->get();
+        }, 'sr'])->where('month', $month)->where('year', $year)->get();
         $title = 'Global report period '.$month_name.' '.$year;
+        // dd($salaries[0]);
         Excel::create($title, function($excel) use ($year, $month, $salaries){
             $excel->setTitle('Lisun HRIS Global Report');
             $excel->setCreator('Lisun')->setCompany('Lisun');
@@ -189,7 +190,7 @@ class PayrollController extends Controller
                             'Total'                                             => $a->gross_salary,
                             'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
                             'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
-                            'Cash Withdrawal'                                   => $a->sr->cash_reecipt,
+                            'Cash Withdrawal'                                   => $a->sr->cash_receipt,
                             'Deduct Absent $'                                   => $a->absent_punishment,
                             'Total To Pay $'                                    => $a->clear_salary,
                             'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
@@ -198,6 +199,7 @@ class PayrollController extends Controller
                         ];
                     }
                 }
+                // dd($arr);
                 $sheet->with($arr);
                 $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB'];
                 
