@@ -87,6 +87,7 @@
 		@if($s->sg->etc == 1)
 		<tr>
 			<td>ETC</td>
+			<td align="right">$</td>
 			<td align="right">{{ $s->sr ? $s->sr->etc : 'Not Set' }}</td>
 		</tr>
 		@endif
