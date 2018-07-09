@@ -16,8 +16,12 @@ Route::namespace('Hris')->group(function(){
 		Route::put('/{id}', 'AttendanceController@update');
 	});
 
-	Route::get('/employees/non-active', 'EmployeeNonActiveController@index');
-	Route::get('/employees/{id?}', 'EmployeeController@api');
+	Route::prefix('employees')->group(function(){
+		Route::get('/non-active', 'EmployeeNonActiveController@index');
+		Route::put('/non-activate/{id}', 'EmployeeController@nonActivate');
+		Route::get('/{id?}', 'EmployeeController@api');
+	});
+
 
 	Route::prefix('payroll')->group(function(){
 		Route::get('/', 'PayrollController@index');

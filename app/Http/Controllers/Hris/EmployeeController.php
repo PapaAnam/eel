@@ -560,4 +560,13 @@ class EmployeeController extends Controller
             });
         })->export('xlsx');
     }
+
+    // public function nonActivate(Request $r, $id)
+    // {
+    //     E::find($id)->update([
+    //         'non_active_at'=>date('Y-m-d'),
+    //         'non_active'=>$r->reason
+    //     ]);
+    //     return 'Employee success non activate';
+    // }
 }
