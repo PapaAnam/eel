@@ -35,7 +35,7 @@ class AccountController extends Controller
         $store['calendar']        =  $r->calendar!=null ? $r->calendar : 0;
         $store['special_day']     =  $r->special_day!=null ? $r->special_day : 0;
         $store['attendance']      =  $r->attendance!=null ? $r->attendance : 0;
-        $store['over_time']       =  $r->over_time!=null ? $r->over_time : 0;
+        $store['cash_withdrawal']       =  $r->cash_withdrawal!=null ? $r->cash_withdrawal : 0;
         $store['official_travel'] =  $r->official_travel!=null ? $r->official_travel : 0;
         $store['payroll']         =  $r->payroll!=null ? $r->payroll : 0;
         $store['announcement']    =  $r->announcement!=null ? $r->announcement : 0;
@@ -58,7 +58,7 @@ class AccountController extends Controller
         ];
         $this->validate($r, $rules);
         $error = true;
-        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
+        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->cash_withdrawal || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
             $error = false;
         if($error)
             return response('authority required. please check authority', 409);
@@ -94,7 +94,7 @@ class AccountController extends Controller
             $rules['password']      = 'required|min:6|max:20|alpha_num|confirmed';
         $this->validate($r, $rules);
         $error = true;
-        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->over_time || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
+        if($r->department || $r->job_title || $r->employee_menu || $r->calendar || $r->special_day || $r->attendance || $r->cash_withdrawal || $r->official_travel || $r->payroll || $r->announcement || $r->salary_rule || $r->account || $r->mutation || $r->leave_period)
             $error = false;
         if($error)
             return response('authority required. please check authority', 409);
