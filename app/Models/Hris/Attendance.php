@@ -20,7 +20,11 @@ class Attendance extends Model
 
     public function getStatAttribute()
     {
-        return absence_status($this->status);
+        $absence_status = ['Present', 'Sick', 'Absent', 'Official Travel', 'Father Leave', 'Annual Leave', 'Special Permit', 'Pregnancy'];
+        foreach ($absence_status as $key => $value) {
+            if($key == $this->status)
+                return $value;
+        }
     }
 
     public function getWorkTotalAttribute()

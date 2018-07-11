@@ -148,7 +148,7 @@ require_once('form-helpers.php');
 
 function absence_status($s)
 {
-	$status = ['Present', 'Sick', 'Absent', 'Official Travel', 'Father Leave', 'Holiday', 'Special Permit', 'Pregnancy'];
+	$status = ['Present', 'Sick', 'Absent', 'Official Travel', 'Father Leave', 'Annual Leave', 'Special Permit', 'Pregnancy'];
 	foreach ($status as $key => $value) {
 		if($key == $s)
 			return $value;
