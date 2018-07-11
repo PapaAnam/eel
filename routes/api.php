@@ -47,4 +47,9 @@ Route::namespace('Hris')->group(function(){
 		Route::put('/', 'LeavePeriodRuleController@store');
 		Route::get('/left', 'LeavePeriodLeftController@index');
 	});
+
+	Route::prefix('cash-withdrawal')->group(function(){
+		Route::get('/', 'CashWithdrawalController@index');
+		Route::post('/', 'CashWithdrawalController@store');
+	});
 });

@@ -190,3 +190,7 @@ Route::prefix('salary-group')->group(function(){
 Route::prefix('leave-period')->group(function(){
 	Route::view('/', 'App.hris');
 });
+
+# CASH WITHDRAWAL
+Route::view('/cash-withdrawal', 'App.hris');
+Route::get('/cash-withdrawal/print-form/{cash_withdrawal}', 'CashWithdrawalController@printForm');

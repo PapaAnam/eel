@@ -1,6 +1,6 @@
 {
-    "/js/hris.js": "/js/hris.js?id=44ffba7407372c8e9f73",
-    "/js/fleet.js": "/js/fleet.js?id=d621e177c9cc8f7dc9c5",
+    "/js/hris.js": "/js/hris.js?id=66d7e0f05da58b75cfe8",
+    "/js/fleet.js": "/js/fleet.js?id=d6e3752a0bdaf63775d7",
     "/js/vendor.js": "/js/vendor.js?id=ad657ee91727f465c051",
     "/js/enterprise.js": "/js/enterprise.js?id=4fa765a7893e9cf73354",
     "/js/login-hris.js": "/js/login-hris.js?id=59270d25bb4559c52ce3",
@@ -14,5 +14,5 @@
     "/js/fleet-lib.js": "/js/fleet-lib.js?id=c24d2b4ea09b583abad1",
     "/css/fleet-lib.min.css": "/css/fleet-lib.min.css?id=39cdf5be65322d489ece",
     "/js/fleet-lib.min.js": "/js/fleet-lib.min.js?id=c24d2b4ea09b583abad1",
-    "/js/fleet.min.js": "/js/fleet.min.js?id=d621e177c9cc8f7dc9c5"
+    "/js/fleet.min.js": "/js/fleet.min.js?id=d6e3752a0bdaf63775d7"
 }
