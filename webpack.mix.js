@@ -31,6 +31,8 @@ if(mix.inProduction()){
 mix.js('resources/assets/js/login-hris.js', 'public/js')
 // hris
 .js('resources/assets/js/hris.js', 'public/js')
+// MARKETING IDE
+.js('resources/assets/js/marketing-idea.js', 'public/js')
 .copy('resources/assets/sass/new-metro.css', 'public/css')
 // .styles([
 // 	'public/metro/build/transition_effects.min.css',

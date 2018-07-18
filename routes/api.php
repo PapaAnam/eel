@@ -2,6 +2,7 @@
 
 Route::get('/my-app-name', 'MyAppController@appName');
 Route::get('/hris-name', 'MyAppController@hrisName');
+Route::get('/marketing-idea-name', 'MyAppController@marketingName');
 Route::get('/setting/animation-icon', 'SettingController@animationIcon');
 Route::namespace('Hris')->group(function(){
 	Route::get('/departments/{id?}', 'DepartmentController@api');
@@ -52,4 +53,15 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'CashWithdrawalController@index');
 		Route::post('/', 'CashWithdrawalController@store');
 	});
+});
+
+Route::namespace('MIdea')->group(function(){
+
+	Route::prefix('categories')->group(function(){
+		Route::get('/', 'CategoryController@index');
+	});
+	Route::prefix('products')->group(function(){
+		Route::get('/', 'ProductController@index');
+	});
+
 });

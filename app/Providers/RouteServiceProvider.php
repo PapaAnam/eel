@@ -42,6 +42,11 @@ class RouteServiceProvider extends ServiceProvider
         ->group(base_path('routes/hris.php'));
 
         Route::middleware(['web'])
+        ->prefix('marketing-idea')
+        ->namespace($this->namespace.'\MIdea')
+        ->group(base_path('routes/midea.php'));
+
+        Route::middleware(['web'])
         ->prefix('warehouse')
         ->namespace($this->namespace.'\Warehouse')
         ->group(base_path('routes/warehouse.php'));

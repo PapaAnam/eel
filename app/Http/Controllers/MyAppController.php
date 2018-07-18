@@ -15,4 +15,9 @@ class MyAppController extends Controller
     {
     	return config('app.hris_name');
     }
+
+    public function marketingName()
+    {
+    	return config('app.marketing_name');
+    }
 }

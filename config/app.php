@@ -13,9 +13,11 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'hris'  => env('HRIS_PATH', 'enterprise_edition/public/hris/'),
+    'hris'  => env('HRIS_PATH', 'eel/public/hris/'),
     'hris_name' => env('HRIS_NAME', 'HRIS'),
-    'logo'  => env('LOGO', 'http://localhost/enterprise_edition/public/images/logo.jpg'),
+    'marketing'  => env('MARKETING_PATH', 'eel/public/marketing-idea/'),
+    'marketing_name'=> env('MARKETING_NAME', 'Marketing Idea'),
+    'logo'  => env('LOGO', 'http://localhost/eel/public/images/logo.jpg'),
     'meta' => [
         'description'   => env('META_DESCRIPTION', 'Aplikasi penggajian yang mudah digunakan untuk melakukan penggajian'),
         'keywords'      => env('META_KEYWORDS', 'HRIS Application, Aplikasi penggajian karyawan, Sistem penggajian karyawan'),
