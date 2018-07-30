@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Request;
 
 class LoginController extends Controller
 {
@@ -47,4 +48,9 @@ class LoginController extends Controller
     {
         return 'username';
     }
+
+    // public function login(Request $r)
+    // {
+    //     return response(1,500);
+    // }
 }
