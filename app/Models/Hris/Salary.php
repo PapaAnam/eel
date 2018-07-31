@@ -96,6 +96,9 @@ class Salary extends Model
 		if(is_null($this->sg['seguranca_social']) || $this->sg['seguranca_social'] == '0'){
 			return 0;
 		}
+		if(is_null($this->seguranca_id) || $this->seguranca_id == '' || $this->seguranca_id == '0'){
+			return 0;
+		}
 		$sr = $this->sr;
 		if(is_null($sr)){
 			return 0;
