@@ -169,6 +169,7 @@ class PayrollController extends Controller
                         $arr[]         = [
                             'NIN'                                               => $a->emp->nin,
                             'Seguranca ID'                                      => $a->emp->seguranca_social,
+                            'BRI Account'                                       => $a->emp->bri_account,
                             'Employee Name'                                     => $a->emp->name,
                             'Group'                                             => config('app.group', 'mix'),
                             'Department'                                        => $a->emp->dep->name,
@@ -201,7 +202,7 @@ class PayrollController extends Controller
                     }
                 }
                 $sheet->with($arr);
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC'];
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC','AD'];
                 
                 // set border to all active cell
                 foreach ($kolom as $k) {
@@ -214,19 +215,19 @@ class PayrollController extends Controller
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
                 });
-                $ijo = ['G','H','P','Q','S','T','U', 'V'];
+                $ijo = ['H','P','Q','S','T','U', 'V','W'];
                 foreach ($ijo as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#44bb33');
                     });
                 }
-                $kuning = ['V','W','X','Y'];
+                $kuning = ['W','X','Y','Z'];
                 foreach ($kuning as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#ffff33');
                     });
                 }
-                $sheet->cell('Z1', function($cell){
+                $sheet->cell('AA1', function($cell){
                     $cell->setBackground('#0044ff');
                 });
                 $sheet->prependRow(1, []);
@@ -242,9 +243,9 @@ class PayrollController extends Controller
                         $cell->setBackground('#ffff33')->setBorder('thin', 'thin', 'thin', 'thin');
                     });
                 }
-                $sheet->mergeCells('AA1:AB1');
-                $sheet->cell('AA1', 'Apply to form');
-                $sheet->cell('AA1', function($cell){
+                $sheet->mergeCells('AB1:AC1');
+                $sheet->cell('AB1', 'Apply to form');
+                $sheet->cell('AB1', function($cell){
                     $cell->setAlignment('center')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
                 $sheet->prependRow(1, ['GLOBAL REPORT']);
