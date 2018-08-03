@@ -34,7 +34,7 @@ class SalaryRule extends Model
 			$MM = $this->export();
 		else
 			$MM = Employee::with(['dep', 'pos', 'sr'=>function($q) use ($type){
-				$q->where('status', '!=', '0')->where('salary_type', $type);
+				$q->where('status', '!=', '0')->where('out_at_rule', $type);
 			}])->where('non_active', null)->get();
 		foreach ($MM as $d) {
 			$a = [

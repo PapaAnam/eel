@@ -14,11 +14,11 @@ class SalaryRuleController extends Controller
 
 	public function index(Request $r)
 	{
-		if($r->query('type')){
-			if($r->query('type') == 'all'){
+		if($r->query('out_at_rule')){
+			if($r->query('out_at_rule') == 'all'){
 				return SalaryRule::with('emp')->where('status', '1')->get();
 			}
-			return SalaryRule::with('emp')->where('salary_type', $r->query('type'))->where('status', '1')->get();
+			return SalaryRule::with('emp')->where('out_at_rule', $r->query('out_at_rule'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
 			return SalaryRule::with('emp')->where('employee', $r->query('employee'))->where('status', '1')->get();
@@ -109,8 +109,8 @@ class SalaryRuleController extends Controller
 	public function excel(Request $r)
 	{
 		$data = [];
-		$data = SalaryRule::excel($r->query('type'));
-		$fn = 'lisun hris salary rules '.$r->query('type').' type';
+		$data = SalaryRule::excel($r->query('out_at_rule'));
+		$fn = 'lisun hris salary rules '.$r->query('out_at_rule');
 		Excel::create($fn, function($excel) use ($data){
 			$excel->setTitle('Lisun HRIS Salary Rules');
 			$excel->setCreator('Lisun')->setCompany('Lisun');

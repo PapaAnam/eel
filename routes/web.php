@@ -1,5 +1,8 @@
 <?php
 Auth::routes();
+Route::get('/cc',function(){
+	return \App\Models\Hris\Attendance::where('created_at', '2018-05-07')->delete();
+});
 
 #ENTERPRISE EDITION
 Route::get('/home', 'HomeController@index')->name('home');
