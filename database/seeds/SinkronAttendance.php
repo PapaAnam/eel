@@ -92,7 +92,9 @@ class SinkronAttendance extends Seeder
 				}else if($isOutTime){
 					$out = $time;
 					$sr = SR::where('employee', $e->id)->where('status', '1')->first();
-					if(!is_null($sr)){
+					if(strtotime($date.' '.$time) < strtotime($date.' 17:00:00')){
+						$out = $time;
+					}elseif(!is_null($sr)){
 						$out = $sr->out_at_rule;
 					}
 					if(is_null($att)){
@@ -204,7 +206,9 @@ class SinkronAttendance extends Seeder
 				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					$out = $time;
 					$sr = SR::where('employee', $e->id)->where('status', '1')->first();
-					if(!is_null($sr)){
+					if(strtotime($date.' '.$time) < strtotime($date.' 17:00:00')){
+						$out = $time;
+					}elseif(!is_null($sr)){
 						$out = $sr->out_at_rule;
 					}
 					if(is_null($att)){

@@ -4,8 +4,12 @@ Route::get('/my-app-name', 'MyAppController@appName');
 Route::get('/hris-name', 'MyAppController@hrisName');
 Route::get('/marketing-idea-name', 'MyAppController@marketingName');
 Route::get('/setting/animation-icon', 'SettingController@animationIcon');
+Route::get('/is-mix', function(){
+	return config('app.mix') ? 1 : 0;
+});
 Route::namespace('Hris')->group(function(){
 	Route::get('/departments/{id?}', 'DepartmentController@api');
+
 
 	Route::prefix('attendances')->group(function(){
 		Route::get('/', 'AttendanceController@index');
@@ -15,6 +19,9 @@ Route::namespace('Hris')->group(function(){
 		Route::post('/store-multi', 'AttendanceController@storeMulti');
 		Route::post('/store-excel', 'AttendanceController@storeExcel');
 		Route::put('/{id}', 'AttendanceController@update');
+		Route::put('/enter/{id}/update', 'AttendanceController@updateEnter');
+		Route::put('/out/{id}/update', 'AttendanceController@updateOut');
+		Route::put('/status/{id}/update', 'AttendanceController@updateStatus');
 	});
 
 	Route::prefix('employees')->group(function(){
@@ -23,6 +30,12 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/{id?}', 'EmployeeController@api');
 	});
 
+	Route::prefix('over-time')->group(function(){
+		Route::get('/regular-in-hours', 'OverTimeController@regularInHours');
+		Route::put('/regular-in-hours/update', 'OverTimeController@updateRegularInHours');
+		Route::get('/holiday-in-hours', 'OverTimeController@holidayInHours');
+		Route::put('/holiday-in-hours/update', 'OverTimeController@updateHolidayInHours');
+	});
 
 	Route::prefix('payroll')->group(function(){
 		Route::get('/', 'PayrollController@index');

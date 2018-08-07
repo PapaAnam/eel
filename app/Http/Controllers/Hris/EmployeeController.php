@@ -100,7 +100,6 @@ class EmployeeController extends Controller
             'u_year'          => $r->u_year,
             'type'            => $r->type,
             'e_from'          => $r->from,
-            'salary_group'      => $r->salary_group,
             'present_address' => $r->present_address,
             'handphone'       => $r->handphone,
             'joining_date'    => $r->joining_date,

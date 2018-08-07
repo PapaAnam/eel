@@ -16,14 +16,20 @@ class SalaryRuleController extends Controller
 	{
 		if($r->query('out_at_rule')){
 			if($r->query('out_at_rule') == 'all'){
-				return SalaryRule::with('emp')->where('status', '1')->get();
+				return SalaryRule::with('emp','salaryGroup')->where('status', '1')->get();
 			}
-			return SalaryRule::with('emp')->where('out_at_rule', $r->query('out_at_rule'))->where('status', '1')->get();
+			return SalaryRule::with('emp','salaryGroup')->where('out_at_rule', $r->query('out_at_rule'))->where('status', '1')->get();
+		}
+		if($r->query('group')){
+			if($r->query('group') == 'all'){
+				return SalaryRule::with('emp','salaryGroup')->where('status', '1')->get();
+			}
+			return SalaryRule::with('emp','salaryGroup')->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			return SalaryRule::with('emp')->where('employee', $r->query('employee'))->where('status', '1')->get();
+			return SalaryRule::with('emp','salaryGroup')->where('employee', $r->query('employee'))->where('status', '1')->get();
 		}
-		return SalaryRule::with('emp')->where('employee', $r->query('employee'))->where('status', '1')->first();
+		return SalaryRule::with('emp','salaryGroup')->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
 
 	public function getData($employee)
@@ -63,16 +69,17 @@ class SalaryRuleController extends Controller
 			'cash_receipt'		=> 'numeric|min:0|max:999999999',
 			'rent_motorcycle'	=> 'numeric|min:0|max:999999999',
 		]);
-		$data = $r->except(['name', 'tipe']);
+		$data = $r->except(['name', 'tipe', 'salary_group']);
 		$sr = SalaryRule::whereEmployee($r->query('employee'))->where('status', '1')->first();
 		$sr = collect($sr);
 		if($r->tipe == 1){
 			if($sr){
-				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status', 'salary_type')->toArray();
+				$data['salary_group_id'] = $r->salary_group;
+				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id')->toArray();
 			}
 		}else{
 			if($sr){
-				$data = $data + $sr->only('basic_salary', 'allowance', 'status', 'salary_type')->toArray();
+				$data = $data + $sr->only('basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id')->toArray();
 			}
 		}
 		$data = $data + ['status'=>'1'];

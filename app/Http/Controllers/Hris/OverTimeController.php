@@ -18,11 +18,98 @@ class OverTimeController extends Controller
 
     public function regular(Request $r)
     {
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::where('employee_id', $employee)
+        ->where('year', $year)
+        ->where('month', $month)
+        ->first();
+        if($o){
+            return $o->ot_reg;
+        }
         return Attendance::otRegular($r->query('year'), $r->query('month'), $r->query('employee'));
+    }
+
+    public function regularInHours(Request $r)
+    {
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::where('employee_id', $employee)
+        ->where('year', $year)
+        ->where('month', $month)
+        ->first();
+        if($o){
+            return $o->ot_regular_in_hours;
+        }
+        $otr = Attendance::overTimeRegularInMonth($year, $month, $employee);
+        return $otr['in_hours'];
+    }
+
+    public function updateRegularInHours(Request $r)
+    {
+        $r->validate([
+            'ot_regular_in_hours'=>'nullable|numeric'
+        ]);
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::updateOrCreate([
+            'employee_id'=>$employee,
+            'year'=>$year,
+            'month'=>$month,
+        ],[
+            'ot_regular_in_hours'=>$r->ot_regular_in_hours
+        ]);
+        return 'Over time regular success updated';
+    }
+
+    public function holidayInHours(Request $r)
+    {
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::where('employee_id', $employee)
+        ->where('year', $year)
+        ->where('month', $month)
+        ->first();
+        if($o){
+            return $o->ot_holiday_in_hours;
+        }
+        return Attendance::overTimeHolidayInMonth($year, $month, $employee)['in_reg']+Attendance::overTimeEventHolidayInMonth($year, $month, $employee)['in_reg'];
+    }
+
+    public function updateHolidayInHours(Request $r)
+    {
+        $r->validate([
+            'ot_holiday_in_hours'=>'nullable|numeric'
+        ]);
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::updateOrCreate([
+            'employee_id'=>$employee,
+            'year'=>$year,
+            'month'=>$month,
+        ],[
+            'ot_holiday_in_hours'=>$r->ot_holiday_in_hours
+        ]);
+        return 'Over time holiday success updated';
     }
 
     public function holiday(Request $r)
     {
+        $year = $r->query('year');
+        $month = $r->query('month');
+        $employee = $r->query('employee');
+        $o = O::where('employee_id', $employee)
+        ->where('year', $year)
+        ->where('month', $month)
+        ->first();
+        if($o){
+            return $o->ot_hol;
+        }
         return Attendance::otHoliday($r->query('year'), $r->query('month'), $r->query('employee'));
     }
 

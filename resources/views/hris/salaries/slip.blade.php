@@ -44,11 +44,6 @@
 			<td align="right">{{ $s->sr ? $s->sr->allowance : 'Not Set' }}</td>
 		</tr>
 		@endif
-		{{-- <tr>
-			<td>Total Work Day ({{ $total_hari_kerja[$loop->index] }} days)</td>
-			<td align="right"></td>
-		</tr>
-		@endif --}}
 		@if($s->sg->ot_regular == 1)
 		<tr>
 			<td>Over Time Regular {{-- ({{ $s->ot_regular_in_hours }}) --}}</td>

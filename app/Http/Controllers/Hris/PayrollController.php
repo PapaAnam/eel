@@ -13,6 +13,7 @@ use App\Models\Hris\Work                as W;
 use App\Models\Hris\SalaryRule;
 use App\Models\Hris\Attendance;
 use Excel;
+use App\Models\Hris\Overtime as O;
 
 class PayrollController extends Controller
 {
@@ -23,7 +24,7 @@ class PayrollController extends Controller
     private function payThat($emp, $year, $month){
         foreach ($emp as $e) {
             if(SalaryRule::where('employee', $e->id)->where('status', '1')->exists()){
-                $sr = SalaryRule::where('employee', $e->id)->where('status', '1')->first();
+                $sr = SalaryRule::with('salaryGroup')->where('employee', $e->id)->where('status', '1')->first();
                 $over_time = 0;
                 $attendances = Attendance::where('employee', $e->id)
                 ->whereMonth('created_at', $month)
@@ -37,22 +38,48 @@ class PayrollController extends Controller
                     }
                 }
 
-                // menghitung ot holiday
-                $oth = Attendance::overTimeSundayInMonth($year, $month, $e->id);
-                $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
-                $ot_holiday_hours = $oth['in_hours'];
+                $sg = $sr->salaryGroup;
 
-                // menghitung ot holiday
-                $oteh = Attendance::overTimeEventInMonth($year, $month, $e->id);
-                // if($e->id == 8){
-                //     return $oth;
-                // }
-                $ot_event_holiday_money = $sr->basic_salary/22/8*$oteh['in_reg'];
-                $ot_event_holiday_hours = $oteh['in_hours'];
-
-                // menghitung ot regular
-                $otr = Attendance::overTimeRegularInMonth($year, $month, $e->id);
-                $ot_regular = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
+                $ot_holiday_money = 0;
+                $ot_holiday_hours = 0;
+                $ot_event_holiday_money = 0;
+                $ot_event_holiday_hours = 0;
+                $ot_regular_money = 0;
+                $ot_regular_in_hours = 0;
+                $total_ot_holiday = 0;
+                if($sg){
+                    $o = O::where('employee_id', $e->id)
+                    ->where('year', $year)
+                    ->where('month', $month)
+                    ->first();
+                    if($sg->ot_holiday == 1){
+                        if(!is_null($o)){
+                            $ot_holiday_money = $sr->basic_salary/22/8*2*$o->ot_holiday_in_hours;
+                            $total_ot_holiday = $o->ot_hol;
+                        }else{
+                            // menghitung ot holiday
+                            $oth = Attendance::overTimeSundayInMonth($year, $month, $e->id);
+                            $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
+                            $ot_holiday_hours = $oth['in_hours'];
+                            // menghitung ot event holiday
+                            $oteh = Attendance::overTimeEventInMonth($year, $month, $e->id);
+                            $ot_event_holiday_money = $sr->basic_salary/22/8*$oteh['in_reg'];
+                            $ot_event_holiday_hours = $oteh['in_hours'];
+                            $total_ot_holiday = $ot_holiday_money + $ot_event_holiday_money;
+                        }
+                    }
+                    if($sg->ot_regular == 1){
+                        if(!is_null($o)){
+                            $ot_regular_money = $sr->basic_salary/22/8*1.5*$o->ot_regular_in_hours;
+                            $ot_regular_in_hours = $o->ot_reg;
+                        }else{
+                            // menghitung ot regular
+                            $otr = Attendance::overTimeRegularInMonth($year, $month, $e->id);
+                            $ot_regular_money = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
+                            $ot_regular_in_hours = $otr['in_hours'];
+                        }
+                    }
+                }
 
                 // menghitung absent
                 $absent = Attendance::absent($year, $month, $e->id);
@@ -68,13 +95,12 @@ class PayrollController extends Controller
                     'salary_rule'           => $sr->id,
                     'department'            => $e->dep->id,
                     'position'              => $e->pos->id,
-                    'ot_regular'            => round($ot_regular, env('ROUND', 2)),
-                    'ot_holiday'            => round($ot_holiday_money + $ot_event_holiday_money, env('ROUND', 2)),
-                    'ot_regular_in_hours'   => $otr['in_hours'],
+                    'ot_regular'            => round($ot_regular_money, env('ROUND', 2)),
+                    'ot_holiday'            => round($total_ot_holiday, env('ROUND', 2)),
+                    'ot_regular_in_hours'   => $ot_regular_in_hours,
                     'ot_holiday_in_hours'   => $ot_holiday_hours,
                     'absent'                => $absent,
                     'absent_punishment'     => round($absent_punishment, env('ROUND', 2)),
-                    'salary_group'          => $e->salary_group,
                     'present_total'         => $present_total,
                     'seguranca_id'          => $e->seguranca_social,
                 ]);
@@ -112,7 +138,7 @@ class PayrollController extends Controller
     {
         $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
         $sr_not_set = [];
-        $this->payThat($emp, $r->year, $r->month);
+        return $this->payThat($emp, $r->year, $r->month);
         if(count($sr_not_set) > 0){
             if($this->total_success > 0){
                 return response([
@@ -134,14 +160,14 @@ class PayrollController extends Controller
         if($r->query('employee')){
             if($r->query('month') == 'all'){
                 S::where('month', '0')->orWhere('month', 0)->delete();
-                $s = S::with(['emp', 'sr', 'sg'])->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
+                $s = S::with(['emp', 'sr.salaryGroup'])->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
             }else{
-                $s = S::with(['emp', 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
+                $s = S::with(['emp', 'sr.salaryGroup'])->where('month', $r->month)->where('year', $r->year)->where('employee', $r->query('employee'))->orderBy('month')->get();
             }
         }else{
             $s = S::with(['emp'=>function($q){
                 $q->whereNull('non_active');
-            }, 'sr', 'sg'])->where('month', $r->month)->where('year', $r->year)->latest()->get()->whereNotIn('emp', [null])->values();
+            }, 'sr.salaryGroup'])->where('month', $r->month)->where('year', $r->year)->latest()->get()->whereNotIn('emp', [null])->values();
         }
         return $s;
     }

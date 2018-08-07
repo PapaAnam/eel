@@ -15,6 +15,11 @@ class SalaryRule extends Model
 		return $this->belongsTo('App\Models\Hris\Employee', 'employee');
 	}
 
+	public function salaryGroup()
+	{
+		return $this->belongsTo('App\Models\Hris\SalaryGroup', 'salary_group_id');
+	}
+
 	public function scopeExport()
 	{
 		return Employee::with(['dep', 'pos', 'sr'=>function($q){
@@ -72,4 +77,5 @@ class SalaryRule extends Model
 	{
 		return substr($this->created_at, 0, 4);
 	}
+
 }

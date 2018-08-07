@@ -89,12 +89,9 @@ class Zt1300Controller extends Controller
 				}else if(strtotime($date.' '.$time) >= strtotime($date.' 13:00:00') && strtotime($date.' '.$time) <= strtotime($date.' 23:59:00')){
 					$out = $time;
 					$sr = SR::where('employee', $e->id)->where('status', '1')->first();
-					if(!is_null($sr)){
-						// if($sr->salary_type == 'driver' || $sr->salary_type == 'sales'){
-						// 	$out = '17:00:00';
-						// }else if($sr->salary_type == 'standart' && strtotime($date.' '.$out) <= strtotime($date.' 17:25:00')){
-						// 	$out = '17:00:00';
-						// }
+					if(strtotime($date.' '.$time) < strtotime($date.' 17:00:00')){
+						$out = $time;
+					}elseif(!is_null($sr)){
 						$out = $sr->out_at_rule;
 					}
 					if(is_null($att)){

@@ -88,12 +88,9 @@ class X100CController extends Controller
 				}else if($isOutTime){
 					$out = $time;
 					$sr = SR::where('employee', $e->id)->where('status', '1')->first();
-					if(!is_null($sr)){
-						// if($sr->salary_type == 'driver' || $sr->salary_type == 'sales'){
-						// 	$out = '17:00:00';
-						// }else if($sr->salary_type == 'standart' && strtotime($date.' '.$out) <= strtotime($date.' 17:25:00')){
-						// 	$out = '17:00:00';
-						// }
+					if(strtotime($date.' '.$time) < strtotime($date.' 17:00:00')){
+						$out = $time;
+					}elseif(!is_null($sr)){
 						$out = $sr->out_at_rule;
 					}
 					if(is_null($att)){
@@ -106,8 +103,6 @@ class X100CController extends Controller
 							'status'		=> 'Present',
 						]);
 					}else{
-						// return strtotime($date.' '.$att->out);// < 
-						// return strtotime($date.' '.$time);// ? 1 : 0;
 						$ambilOutTerlama = is_null($att->out) || ($att->out == '00:00:00') || strtotime($date.' '.$att->out) < strtotime($date.' '.$time);
 						if($ambilOutTerlama){
 							Attendance::where([
@@ -120,14 +115,6 @@ class X100CController extends Controller
 								'status'		=> 'Present',
 							]);
 						}
-
-						// if($time == '17:59:00'){
-						// 	return $a;
-						// 	return Attendance::where([
-						// 		'employee'		=> $e->id,
-						// 		'created_at'	=> $date,
-						// 	])->first();
-						// }
 					}
 					$berhasil++;
 				}

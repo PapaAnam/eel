@@ -631,5 +631,31 @@ class AttendanceController extends Controller
     {
         return convertHour(A::workTotalInMonth($r->query('year'), $r->query('month'), $r->query('employee')));
     }
+
+    // update satu2
+
+    public function updateEnter($id, Request $r)
+    {
+        A::find($id)->update([
+            'enter'=>$r->enter
+        ]);
+        return 'Enter attendance with id '.$id.' success updated';
+    }
+
+    public function updateOut($id, Request $r)
+    {
+        A::find($id)->update([
+            'out'=>$r->out
+        ]);
+        return 'Out attendance with id '.$id.' success updated';
+    }
+
+    public function updateStatus($id, Request $r)
+    {
+        A::find($id)->update([
+            'status'=>$r->status
+        ]);
+        return 'Status attendance with id '.$id.' success updated';
+    }
 }
 

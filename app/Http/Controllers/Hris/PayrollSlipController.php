@@ -20,9 +20,7 @@ class PayrollSlipController extends Controller
 
 	public function getData($id)
 	{
-		$s = $this->s = Salary::with(['sg', 'emp.pos', 'sr'=>function($q){
-			$q->where('status', '1');
-		}])->where('id', $id)->first();
+		$s = $this->s = Salary::slip()->where('id', $id)->first();
 		$this->total_hari_kerja = Attendance::totalHariKerja($s->year, $s->month, $s->emp->id);
 		$this->file_name = 'slip ('.$s->emp->nin.') '.$s->emp->name.' ['.now().']';
 	}
@@ -122,7 +120,7 @@ class PayrollSlipController extends Controller
 			->where('month', $r->query('month'))
 			->where('year', $r->query('year'))
 			->first();
-			$salaries[] 						= Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $salary->id)->first();
+			$salaries[] 						= Salary::slip()->where('id', $salary->id)->first();
 		}
 		return [
 			'salaries'							=> $salaries,
@@ -174,7 +172,7 @@ class PayrollSlipController extends Controller
 
 	public function print($id)
 	{
-		$s = Salary::with(['sg', 'emp.pos', 'sr'])->where('id', $id)->first();
+		$s = Salary::slip()->where('id', $id)->first();
 		if(is_null($s)){
 			return 'not available';
 		}
@@ -187,12 +185,12 @@ class PayrollSlipController extends Controller
 	{
 		$salaries = [];
 		if($r->query('month') == 'all'){
-			$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+			$salaries = Salary::slip()
 			->where('year', $r->query('year'))
 			->where('employee', $r->query('employee'))
 			->get();
 		}else{
-			$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+			$salaries = Salary::slip()
 			->where('month', $r->query('month'))
 			->where('year', $r->query('year'))
 			->where('employee', $r->query('employee'))
@@ -208,11 +206,19 @@ class PayrollSlipController extends Controller
 
 	public function byGroup(Request $r, $id)
 	{
-		$salaries = Salary::with(['sg', 'emp.pos', 'sr'])
+		$salaries = Salary::slip()
 		->where('month', $r->query('month'))
 		->where('year', $r->query('year'))
-		->where('salary_group', $id)
-		->get();
+		// ->where('salary_group', $id)
+		->get()
+		->transform(function($item)use($id){
+			if(!is_null($item->sg)){
+				if($item->sg->id == $id)
+					return $item;
+			}
+		})->filter()->values()
+			;
+		// return $salaries;
 		if(count($salaries) <= 0){
 			return 'not available';
 		}
@@ -223,7 +229,7 @@ class PayrollSlipController extends Controller
 
 	public function byGroupPdf($id)
 	{
-		$salaries = Salary::with(['sg', 'emp.pos', 'sr'])->where('salary_group', $id)->get();
+		$salaries = Salary::slip()->where('salary_group', $id)->get();
 		return PDF::loadView('hris.salaries.multiple-slip', [
 			'salaries'	=> $salaries
 		])->download('slip for '.$salaries[0]->sg->name.' group.pdf');
