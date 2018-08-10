@@ -28,6 +28,8 @@ return [
     'animation_icon'    => env('ANIMATION_ICON', false),
     'group' => env('GROUP_NAME', 'mix'),
     'mix'=>env('MIX',false),
+    'zt1300'=>env('ZT1300', false),
+    'x100c'=>env('X100C', false),
 
     /*
     |--------------------------------------------------------------------------
