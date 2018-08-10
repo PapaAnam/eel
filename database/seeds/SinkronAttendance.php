@@ -130,7 +130,7 @@ class SinkronAttendance extends Seeder
     		echo 'Synchronize attendances from x100c successfull';
     	}
 
-    	if(config('app.x100c')){
+    	if(config('app.zt1300')){
 			// zt1300
     		$data = TaLog::with('staff')
     		->where('Tanggal_Log', $date)
