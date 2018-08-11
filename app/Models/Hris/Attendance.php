@@ -210,6 +210,28 @@ class Attendance extends Model
 
     public function scopeInMonth($q, $employee, $year, $month)
     {
+        $skrg = date('d');
+        for ($i = 1; $i <= $skrg; $i++) {
+            $date = $i;
+            if($date < 10){
+                $date = '0'.$i;
+            }
+            $fulldate = $year.'-'.$month.'-'.$date;
+            $normalAtt = Attendance::where('employee', $employee)
+            ->where('created_at', $fulldate)
+            ->first();
+            $libur = Calendar::where('month', $month)
+            ->where('date', $date)
+            ->exists() || date('l', strtotime($fulldate)) === 'Sunday';
+            // return $libur ? 1 : 0;
+            if(is_null($normalAtt)){
+                Attendance::create([
+                    'employee'=>$employee,
+                    'status'=>$libur ? null : 'Absent',
+                    'created_at'=>$year.'-'.$month.'-'.$date,
+                ]);
+            }
+        }
         if($employee != 'all'){
             $att = $q->with(['emp' => function($q){
                 $q->with(['sr'=>function($k){
