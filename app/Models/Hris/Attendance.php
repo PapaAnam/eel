@@ -5,6 +5,7 @@ namespace App\Models\Hris;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Hris\Calendar;
 use App\Models\Hris\Employee;
+use App\Models\Hris\StandartWorkTime;
 
 class Attendance extends Model
 {
@@ -111,7 +112,12 @@ class Attendance extends Model
 
     public function scopeOverTimeTotalInMonth($q, $year, $month, $employee)
     {
-        return $q->workTotalInMonth($year, $month, $employee) - 176;
+        $st = StandartWorkTime::where('month', $month)->where('year', $year)->first();
+        $standartWorkTime = 176;
+        if(!is_null($st)){
+            $standartWorkTime = $st->max_time;
+        }
+        return $q->workTotalInMonth($year, $month, $employee) - $standartWorkTime;
     }
 
     public function scopeOtRegularInMonth($q, $year, $month, $employee)
@@ -198,7 +204,12 @@ class Attendance extends Model
             ];
         }
         $ot_hol = $q->overTimeSundayInMonth($year, $month, $employee)['in_reg']+$q->overTimeEventInMonth($year, $month, $employee)['in_reg'];
-        $otr = $work_total - 176 - $ot_hol;
+        $st = StandartWorkTime::where('month', $month)->where('year', $year)->first();
+        $standartWorkTime = 176;
+        if(!is_null($st)){
+            $standartWorkTime = $st->max_time;
+        }
+        $otr = $work_total - $standartWorkTime - $ot_hol;
         if($otr < 0){
             $otr = 0;
         }
@@ -213,6 +224,9 @@ class Attendance extends Model
         $skrg = date('d');
         if($month < date('m')){
             $skrg = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        }
+        if($month > date('m')){
+            $skrg = 0;
         }
         for ($i = 1; $i <= $skrg; $i++) {
             $date = $i;
