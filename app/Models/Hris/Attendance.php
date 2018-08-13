@@ -211,6 +211,9 @@ class Attendance extends Model
     public function scopeInMonth($q, $employee, $year, $month)
     {
         $skrg = date('d');
+        if($month < date('m')){
+            $skrg = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        }
         for ($i = 1; $i <= $skrg; $i++) {
             $date = $i;
             if($date < 10){
@@ -220,6 +223,15 @@ class Attendance extends Model
                 $month = '0'.$month;
             }
             $fulldate = $year.'-'.$month.'-'.$date;
+            $normalAtts = Attendance::where('employee', $employee)
+            ->where('created_at', $fulldate)
+            ->get();
+            if(count($normalAtts) > 1){
+                $tetanggalan = $normalAtts->splice(1);
+                Attendance::where('employee', $employee)
+                ->whereIn('created_at', $tetanggalan->pluck('id'))
+                ->delete();
+            }
             $normalAtt = Attendance::where('employee', $employee)
             ->where('created_at', $fulldate)
             ->first();
