@@ -225,10 +225,11 @@ class Attendance extends Model
             ->exists() || date('l', strtotime($fulldate)) === 'Sunday';
             // return $libur ? 1 : 0;
             if(is_null($normalAtt)){
-                Attendance::create([
+                Attendance::updateOrCreate([
                     'employee'=>$employee,
-                    'status'=>$libur ? null : 'Absent',
                     'created_at'=>$year.'-'.$month.'-'.$date,
+                ],[
+                    'status'=>$libur ? null : 'Absent',
                 ]);
             }
         }
