@@ -217,7 +217,7 @@ class Attendance extends Model
                 $date = '0'.$i;
             }
             if($month < 10 ){
-                $month = '0'.$i;
+                $month = '0'.$month;
             }
             $fulldate = $year.'-'.$month.'-'.$date;
             $normalAtt = Attendance::where('employee', $employee)
