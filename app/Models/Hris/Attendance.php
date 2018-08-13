@@ -229,7 +229,7 @@ class Attendance extends Model
             if(count($normalAtts) > 1){
                 $tetanggalan = $normalAtts->splice(1);
                 Attendance::where('employee', $employee)
-                ->whereIn('created_at', $tetanggalan->pluck('id'))
+                ->whereIn('id', $tetanggalan->pluck('id'))
                 ->delete();
             }
             $normalAtt = Attendance::where('employee', $employee)
