@@ -228,40 +228,53 @@ class Attendance extends Model
         if($month > date('m')){
             $skrg = 0;
         }
-        for ($i = 1; $i <= $skrg; $i++) {
-            $date = $i;
-            if($date < 10){
-                $date = '0'.$i;
-            }
-            if($month < 10 ){
-                $month = '0'.$month;
-            }
-            $fulldate = $year.'-'.$month.'-'.$date;
-            $normalAtts = Attendance::where('employee', $employee)
-            ->where('created_at', $fulldate)
-            ->get();
-            if(count($normalAtts) > 1){
-                $tetanggalan = $normalAtts->splice(1);
-                Attendance::where('employee', $employee)
-                ->whereIn('id', $tetanggalan->pluck('id'))
-                ->delete();
-            }
-            $normalAtt = Attendance::where('employee', $employee)
-            ->where('created_at', $fulldate)
-            ->first();
-            $libur = Calendar::where('month', $month)
-            ->where('date', $date)
-            ->exists() || date('l', strtotime($fulldate)) === 'Sunday';
-            // return $libur ? 1 : 0;
-            if(is_null($normalAtt)){
-                Attendance::updateOrCreate([
-                    'employee'=>$employee,
-                    'created_at'=>$year.'-'.$month.'-'.$date,
-                ],[
-                    'status'=>$libur ? null : 'Absent',
-                ]);
+        $allEmployee = null;
+        if($employee == 'all'){
+            $allEmployee = Employee::active();
+        }else{
+            $allEmployee = Employee::where('id', $employee)->take(1)->get();
+        }
+        $tempEmp = $employee;
+        foreach ($allEmployee as $ae => $attemp) {
+            $employee = $attemp->id;
+            for ($i = 1; $i <= $skrg; $i++) {
+                $date = $i;
+                if($date < 10){
+                    $date = (int) $date;
+                    $date = '0'.$i;
+                }
+                if($month < 10 ){
+                    $month = (int) $month;
+                    $month = '0'.$month;
+                }
+                $fulldate = $year.'-'.$month.'-'.$date;
+                $normalAtts = Attendance::where('employee', $employee)
+                ->where('created_at', $fulldate)
+                ->get();
+                if(count($normalAtts) > 1){
+                    $tetanggalan = $normalAtts->splice(1);
+                    Attendance::where('employee', $employee)
+                    ->whereIn('id', $tetanggalan->pluck('id'))
+                    ->delete();
+                }
+                $normalAtt = Attendance::where('employee', $employee)
+                ->where('created_at', $fulldate)
+                ->first();
+                $libur = Calendar::where('month', $month)
+                ->where('date', $date)
+                ->exists() || date('l', strtotime($fulldate)) === 'Sunday';
+                // return $libur ? 1 : 0;
+                if(is_null($normalAtt)){
+                    Attendance::updateOrCreate([
+                        'employee'=>$employee,
+                        'created_at'=>$year.'-'.$month.'-'.$date,
+                    ],[
+                        'status'=>$libur ? null : 'Absent',
+                    ]);
+                }
             }
         }
+        $employee = $tempEmp;
         if($employee != 'all'){
             $att = $q->with(['emp' => function($q){
                 $q->with(['sr'=>function($k){
