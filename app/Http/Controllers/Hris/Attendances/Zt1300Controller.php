@@ -92,7 +92,9 @@ class Zt1300Controller extends Controller
 					if(strtotime($date.' '.$time) < strtotime($date.' 17:00:00')){
 						$out = $time;
 					}elseif(!is_null($sr)){
-						$out = $sr->out_at_rule;
+						if(strtotime($date.' '.$time) > strtotime($date.' '.$sr->out_at_rule)){
+							$out = $sr->out_at_rule;
+						}
 					}
 					if(is_null($att)){
 						Attendance::create([
@@ -120,7 +122,7 @@ class Zt1300Controller extends Controller
 				}
 			}
 		}
-		$employees = Employee::all();
+		$employees = Employee::active();
 		foreach ($employees as $e) {
 			$hi = Attendance::where('employee', $e->id)->where('created_at', $date)->first();
 			if(is_null($hi)){
