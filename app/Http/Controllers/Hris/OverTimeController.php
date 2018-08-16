@@ -171,6 +171,7 @@ class OverTimeController extends Controller
 
     public function excel(Request $r)
     {
+        // DB::enableQueryLog();
         $emp        = $r->query('employee');
         $year       = $r->query('year');
         $month      = $r->query('month');
@@ -223,24 +224,28 @@ class OverTimeController extends Controller
                     if($a['work_total_in_hours'] != '-'){
                         $total += $a['work_total_in_hours'];   
                     }
-                    $arr         = [
-                        '#'                 => $i++,
-                        'NIN'               => $a['emp']['nin'],
-                        'Employee'          => $a['emp']['name'],
-                        'Day'               => $a['day'],
-                        'Date'              => $a['created_at'],
-                        'Status'            => $a['status'],
-                        'Enter At'          => $a['enter'],
-                        'Break'             => $a['break'],
-                        'End Break'         => $a['end_break'],
-                        'Out At'            => $a['out'],
-                        'Work Total'        => $a['work_total'],
-                        'Total Time (W)'    => $a['work_total_in_week']
-                    ];
-                    array_push($datas, $arr);
+                    if($a->emp->non_active == null){
+                        $arr         = [
+                            '#'                 => $i++,
+                            'NIN'               => $a['emp']['nin'],
+                            'Employee'          => $a['emp']['name'],
+                            'Day'               => $a['day'],
+                            'Date'              => $a['created_at'],
+                            'Status'            => $a['status'],
+                            'Enter At'          => $a['enter'],
+                            'Break'             => $a['break'],
+                            'End Break'         => $a['end_break'],
+                            'Out At'            => $a['out'],
+                            'Work Total'        => $a['work_total'],
+                            'Total Time (W)'    => $a['work_total_in_week']
+                        ];
+                        array_push($datas, $arr);
+                    }
                 }
                 $total_data = count($attendances);
                 $sheet->with($datas);
+                // dd(count($datas));
+                // dd(DB::getQueryLog());
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
