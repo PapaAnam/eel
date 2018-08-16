@@ -18,11 +18,6 @@ class Employee extends Model
 	protected $hidden = ['salary_rule', 'login', 'deleted_at'];
 	protected $appends = ['bd', 'e_type', 'marry', 'join_date', 'p_name', 'non_act', 'non_act_date'];
 
-	public function sg()
-	{
-		return $this->belongsTo('App\Models\Hris\SalaryGroup', 'salary_group');
-	}
-
 	public static function permanent_employee_count()
 	{
 		return parent::where('type', 2)->count();

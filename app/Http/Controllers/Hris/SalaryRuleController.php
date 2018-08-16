@@ -14,22 +14,23 @@ class SalaryRuleController extends Controller
 
 	public function index(Request $r)
 	{
+		$sr = SalaryRule::with('emp.pos','emp.dep','salaryGroup');
 		if($r->query('out_at_rule')){
 			if($r->query('out_at_rule') == 'all'){
-				return SalaryRule::with('emp','salaryGroup')->where('status', '1')->get();
+				return $sr->where('status', '1')->get();
 			}
-			return SalaryRule::with('emp','salaryGroup')->where('out_at_rule', $r->query('out_at_rule'))->where('status', '1')->get();
+			return $sr->where('out_at_rule', $r->query('out_at_rule'))->where('status', '1')->get();
 		}
 		if($r->query('group')){
 			if($r->query('group') == 'all'){
-				return SalaryRule::with('emp','salaryGroup')->where('status', '1')->get();
+				return $sr->where('status', '1')->get();
 			}
-			return SalaryRule::with('emp','salaryGroup')->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
+			return $sr->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			return SalaryRule::with('emp','salaryGroup')->where('employee', $r->query('employee'))->where('status', '1')->get();
+			return $sr->where('employee', $r->query('employee'))->where('status', '1')->get();
 		}
-		return SalaryRule::with('emp','salaryGroup')->where('employee', $r->query('employee'))->where('status', '1')->first();
+		return $sr->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
 
 	public function getData($employee)
