@@ -164,7 +164,7 @@ class Employee extends Model
 	public function scopeData($q, $id = null)
 	{
 		if($id){
-			return $q->with(['dep', 'pos', 'sg'])->where('id', $id)->first();
+			return $q->with(['dep', 'pos'])->where('id', $id)->first();
 		}
 		return $q->with(['dep', 'pos'])->where('non_active', null)->get();
 	}
