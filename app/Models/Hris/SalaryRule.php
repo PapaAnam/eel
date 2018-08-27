@@ -78,4 +78,12 @@ class SalaryRule extends Model
 		return substr($this->created_at, 0, 4);
 	}
 
+	// public function getBasicSalaryAttribute($value)
+	// {
+	// 	if($this->salary_type == 'daily'){
+			
+	// 	}
+	// 	return $value;
+	// }
+
 }

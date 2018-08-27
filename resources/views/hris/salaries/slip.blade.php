@@ -8,7 +8,7 @@
 	<tbody>
 		<tr>
 			<td>Name</td>
-			<td>: {{ $s->emp->name }}</td>
+			<td>: {{ $s->emp->name }} {{ $s->sr->salary_type == 'daily' ? '(Daily)' : '' }}</td>
 		</tr>
 		<tr>
 			<td>NIN</td>
@@ -34,7 +34,7 @@
 		<tr>
 			<td width="250px">Basic Salary</td>
 			<td align="right">$</td>
-			<td width="50px" align="right">{{ $s->sr ? $s->sr->basic_salary : 'Not Set' }}</td>
+			<td width="50px" align="right">{{ $s->sr ? ($s->sr->salary_type == 'daily' ? $s->sr->basic_salary * $s->present_total : $s->sr->basic_salary) : 'Not Set' }}</td>
 		</tr>
 		@endif
 		@if($s->sg->basic_salary == 1)

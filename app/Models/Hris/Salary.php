@@ -62,6 +62,9 @@ class Salary extends Model
 			if($sg){
 				if($sg['basic_salary'] == 1){
 					$bs = $sr->basic_salary;
+					if($sr->salary_type == 'daily'){
+						$bs = $this->present_total * $bs;
+					}
 				}
 				if($sg['incentive'] == 1){
 					$incentive = $sr->incentive;
