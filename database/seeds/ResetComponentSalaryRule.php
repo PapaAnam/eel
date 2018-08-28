@@ -23,7 +23,7 @@ class ResetComponentSalaryRule extends Seeder
     		'rent_motorcycle'=>0,
     	];
         foreach ($sr as $s) {
-        	$data = $temp + $s->only('basic_salary', 'allowance', 'status', 'salary_type','employee','salary_group_id');
+        	$data = $temp + $s->only('basic_salary', 'allowance', 'status', 'salary_type','employee','salary_group_id','out_of_rule');
         	SalaryRule::find($s->id)->update(['status'=>0]);
         	SalaryRule::create($data);
         }
