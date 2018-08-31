@@ -28,7 +28,7 @@ class SalaryRuleController extends Controller
 			return $sr->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			return $sr->where('employee', $r->query('employee'))->where('status', '1')->get();
+			return $sr->where('employee', $r->query('employee'))->take(2)->latest()->get();
 		}
 		return $sr->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
