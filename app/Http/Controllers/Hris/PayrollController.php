@@ -53,37 +53,47 @@ class PayrollController extends Controller
                     ->where('month', $month)
                     ->first();
                     if($sg->ot_holiday == 1){
+                        $hariPembagi = 22;
+                        if($sr->salary_rule == 'daily'){
+                            $hariPembagi = 1;
+                        }
                         if(!is_null($o)){
-                            $ot_holiday_money = $sr->basic_salary/22/8*2*$o->ot_holiday_in_hours;
-                            $total_ot_holiday = $o->ot_hol;
+                            $ot_holiday_money = $sr->basic_salary/$hariPembagi/8*2*$o->ot_holiday_in_hours;
+                            $total_ot_holiday = $ot_holiday_money;
+                            $ot_holiday_hours = $o->ot_holiday_in_hours;
                         }else{
                             // menghitung ot holiday
                             $oth = Attendance::overTimeSundayInMonth($year, $month, $e->id);
-                            $ot_holiday_money = $sr->basic_salary/22/8*2*$oth['in_reg'];
+                            $ot_holiday_money = $sr->basic_salary/$hariPembagi/8*2*$oth['in_reg'];
                             $ot_holiday_hours = $oth['in_hours'];
                             // menghitung ot event holiday
                             $oteh = Attendance::overTimeEventInMonth($year, $month, $e->id);
-                            $ot_event_holiday_money = $sr->basic_salary/22/8*$oteh['in_reg'];
+                            $ot_event_holiday_money = $sr->basic_salary/$hariPembagi/8*$oteh['in_reg'];
                             $ot_event_holiday_hours = $oteh['in_hours'];
                             $total_ot_holiday = $ot_holiday_money + $ot_event_holiday_money;
                         }
                     }
                     if($sg->ot_regular == 1){
                         if(!is_null($o)){
-                            $ot_regular_money = $sr->basic_salary/22/8*1.5*$o->ot_regular_in_hours;
-                            $ot_regular_in_hours = $o->ot_reg;
+                            $ot_regular_money = $sr->basic_salary/$hariPembagi/8*1.5*$o->ot_regular_in_hours;
+                            $ot_regular_in_hours = $o->ot_regular_in_hours;
                         }else{
                             // menghitung ot regular
                             $otr = Attendance::overTimeRegularInMonth($year, $month, $e->id);
-                            $ot_regular_money = $sr->basic_salary/22/8*1.5*$otr['in_reg'];
+                            $ot_regular_money = $sr->basic_salary/$hariPembagi/8*1.5*$otr['in_reg'];
                             $ot_regular_in_hours = $otr['in_hours'];
                         }
                     }
                 }
 
+                $absent = 0;
+                $absent_punishment = 0;
+
                 // menghitung absent
-                $absent = Attendance::absent($year, $month, $e->id);
-                $absent_punishment = $absent * ($sr->basic_salary / 22);
+                if($sr->salary_rule != 'daily'){
+                    $absent = Attendance::absent($year, $month, $e->id);
+                    $absent_punishment = $absent * ($sr->basic_salary / 22);
+                }
 
                 $present_total = Attendance::presentTotalInMonth($e->id, $year, $month);
                 
