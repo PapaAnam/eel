@@ -41,7 +41,7 @@ class SalaryRuleController extends Controller
 			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
 			->where('id', $s->salary_rule)
 			->first();
-			return [$salaryrule, $salaryrule2];
+			return [$salaryrule2,$salaryrule, ];
 		}
 		return $sr->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
