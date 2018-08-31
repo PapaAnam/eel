@@ -5,16 +5,20 @@ namespace App\Http\Controllers\Hris;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hris\SalaryRule;
+use App\Models\Hris\Salary;
 use App\Models\Hris\Employee;
 use PDF;
 use Excel;
+use DB;
+use Auth;
+use App\User;
 
 class SalaryRuleController extends Controller
 {
 
 	public function index(Request $r)
 	{
-		$sr = SalaryRule::with('emp.pos','emp.dep','salaryGroup');
+		$sr = SalaryRule::with('emp.pos','emp.dep','salaryGroup','user');
 		if($r->query('out_at_rule')){
 			if($r->query('out_at_rule') == 'all'){
 				return $sr->where('status', '1')->get();
@@ -28,7 +32,16 @@ class SalaryRuleController extends Controller
 			return $sr->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			return $sr->where('employee', $r->query('employee'))->take(2)->latest()->get();
+			$bulanLalu = date('m',strtotime('-1 month'));
+			$tahun = $bulanLalu == 12 ? date('Y') - 1 : date('Y');
+			$s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
+			$salaryrule = $sr->where('employee', $r->query('employee'))
+			->latest()
+			->first();
+			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
+			->where('id', $s->salary_rule)
+			->first();
+			return [$salaryrule, $salaryrule2];
 		}
 		return $sr->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}

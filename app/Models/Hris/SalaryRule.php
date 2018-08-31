@@ -15,6 +15,11 @@ class SalaryRule extends Model
 		return $this->belongsTo('App\Models\Hris\Employee', 'employee');
 	}
 
+	public function user()
+	{
+		return $this->belongsTo('App\User', 'user_id');
+	}
+
 	public function salaryGroup()
 	{
 		return $this->belongsTo('App\Models\Hris\SalaryGroup', 'salary_group_id');
