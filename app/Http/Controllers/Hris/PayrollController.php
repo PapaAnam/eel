@@ -52,11 +52,11 @@ class PayrollController extends Controller
                     ->where('year', $year)
                     ->where('month', $month)
                     ->first();
+                    $hariPembagi = 22;
+                    if($sr->salary_rule == 'daily'){
+                        $hariPembagi = 1;
+                    }
                     if($sg->ot_holiday == 1){
-                        $hariPembagi = 22;
-                        if($sr->salary_rule == 'daily'){
-                            $hariPembagi = 1;
-                        }
                         if(!is_null($o)){
                             $ot_holiday_money = $sr->basic_salary/$hariPembagi/8*2*$o->ot_holiday_in_hours;
                             $total_ot_holiday = $ot_holiday_money;
