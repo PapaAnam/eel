@@ -61,6 +61,7 @@ class PayrollController extends Controller
                             $ot_holiday_money = $sr->basic_salary/$hariPembagi/8*2*$o->ot_holiday_in_hours;
                             $total_ot_holiday = $ot_holiday_money;
                             $ot_holiday_hours = $o->ot_holiday_in_hours;
+                            // return $month;
                         }else{
                             // menghitung ot holiday
                             $oth = Attendance::overTimeSundayInMonth($year, $month, $e->id);
@@ -147,6 +148,7 @@ class PayrollController extends Controller
     public function payAll(Request $r)
     {
         $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
+        $emp = E::with(['dep', 'pos'])->where('id',16)->get();
         $sr_not_set = [];
         return $this->payThat($emp, $r->year, $r->month);
         if(count($sr_not_set) > 0){

@@ -32,14 +32,16 @@ class SalaryRuleController extends Controller
 			return $sr->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			$bulanLalu = date('m',strtotime('-1 month'));
-			$tahun = $bulanLalu == 12 ? date('Y') - 1 : date('Y');
-			$s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
+			// $bulanLalu = date('m',strtotime('-1 month'));
+			// $tahun = $bulanLalu == 12 ? date('Y') - 1 : date('Y');
+			// $s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
 			$salaryrule = $sr->where('employee', $r->query('employee'))
 			->latest()
 			->first();
 			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
-			->where('id', $s->salary_rule)
+			->whereMonth('created_at', '<', date('m'))
+			->where('employee', $r->query('employee'))
+			->latest()
 			->first();
 			return [$salaryrule2,$salaryrule, ];
 		}

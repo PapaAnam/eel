@@ -16,6 +16,8 @@ use App\Models\Hris\Department          as D;
 use App\Models\Hris\SalaryRule          as SR;
 use App\Models\Absensi\CheckInOut;
 use App\Models\Hris\Calendar;
+use App\Models\Hris\Log;
+use App\User;
 use Excel;
 use Storage;
 
@@ -117,30 +119,39 @@ class AttendanceController extends Controller
 
     public function update($id, Request $r)
     {
+        $tempId = $id;
         $break          = $r->break;
         $end_break      = $r->end_break;
         $out            = $r->out;
         $enter          = $r->enter;
+        $value = [
+            'break'         => $break,
+            'end_break'     => $end_break,
+            'out'           => $out,
+            'enter'         => $enter,
+            'status'        => $r->status,
+        ];
         if(is_numeric($id)){
-            A::find($id)->update([
-                'break'         => $break,
-                'end_break'     => $end_break,
-                'out'           => $out,
-                'enter'         => $enter,
-                'status'        => $r->status,
-            ]); 
+            A::find($id)->update($value); 
         }else{
-            A::updateOrCreate([
+            $tempId = A::updateOrCreate([
                 'employee'      => $r->query('employee'),
                 'created_at'    => $r->query('date'),
-            ], [
-                'break'         => $break,
-                'end_break'     => $end_break,
-                'out'           => $out,
-                'enter'         => $enter,
-                'status'        => $r->status,
-            ]);
+            ], $value);
+            $tempId = $tempId->id;
         }
+        $user = User::find($r->query('user_id'));
+        $action = 'edit';
+        $value = json_encode($value);
+        $table_name = 'hris_attendances';
+        Log::create([
+            'user_id'=>$r->query('user_id'),
+            'table_name'=>$table_name,
+            'action'=>$action,
+            'value'=>$value,
+            'target_id'=>$tempId,
+            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+        ]);
         return 'Attendance updated';
     }
 
@@ -636,6 +647,18 @@ class AttendanceController extends Controller
 
     public function updateEnter($id, Request $r)
     {
+        $user = User::find($r->query('user_id'));
+        $action = 'edit enter at';
+        $value = $r->enter;
+        $table_name = 'hris_attendances';
+        Log::create([
+            'user_id'=>$r->query('user_id'),
+            'table_name'=>$table_name,
+            'action'=>$action,
+            'value'=>$value,
+            'target_id'=>$id,
+            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+        ]);
         A::find($id)->update([
             'enter'=>$r->enter
         ]);
@@ -644,6 +667,18 @@ class AttendanceController extends Controller
 
     public function updateOut($id, Request $r)
     {
+        $user = User::find($r->query('user_id'));
+        $action = 'edit out at';
+        $value = $r->out;
+        $table_name = 'hris_attendances';
+        Log::create([
+            'user_id'=>$r->query('user_id'),
+            'table_name'=>$table_name,
+            'action'=>$action,
+            'value'=>$value,
+            'target_id'=>$id,
+            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+        ]);
         A::find($id)->update([
             'out'=>$r->out
         ]);
@@ -652,6 +687,18 @@ class AttendanceController extends Controller
 
     public function updateStatus($id, Request $r)
     {
+        $user = User::find($r->query('user_id'));
+        $action = 'edit status';
+        $value = $r->status;
+        $table_name = 'hris_attendances';
+        Log::create([
+            'user_id'=>$r->query('user_id'),
+            'table_name'=>$table_name,
+            'action'=>$action,
+            'value'=>$value,
+            'target_id'=>$id,
+            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+        ]);
         A::find($id)->update([
             'status'=>$r->status
         ]);
