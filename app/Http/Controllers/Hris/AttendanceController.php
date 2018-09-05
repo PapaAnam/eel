@@ -17,6 +17,7 @@ use App\Models\Hris\SalaryRule          as SR;
 use App\Models\Absensi\CheckInOut;
 use App\Models\Hris\Calendar;
 use App\Models\Hris\Log;
+use App\Models\Hris\StandartWorkTime;
 use App\User;
 use Excel;
 use Storage;
@@ -349,9 +350,9 @@ class AttendanceController extends Controller
             if(E::where('nin', $row->employee)->count()){
                 $re = E::where('nin', $row->employee)->first()->id;
                 A::updateOrCreate([
-                   'created_at' => $created_at, 
-                   'employee'   => $re 
-               ], [
+                 'created_at' => $created_at, 
+                 'employee'   => $re 
+             ], [
                 'enter'      => is_null($row->enter) ? '00:00:00' : $row->enter->format('H:i:s'),
                 'break'      => is_null($row->break) ? '00:00:00' : $row->break->format('H:i:s'),
                 'end_break'  => is_null($row->end_break) ? '00:00:00' : $row->end_break->format('H:i:s'),
@@ -591,6 +592,7 @@ class AttendanceController extends Controller
                 foreach ($cells as $c) {
                     $sheet->setBorder($c.($no), 'thin');
                 }
+                $i = 1;
                 foreach ($data as $d) {
                     foreach ($cells as $c) {
                         $sheet->setBorder($c.($no+1), 'thin');
@@ -622,6 +624,7 @@ class AttendanceController extends Controller
                         ];   
                     }
                     array_push($datas, $arr);
+                    $i++;
                 }
                 $sheet->with($datas);
                 $sheet->row(1, function($row){
@@ -630,79 +633,130 @@ class AttendanceController extends Controller
                 $sheet->prependRow(1, [
                     '['.$emp->nin.'] '.$emp->name.' '.$r->query('year').'-'.$r->query('month')
                 ]);
+                $i++;
+                $i++;
+                $sheet->cell('H'.$i, 'Total');
+                $sheet->cell('H'.$i, function($cell){
+                    $cell->setFontWeight('bold');
+                });
+                $workTotal = convertHour(A::workTotalInMonth($r->query('year'), $r->query('month'), $r->query('employee')));
+                $sheet->cell('I'.$i, $workTotal);
+                $i++;
+                $sheet->cell('H'.$i, 'Standart Time Work / Month');
+                $sheet->cell('H'.$i, function($cell){
+                    $cell->setFontWeight('bold');
+                });
+                $month = $r->query('month');
+                $year = $r->query('year');
+                $standartTime = '176 hours';
+                $std = null;
+                $st = null;
+                if($month && $year){
+                    $st = StandartWorkTime::where('month', $month)->where('year', $year)->first();
+                    if(!is_null($st)){
+                        $std = $st->max_time_view;
+                    }
+                }
+                $stdtTime = is_null($st) ? $standartTime : $std;
+                $sheet->cell('I'.$i, $stdtTime);
+                $i++;
+                $sheet->cell('H'.$i, 'Over Time Regular');
+                $sheet->cell('H'.$i, function($cell){
+                    $cell->setFontWeight('bold');
+                });
+                $employee = $r->query('employee');
+                $o = O::where('employee_id', $employee)
+                ->where('year', $year)
+                ->where('month', $month)
+                ->first();
+                if($o){
+                    $regular = $o->ot_reg;
+                }
+                $regular = A::otRegular($year, $month, $employee);
+                $sheet->cell('I'.$i, $regular);
+                $i++;
+                $sheet->cell('H'.$i, 'Over Time Holiday');
+                $sheet->cell('H'.$i, function($cell){
+                    $cell->setFontWeight('bold');
+                });
+                if($o){
+                    $holiday = $o->ot_hol;
+                }
+                $holiday = A::otHoliday($year, $month, $employee); 
+                $sheet->cell('I'.$i, $holiday);
                 $sheet->mergeCells('A1:I1');
                 $sheet->cell('A1', function($cell){
                     $cell->setAlignment('center')->setBackground('#999999')->setFontSize(16)->setFontWeight('bold');
                 });
             });
-        })->export('xlsx');
-    }
+})->export('xlsx');
+}
 
-    public function workTotal(Request $r)
-    {
-        return convertHour(A::workTotalInMonth($r->query('year'), $r->query('month'), $r->query('employee')));
-    }
+public function workTotal(Request $r)
+{
+    return convertHour(A::workTotalInMonth($r->query('year'), $r->query('month'), $r->query('employee')));
+}
 
     // update satu2
 
-    public function updateEnter($id, Request $r)
-    {
-        $user = User::find($r->query('user_id'));
-        $action = 'edit enter at';
-        $value = $r->enter;
-        $table_name = 'hris_attendances';
-        Log::create([
-            'user_id'=>$r->query('user_id'),
-            'table_name'=>$table_name,
-            'action'=>$action,
-            'value'=>$value,
-            'target_id'=>$id,
-            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
-        ]);
-        A::find($id)->update([
-            'enter'=>$r->enter
-        ]);
-        return 'Enter attendance with id '.$id.' success updated';
-    }
+public function updateEnter($id, Request $r)
+{
+    $user = User::find($r->query('user_id'));
+    $action = 'edit enter at';
+    $value = $r->enter;
+    $table_name = 'hris_attendances';
+    Log::create([
+        'user_id'=>$r->query('user_id'),
+        'table_name'=>$table_name,
+        'action'=>$action,
+        'value'=>$value,
+        'target_id'=>$id,
+        'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+    ]);
+    A::find($id)->update([
+        'enter'=>$r->enter
+    ]);
+    return 'Enter attendance with id '.$id.' success updated';
+}
 
-    public function updateOut($id, Request $r)
-    {
-        $user = User::find($r->query('user_id'));
-        $action = 'edit out at';
-        $value = $r->out;
-        $table_name = 'hris_attendances';
-        Log::create([
-            'user_id'=>$r->query('user_id'),
-            'table_name'=>$table_name,
-            'action'=>$action,
-            'value'=>$value,
-            'target_id'=>$id,
-            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
-        ]);
-        A::find($id)->update([
-            'out'=>$r->out
-        ]);
-        return 'Out attendance with id '.$id.' success updated';
-    }
+public function updateOut($id, Request $r)
+{
+    $user = User::find($r->query('user_id'));
+    $action = 'edit out at';
+    $value = $r->out;
+    $table_name = 'hris_attendances';
+    Log::create([
+        'user_id'=>$r->query('user_id'),
+        'table_name'=>$table_name,
+        'action'=>$action,
+        'value'=>$value,
+        'target_id'=>$id,
+        'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+    ]);
+    A::find($id)->update([
+        'out'=>$r->out
+    ]);
+    return 'Out attendance with id '.$id.' success updated';
+}
 
-    public function updateStatus($id, Request $r)
-    {
-        $user = User::find($r->query('user_id'));
-        $action = 'edit status';
-        $value = $r->status;
-        $table_name = 'hris_attendances';
-        Log::create([
-            'user_id'=>$r->query('user_id'),
-            'table_name'=>$table_name,
-            'action'=>$action,
-            'value'=>$value,
-            'target_id'=>$id,
-            'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
-        ]);
-        A::find($id)->update([
-            'status'=>$r->status
-        ]);
-        return 'Status attendance with id '.$id.' success updated';
-    }
+public function updateStatus($id, Request $r)
+{
+    $user = User::find($r->query('user_id'));
+    $action = 'edit status';
+    $value = $r->status;
+    $table_name = 'hris_attendances';
+    Log::create([
+        'user_id'=>$r->query('user_id'),
+        'table_name'=>$table_name,
+        'action'=>$action,
+        'value'=>$value,
+        'target_id'=>$id,
+        'description'=>'user '.$user->username.' '.$action.' in '.$table_name.' with id '.$id.' and with value '.$value,
+    ]);
+    A::find($id)->update([
+        'status'=>$r->status
+    ]);
+    return 'Status attendance with id '.$id.' success updated';
+}
 }
 
