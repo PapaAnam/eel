@@ -43,7 +43,15 @@ class SalaryRuleController extends Controller
 			->where('employee', $r->query('employee'))
 			->latest()
 			->first();
-			return [$salaryrule2,$salaryrule, ];
+			if($salaryrule2 && $salaryrule){
+				return [$salaryrule2,$salaryrule, ];
+			}			
+			if($salaryrule2 ){
+				return [$salaryrule2];
+			}
+			if($salaryrule ){
+				return [$salaryrule];
+			}
 		}
 		return $sr->where('employee', $r->query('employee'))->where('status', '1')->first();
 	}
