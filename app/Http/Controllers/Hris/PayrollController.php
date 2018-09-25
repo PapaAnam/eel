@@ -117,8 +117,8 @@ class PayrollController extends Controller
                 ]);
                 $this->total_success++;
             }else{
-                $this->sr_not_set = true;
-                $sr_not_set[] = [
+                // $this->sr_not_set = true;
+                $this->sr_not_set[] = [
                     'nin'       => $e->nin,
                     'name'      => $e->name,
                 ];
@@ -148,14 +148,15 @@ class PayrollController extends Controller
     public function payAll(Request $r)
     {
         $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
-        $emp = E::with(['dep', 'pos'])->where('id',16)->get();
-        $sr_not_set = [];
-        return $this->payThat($emp, $r->year, $r->month);
-        if(count($sr_not_set) > 0){
+        // $emp = E::with(['dep', 'pos'])->where('id',16)->get();
+        // return $emp;
+        // $sr_not_set = [];
+        $this->payThat($emp, $r->year, $r->month);
+        if(count($this->sr_not_set) > 0){
             if($this->total_success > 0){
                 return response([
-                    'msg'           => 'Some employees success paid but there are '.count($sr_not_set).' employees not yet set salary rule', 
-                    'employee'      => $sr_not_set,
+                    'msg'           => 'Some employees success paid but there are '.count($this->sr_not_set).' employees not yet set salary rule', 
+                    'employee'      => $this->sr_not_set,
                 ],
                 422);
             }
