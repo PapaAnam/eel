@@ -21,7 +21,10 @@ class GenerateAttendanceUntilEndMonth extends Seeder
         		Attendance::updateOrCreate([
         			'created_at'=>date('Y-m').'-'.$tgl,
         			'employee'=>$e->id,
-        		],[]);
+        		],[
+                    'enter'=>'08:30:00',
+                    'out'=>'17:00:00'
+                ]);
         	}
         }
     }
