@@ -53,9 +53,10 @@ class PayrollController extends Controller
                     ->where('month', $month)
                     ->first();
                     $hariPembagi = 22;
-                    if($sr->salary_rule == 'daily'){
+                    if($sr->salary_type == 'daily'){
                         $hariPembagi = 1;
                     }
+                    // dd($hariPembagi);
                     if($sg->ot_holiday == 1){
                         if(!is_null($o)){
                             $ot_holiday_money = $sr->basic_salary/$hariPembagi/8*2*$o->ot_holiday_in_hours;
@@ -91,7 +92,7 @@ class PayrollController extends Controller
                 $absent_punishment = 0;
 
                 // menghitung absent
-                if($sr->salary_rule != 'daily'){
+                if($sr->salary_type != 'daily'){
                     $absent = Attendance::absent($year, $month, $e->id);
                     $absent_punishment = $absent * ($sr->basic_salary / 22);
                 }
@@ -148,7 +149,7 @@ class PayrollController extends Controller
     public function payAll(Request $r)
     {
         $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
-        // $emp = E::with(['dep', 'pos'])->where('id',16)->get();
+        // $emp = E::with(['dep', 'pos'])->where('id',293)->get();
         // return $emp;
         // $sr_not_set = [];
         $this->payThat($emp, $r->year, $r->month);
