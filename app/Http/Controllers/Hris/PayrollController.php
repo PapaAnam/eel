@@ -225,7 +225,7 @@ class PayrollController extends Controller
                             'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
                             'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
                             'Total Overtime Hours (x2)'                         => $a->ot_holiday,
-                            'Food Allowance'                                    => $a->eat_cost,
+                            'Food Allowance'                                    => $a->sr->eat_cost,
                             'Retention Number'                                  => '',
                             'Retention Amount'                                  => $a->sr->ritation,
                             'Incentive Amount'                                  => $a->sr->incentive,
