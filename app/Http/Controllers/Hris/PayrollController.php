@@ -225,6 +225,7 @@ class PayrollController extends Controller
                             'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
                             'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
                             'Total Overtime Hours (x2)'                         => $a->ot_holiday,
+                            'Food Allowance'                                    => $a->eat_cost,
                             'Retention Number'                                  => '',
                             'Retention Amount'                                  => $a->sr->ritation,
                             'Incentive Amount'                                  => $a->sr->incentive,
@@ -242,7 +243,7 @@ class PayrollController extends Controller
                     }
                 }
                 $sheet->with($arr);
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC','AD'];
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC','AD','AE'];
                 
                 // set border to all active cell
                 foreach ($kolom as $k) {
@@ -261,13 +262,13 @@ class PayrollController extends Controller
                         $cell->setBackground('#44bb33');
                     });
                 }
-                $kuning = ['W','X','Y','Z'];
+                $kuning = ['X','Y','Z','AA'];
                 foreach ($kuning as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#ffff33');
                     });
                 }
-                $sheet->cell('AA1', function($cell){
+                $sheet->cell('AB1', function($cell){
                     $cell->setBackground('#0044ff');
                 });
                 $sheet->prependRow(1, []);
