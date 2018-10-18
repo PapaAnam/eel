@@ -80,4 +80,11 @@ Route::namespace('MIdea')->group(function(){
 		Route::get('/', 'ProductController@index');
 	});
 
+	Route::prefix('marketing-idea/customer-outlet')->group(function(){
+		Route::get('/', 'CustomerOutletController@index');
+		Route::get('/{customer_outlet}', 'CustomerOutletController@show');
+		Route::post('/store','CustomerOutletController@store');
+		Route::put('/update/{customer_outlet}','CustomerOutletController@update');
+	});
+
 });

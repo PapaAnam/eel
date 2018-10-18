@@ -30,6 +30,8 @@ return [
     'mix'=>env('MIX',false),
     'zt1300'=>env('ZT1300', false),
     'x100c'=>env('X100C', false),
+    'map_api'=>env('MAP_API_KEY'),
+    'is_online'=>env('ONLINE',false),
 
     /*
     |--------------------------------------------------------------------------

@@ -51,6 +51,9 @@
   <script src="{{ asset('datatable/js/dataTables.bootstrap4.min.js') }}"></script>
   <script src="{{ asset('datatable/responsive/js/dataTables.responsive.min.js') }}"></script>
   <script src="{{ asset('datatable/responsive/js/responsive.bootstrap4.min.js') }}"></script>
+  @if(config('app.is_online'))
+  <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key={{config('app.map_api')}}"></script>
+  @endif
   @include('manifest')
   <script src="{{ asset(mix('js/marketing-idea.js')) }}"></script>
 </body>
