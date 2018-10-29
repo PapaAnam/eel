@@ -19,10 +19,12 @@ class GenerateAttendanceUntilEndMonth extends Seeder
     	foreach ($employees as $e) {
     		foreach (range($hariIni, $tglMaks) as $tgl) {
     			$data = [
-    				'enter'=>'08:30:00',
+    				// 'enter'=>'08:30:00',
+                    'enter'=>null,
     				'out'=>'17:00:00',
     				'break'=>'12:00:00',
-    				'end_break'=>'13:00:00',
+    				// 'end_break'=>'13:00:00',
+                    'end_break'=>null,
     			];
     			if(date('N',strtotime(date('Y-m').'-'.$tgl)) == 7){
     				$data = [
