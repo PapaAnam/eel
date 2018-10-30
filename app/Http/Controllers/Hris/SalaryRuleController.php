@@ -37,6 +37,7 @@ class SalaryRuleController extends Controller
 			// $s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
 			$salaryrule = $sr->where('employee', $r->query('employee'))
 			->latest()
+			->orderBy('updated_at','desc')
 			->first();
 			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
 			->whereMonth('created_at', '<', date('m'))
