@@ -36,6 +36,7 @@ class SalaryRuleController extends Controller
 			// $tahun = $bulanLalu == 12 ? date('Y') - 1 : date('Y');
 			// $s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
 			$salaryrule = $sr->where('employee', $r->query('employee'))
+			->where('status','1')
 			->latest()
 			->orderBy('updated_at','desc')
 			->first();
