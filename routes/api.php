@@ -17,6 +17,8 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/standart-time', 'StandartWorkTimeController@index');
 		Route::put('/max-work-time/update', 'StandartWorkTimeController@update');
 		Route::get('/max-work-time', 'StandartWorkTimeController@maxTime');
+		Route::post('/generate','AttendanceController@generate');
+		Route::post('/cancel-generate','AttendanceController@cancelGenerate');
 		Route::get('/{id}', 'AttendanceController@api');
 		Route::post('/store', 'AttendanceController@store');
 		Route::post('/store-multi', 'AttendanceController@storeMulti');

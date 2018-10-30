@@ -758,5 +758,48 @@ public function updateStatus($id, Request $r)
     ]);
     return 'Status attendance with id '.$id.' success updated';
 }
+
+public function generate(Request $r)
+{
+    $employees = E::active();
+        $tglMaks = date('t');
+        $hariIni = date('d');
+        foreach ($employees as $e) {
+            foreach (range($hariIni, $tglMaks) as $tgl) {
+                $data = [
+                    'enter'=>null,
+                    'out'=>null,
+                    'break'=>'12:00:00',
+                    'end_break'=>'13:00:00',
+                    'updated'=>'no'
+                ];
+                if(date('N',strtotime(date('Y-m').'-'.$tgl)) == 7){
+                    $data = [
+                        'enter'=>null,
+                        'out'=>null,
+                        'break'=>null,
+                        'end_break'=>null,
+                        'updated'=>'no'
+                    ];
+                }
+                $aa = A::where('created_at',date('Y-m').'-'.$tgl)->where('employee',$e->id)->first();
+                if($aa){
+                    if($aa->updated == 'no')
+                        $aa->update($data);
+                }else{
+                    $data['created_at'] = date('Y-m').'-'.$tgl;
+                    $data['employee'] = $e->id;
+                    A::create($data);
+                }
+            }
+        }
+        return 'Generate attendance until end month success';
+}
+
+public function cancelGenerate()
+{
+    A::where('created_at','>=',date('Y-m-d'))->where('updated','no')->delete();
+    return 'Cancel generate attendance until end month success';
+}
 }
 

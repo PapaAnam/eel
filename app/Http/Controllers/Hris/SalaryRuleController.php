@@ -99,11 +99,11 @@ class SalaryRuleController extends Controller
 		if($r->tipe == 1){
 			if($sr){
 				$data['salary_group_id'] = $r->salary_group;
-				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id')->toArray();
+				$data = $data + $sr->except('id', 'basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id','created_at','updated_at')->toArray();
 			}
 		}else{
 			if($sr){
-				$data = $data + $sr->only('basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id')->toArray();
+				$data = $data + $sr->only('basic_salary', 'allowance', 'status', 'salary_type', 'salary_group_id','created_at','updated_at')->toArray();
 			}
 		}
 		$data = $data + ['status'=>'1'];
