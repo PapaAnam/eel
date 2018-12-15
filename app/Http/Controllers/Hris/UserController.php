@@ -11,6 +11,7 @@ class UserController extends Controller
 {
 	public function active(Request $r)
 	{
-		return User::with('auth')->where('id', Auth::id())->first();
+		$id_user = Auth::guard('api')->user()->id;
+		return User::with('auth')->where('id', $id_user)->first();
 	}
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Hris\SubDepartment;
 use App\Models\Hris\Department;
 use App\Models\Hris\Position;
+use DB;
 
 class Employee extends Model
 {
@@ -16,7 +17,14 @@ class Employee extends Model
 	public $timestamps = false;
 	protected $fillable = ['name', 'nin', 'gender', 'born_in', 'birthdate', 'position', 'login', 'father', 'mother', 'husband', 'wife', 'son', 'daughter', 'elementary', 'el_year', 'junior', 'jun_year', 'senior', 'sen_year', 'university', 'u_year', 'elektoral', 'cartao_rdtl', 'certidao_baptismo', 'elektoral_path', 'cartao_rdtl_path', 'certidao_baptismo_path', 'type', 'e_from', 'department', 'photo', 'marital_status', 'present_address', 'handphone', 'joining_date', 'non_active', 'non_active_at', 'bri_account', 'salary_rule', 'department_id', 'seguranca_social'];
 	protected $hidden = ['salary_rule', 'login', 'deleted_at'];
-	protected $appends = ['bd', 'e_type', 'marry', 'join_date', 'p_name', 'non_act', 'non_act_date'];
+	protected $appends = [
+		'bd', 
+		'e_type', 
+		'marry', 
+		'join_date',  
+		'non_act', 
+		'non_act_date'
+	];
 
 	public static function permanent_employee_count()
 	{
@@ -73,6 +81,16 @@ class Employee extends Model
 		return $this->belongsTo('App\Models\Hris\Position', 'position');
 	}
 
+	public function job()
+	{
+		return $this->belongsTo('App\Models\Hris\Position', 'position');
+	}
+
+	public function salaryrule()
+	{
+		return $this->hasMany('App\Models\Hris\SalaryRule','employee');
+	}
+
 	public function getBdAttribute()
 	{
 		return english_date($this->birthdate);
@@ -86,11 +104,6 @@ class Employee extends Model
 	public function getETypeAttribute()
 	{
 		return employee_type($this->type);
-	}
-
-	public function getPNameAttribute()
-	{
-		return Position::find($this->position)->name;
 	}
 
 	public function getJoinDateAttribute()
@@ -177,5 +190,10 @@ class Employee extends Model
 	public function scopeNonActive($q)
 	{
 		return $q->with('dep', 'pos')->whereNotNull('non_active_at')->get();
+	}
+
+	public function scopeSelectMode()
+	{
+		return DB::table('hris_employees')->whereNull('non_active')->select('id','name','nin')->get();
 	}
 }

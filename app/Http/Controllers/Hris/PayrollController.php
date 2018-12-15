@@ -118,7 +118,6 @@ class PayrollController extends Controller
                 ]);
                 $this->total_success++;
             }else{
-                // $this->sr_not_set = true;
                 $this->sr_not_set[] = [
                     'nin'       => $e->nin,
                     'name'      => $e->name,
@@ -149,9 +148,6 @@ class PayrollController extends Controller
     public function payAll(Request $r)
     {
         $emp = E::with(['dep', 'pos'])->whereNull('non_active')->get();
-        // $emp = E::with(['dep', 'pos'])->where('id',293)->get();
-        // return $emp;
-        // $sr_not_set = [];
         $this->payThat($emp, $r->year, $r->month);
         if(count($this->sr_not_set) > 0){
             if($this->total_success > 0){

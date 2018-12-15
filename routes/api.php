@@ -8,6 +8,10 @@ Route::get('/is-mix', function(){
 	return config('app.mix') ? 1 : 0;
 });
 Route::namespace('Hris')->group(function(){
+
+	# LOGIN
+	Route::post('/hris/login', 'LoginController@login');
+
 	Route::get('/departments/{id?}', 'DepartmentController@api');
 
 
@@ -32,6 +36,8 @@ Route::namespace('Hris')->group(function(){
 	Route::prefix('employees')->group(function(){
 		Route::get('/non-active', 'EmployeeNonActiveController@index');
 		Route::put('/non-activate/{id}', 'EmployeeController@nonActivate');
+		Route::get('/select-mode', 'EmployeeController@selectMode');
+		Route::get('/active', 'EmployeeController@active');
 		Route::get('/{id?}', 'EmployeeController@api');
 	});
 
@@ -58,13 +64,16 @@ Route::namespace('Hris')->group(function(){
 	Route::prefix('salary-rules')->group(function(){
 		Route::get('/', 'SalaryRuleController@index');
 		Route::post('/', 'SalaryRuleController@store');
+		Route::get('/not-set', 'SalaryRuleController@notSet');
 	});
 
 	Route::prefix('leave-period')->group(function(){
 		Route::get('/', 'LeavePeriodRuleController@index');
-		Route::get('/id', 'LeavePeriodRuleController@show');
+		Route::get('/rule-status', 'LeavePeriodController@allStatus');
+		Route::get('/{rule}', 'LeavePeriodRuleController@show');
 		Route::put('/', 'LeavePeriodRuleController@store');
 		Route::get('/left', 'LeavePeriodLeftController@index');
+		Route::put('/rule/update', 'LeavePeriodController@updateRule');
 	});
 
 	Route::prefix('cash-withdrawal')->group(function(){
@@ -90,3 +99,7 @@ Route::namespace('MIdea')->group(function(){
 	});
 
 });
+
+// Route::get('/testing', function(){
+// 	return Auth::guard('api')->user();
+// })->middleware('auth:api');

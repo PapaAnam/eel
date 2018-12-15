@@ -560,12 +560,20 @@ class EmployeeController extends Controller
         })->export('xlsx');
     }
 
-    // public function nonActivate(Request $r, $id)
-    // {
-    //     E::find($id)->update([
-    //         'non_active_at'=>date('Y-m-d'),
-    //         'non_active'=>$r->reason
-    //     ]);
-    //     return 'Employee success non activate';
-    // }
+    public function selectMode()
+    {
+        return E::selectMode();
+    }
+
+    public function active(Request $r)
+    {
+        $with = $r->query('with');
+        if($with){
+            $with = explode(',', $with);
+            $employees = E::with($with)->whereNull('non_active')->get();
+        }else{
+            $employees = DB::table('hris_employees')->whereNull('non_active')->get();
+        }
+        return $employees;
+    }
 }

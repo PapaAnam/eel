@@ -11,6 +11,7 @@
   <meta content="{{ config('app.url') }}" name="domain" id="domain">
   <meta content="{{ config('app.hris') }}" name="hris-base" id="hris-base">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="api_token" content="{{Auth::user()->api_token}}">
   {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"> --}}
   <link rel="stylesheet" href="{{ asset('css/new-metro.css?3892832') }}">
   <link rel="stylesheet" href="{{ asset('css/metro-schemes.min.css') }}">

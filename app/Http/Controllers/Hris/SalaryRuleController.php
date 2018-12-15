@@ -32,9 +32,6 @@ class SalaryRuleController extends Controller
 			return $sr->where('salary_group_id', $r->query('group'))->where('status', '1')->get();
 		}
 		if($r->query('array')){
-			// $bulanLalu = date('m',strtotime('-1 month'));
-			// $tahun = $bulanLalu == 12 ? date('Y') - 1 : date('Y');
-			// $s = Salary::where('month', $bulanLalu)->where('year', $tahun)->where('employee',$r->query('employee'))->first();
 			$salaryrule = $sr->where('employee', $r->query('employee'))
 			->where('status','1')
 			->latest()
@@ -161,5 +158,12 @@ class SalaryRuleController extends Controller
 				});
 			});
 		})->export('xlsx');
+	}
+
+	public function notSet()
+	{
+		return Employee::whereNull('non_active')->withCount(['salaryrule'=>function($q){
+			$q->where('status','1');
+		}])->get()->where('salaryrule_count',0)->values();
 	}
 }
