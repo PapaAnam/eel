@@ -6,6 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 class LeavePeriod extends Model
 {
 	protected $table = 'hris_leave_periods';
-	public $timestamps = false;
-	protected $fillable = ['special_permit', 'holiday', 'father_leave', 'sick', 'pregnancy', 'employee', 'year'];
+	protected $fillable = [
+		'employee_id',
+		'user_id',
+		'start_date',
+		'end_date',
+		'day_total',
+		'status_id',
+		'status',
+		'attachment',
+	];
+
+	public function employee()
+	{
+		return $this->belongsTo('App\Models\Hris\Employee', 'employee_id');
+	}
 }

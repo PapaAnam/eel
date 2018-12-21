@@ -68,7 +68,10 @@ Route::namespace('Hris')->group(function(){
 	});
 
 	Route::prefix('leave-period')->group(function(){
-		Route::get('/', 'LeavePeriodRuleController@index');
+		Route::get('/', 'LeavePeriodController@index');
+		Route::get('/rule', 'LeavePeriodRuleController@index');
+		Route::delete('/{leave}', 'LeavePeriodController@delete');
+		Route::post('/', 'LeavePeriodController@store');
 		Route::get('/rule-status', 'LeavePeriodController@allStatus');
 		Route::get('/{rule}', 'LeavePeriodRuleController@show');
 		Route::put('/', 'LeavePeriodRuleController@store');

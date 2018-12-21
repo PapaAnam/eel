@@ -20,9 +20,9 @@ class LeavePeriodRuleController extends Controller
         $is_local = $request->is_local;
         $rules = Rule::with('status');
         if($is_local == 'all'){
-            return $rules->where('rule_year', $year)->get();
+            return $rules->where('rule_year', $year)->orderBy('is_local', 'desc')->get();
         }
-        return $rules->where('is_local', $is_local)->where('rule_year', $year)->get();
+        return $rules->where('is_local', $is_local)->where('rule_year', $year)->orderBy('is_local', 'desc')->get();
     }
 
     /**

@@ -36,6 +36,7 @@ class GenerateLeavePeriodStatus extends Seeder
     			'joining_date'	=> 'false',
     			'only_female'	=> 'false',
     			'only_maried' 	=> 'false',
+                'attachment'    => 'true',
     		],
     		[
     			'status_name' 	=> 'Pregnancy Leave',

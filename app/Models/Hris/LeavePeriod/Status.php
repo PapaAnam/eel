@@ -14,6 +14,7 @@ class Status extends Model
 		'joining_date',
 		'only_female',
 		'only_maried',
+		'attachment',
 	];
 
 }
