@@ -325,3 +325,32 @@ function convertHour($hours)
 	}
 	return $prefix.$suffix;
 }
+
+function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' )
+{
+    $datetime1 = date_create($date_1);
+    $datetime2 = date_create($date_2);
+    
+    $interval 	= date_diff($datetime1, $datetime2);
+	$dalamBulan = (int) $interval->format('%m');
+	// return $dalamBulan;
+	if($dalamBulan > 12){
+		$differenceFormat = '%y Year %m Month %d Day';
+	}else if($dalamBulan >= 1){
+		$differenceFormat = '%m Month %d Day';
+	}else{
+		$differenceFormat = '%d Day';
+	}
+    
+    return $interval->format($differenceFormat);
+    
+}
+
+function selisihDalamBulan($date_1 , $date_2)
+{
+	$datetime1 = date_create($date_1);
+    $datetime2 = date_create($date_2);
+    
+    $interval 	= date_diff($datetime1, $datetime2);
+    return (int) $interval->format('%m');
+}

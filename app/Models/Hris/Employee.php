@@ -23,7 +23,9 @@ class Employee extends Model
 		'marry', 
 		'join_date',  
 		'non_act', 
-		'non_act_date'
+		'non_act_date',
+		'length_of_work',
+		'length_of_work_in_month',
 	];
 
 	public static function permanent_employee_count()
@@ -195,5 +197,15 @@ class Employee extends Model
 	public function scopeSelectMode()
 	{
 		return DB::table('hris_employees')->whereNull('non_active')->select('id','name','nin')->get();
+	}
+
+	public function getLengthOfWorkAttribute()
+	{
+		return dateDifference($this->joining_date, date('Y-m-d'));
+	}
+
+	public function getLengthOfWorkInMonthAttribute()
+	{
+		return selisihDalamBulan(date('Y-m-d'), $this->joining_date);
 	}
 }

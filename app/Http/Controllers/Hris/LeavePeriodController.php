@@ -99,7 +99,8 @@ class LeavePeriodController extends Controller
 			return response('Joining date for employee '.$employee->name.' is invalid with value '.$employee->joining_date, 409);
 		}
 		$joining_date = $employee->joining_date;
-		$lama_bekerja = floor((strtotime($joining_date) - strtotime(date('Y-m-d'))) / 3600 / 30); // dalam bulan
+		$lama_bekerja = $employee->length_of_work_in_month;
+		// return $lama_bekerja;
 		if($status->joining_date == 'true' && $lama_bekerja < $max){
 			$max = $lama_bekerja;
 		}
@@ -145,6 +146,45 @@ class LeavePeriodController extends Controller
 	{
 		$leave->delete();
 		return 'Leave period success deleted';
+	}
+
+	public function left(Request $request)
+	{
+		$employee_id	= $request->query('employee_id');
+		$year			= $request->query('year');
+		$employee 		= Employee::find($employee_id);
+		$is_local 		= $employee->e_from == 'Local' ? 'true' : 'false';
+		$rules = Rule::with('status')->where('rule_year', $year)->where('is_local', $is_local)->get();
+		$rules->transform(function($item) use ($employee, $year){
+			$max = $item->qty_max;
+			if($item->status->joining_date == 'true'){
+				if($employee->length_of_work_in_month < $max){
+					$max = $employee->length_of_work_in_month;
+				}
+			}
+			if($item->status->only_female == 'true'){
+				if($employee->gender != 'Female'){
+					$max = 0;
+				}
+			}
+			if($item->status->only_maried == 'true'){
+				if($employee->marital_status != 1){
+					$max = 0;
+				}
+			}
+			$item->max = $max;
+			$used = (int) LeavePeriod::where('employee_id', $employee->id)->whereYear('start_date', $year)->where('status_id', $item->status_id)->sum('day_total');
+			$item->used = $used;
+			$item->leftovers = $max - $used;
+			$item->employee = $employee->name;
+			if($item->status->only_female == 'true'){
+				if($employee->gender != 'Female'){
+					$item->status->status_name = $item->status->status_name.' <b><i>(only female employee)</i></b>';
+				}
+			}
+			return $item;
+		});
+		return $rules;
 	}
 
 }

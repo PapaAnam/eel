@@ -17,4 +17,9 @@ class Status extends Model
 		'attachment',
 	];
 
+	public function leaveperiod()
+	{
+		return $this->hasMany('App\Models\Hris\LeavePeriod', 'status_id');
+	}
+
 }

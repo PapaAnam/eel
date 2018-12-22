@@ -576,4 +576,9 @@ class EmployeeController extends Controller
         }
         return $employees;
     }
+
+    public function random()
+    {
+        return E::whereNull('non_active_at')->inRandomOrder()->first();
+    }
 }

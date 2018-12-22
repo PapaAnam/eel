@@ -34,10 +34,12 @@ Route::namespace('Hris')->group(function(){
 	});
 
 	Route::prefix('employees')->group(function(){
+		Route::get('/random', 'EmployeeController@random');
 		Route::get('/non-active', 'EmployeeNonActiveController@index');
 		Route::put('/non-activate/{id}', 'EmployeeController@nonActivate');
 		Route::get('/select-mode', 'EmployeeController@selectMode');
 		Route::get('/active', 'EmployeeController@active');
+		// Route::get('/{employee}', 'EmployeeController@find');
 		Route::get('/{id?}', 'EmployeeController@api');
 	});
 
@@ -69,13 +71,13 @@ Route::namespace('Hris')->group(function(){
 
 	Route::prefix('leave-period')->group(function(){
 		Route::get('/', 'LeavePeriodController@index');
+		Route::get('/left', 'LeavePeriodController@left');
 		Route::get('/rule', 'LeavePeriodRuleController@index');
 		Route::delete('/{leave}', 'LeavePeriodController@delete');
 		Route::post('/', 'LeavePeriodController@store');
 		Route::get('/rule-status', 'LeavePeriodController@allStatus');
 		Route::get('/{rule}', 'LeavePeriodRuleController@show');
 		Route::put('/', 'LeavePeriodRuleController@store');
-		Route::get('/left', 'LeavePeriodLeftController@index');
 		Route::put('/rule/update', 'LeavePeriodController@updateRule');
 	});
 

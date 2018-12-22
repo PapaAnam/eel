@@ -19,4 +19,6 @@ class Rule extends Model
 	{
 		return $this->belongsTo('App\Models\Hris\LeavePeriod\Status', 'status_id');
 	}
+
+	
 }

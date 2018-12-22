@@ -1,1 +1,1 @@
-php artisan db:seed --class=GenerateLeavePeriodStatus
+php artisan db:seed --class=GenerateLeavePeriodStatus --force
