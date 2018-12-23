@@ -8,6 +8,8 @@ use App\Models\Hris\LeavePeriod\Rule;
 use App\Http\Controllers\Controller;
 use App\Models\Hris\LeavePeriod;
 use App\Models\Hris\Employee;
+use App\Models\Hris\Attendance;
+use App\Models\Hris\Calendar;
 use Auth;
 
 class LeavePeriodController extends Controller
@@ -41,7 +43,6 @@ class LeavePeriodController extends Controller
 
 	public function store(Request $request)
 	{
-		// return $request->all();
 		$day_total 	= (strtotime($request->end_date)-strtotime($request->start_date)) / 3600 / 24;
 		$status_id 	= $request->status;
 		$status = Status::find($request->status);
@@ -62,6 +63,19 @@ class LeavePeriodController extends Controller
 			],
 			'attachment'=>$requiredAttach ? 'required|file' : 'nullable',
 		]);
+
+		// CEK RENTANG TANGGAL
+		for($i = strtotime($request->start_date); $i <= strtotime($request->end_date); $i+= 86400) {
+			$isMinggu = date('N', $i) == 7;
+			$isEvent = Calendar::where('date', date('d', $i))->where('month', date('m', $i))->first();
+			if($isMinggu){
+			}elseif(!is_null($isEvent)){
+			}else{
+				$tanggal[] = date('Y-m-d', $i);
+			}
+		}
+
+		$day_total = count($tanggal);
 		
 		# CEK STOK LEAVE PERIOD
 		$rule_year 		= substr($request->start_date, 0, 4);
@@ -130,6 +144,25 @@ class LeavePeriodController extends Controller
 		if($requiredAttach)
 			$lp->attachment 	= $attachment;
 		$lp->save();
+		foreach ($tanggal as $t) {
+			$attendance = Attendance::where('employee', $employee_id)
+			->where('created_at', 'LIKE', $t.'%')
+			->first();
+			$isMinggu = date('N', strtotime($t)) == 7;
+			if(is_null($attendance)){
+				Attendance::create([
+					'employee'=>$employee_id,
+					'created_at'=>$t,
+					'status'=>$status->status_name,
+				]);
+			}else{
+				$attendance->update([
+					'employee'=>$employee_id,
+					'created_at'=>$t,
+					'status'=>$status->status_name,
+				]);
+			}
+		}
 		return 'Leave period success created';
 	}
 
@@ -144,6 +177,11 @@ class LeavePeriodController extends Controller
 
 	public function delete(LeavePeriod $leave)
 	{
+		// CEK RENTANG TANGGAL
+		for($i = strtotime($leave->start_date); $i <= strtotime($leave->end_date); $i+= 86400) {
+			$tanggal[] = date('Y-m-d', $i);
+		}
+		Attendance::whereIn('created_at',$tanggal)->where('employee', $leave->employee_id)->delete();
 		$leave->delete();
 		return 'Leave period success deleted';
 	}
