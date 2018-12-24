@@ -221,7 +221,7 @@ function maried($i)
 		break;
 		
 		default:
-		return 'No Maried';
+		return 'Single';
 		break;
 	}
 }
@@ -332,7 +332,13 @@ function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' )
     $datetime2 = date_create($date_2);
     
     $interval 	= date_diff($datetime1, $datetime2);
+    $dalamTahun = (int) $interval->format('%y');
 	$dalamBulan = (int) $interval->format('%m');
+	if($dalamTahun > 0){
+		$dalamTahun *= 12;
+		$dalamBulan += $dalamTahun;
+	}
+	// return $dalamBulan;
 	// return $dalamBulan;
 	if($dalamBulan > 12){
 		$differenceFormat = '%y Year %m Month %d Day';
@@ -352,5 +358,11 @@ function selisihDalamBulan($date_1 , $date_2)
     $datetime2 = date_create($date_2);
     
     $interval 	= date_diff($datetime1, $datetime2);
-    return (int) $interval->format('%m');
+    $dalamTahun = (int) $interval->format('%y');
+	$dalamBulan = (int) $interval->format('%m');
+	if($dalamTahun > 0){
+		$dalamTahun *= 12;
+		$dalamBulan += $dalamTahun;
+	}
+	return $dalamBulan;
 }
