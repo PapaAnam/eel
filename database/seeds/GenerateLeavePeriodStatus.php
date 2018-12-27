@@ -24,6 +24,7 @@ class GenerateLeavePeriodStatus extends Seeder
     			'joining_date'	=> 'true',
     			'only_female'	=> 'false',
     			'only_maried' 	=> 'false',
+                'accumulation'  => 'true',
     		],
     		[
     			'status_name' 	=> 'Father Leave',

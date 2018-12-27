@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Hris\SubDepartment;
 use App\Models\Hris\Department;
 use App\Models\Hris\Position;
+use App\Models\Hris\LeavePeriod\Status;
+use App\Models\Hris\LeavePeriod\Rule;
 use DB;
+// use App\Models\Hris\Leave
 
 class Employee extends Model
 {
@@ -26,7 +29,15 @@ class Employee extends Model
 		'non_act_date',
 		'length_of_work',
 		'length_of_work_in_month',
+		'is_local'
 	];
+
+	// APPENDED ATTRIBUTE
+
+	public function getIsLocalAttribute()
+	{
+		return $this->e_from == 'Local' ? 'true' : 'false';
+	}
 
 	public static function permanent_employee_count()
 	{
@@ -74,6 +85,11 @@ class Employee extends Model
 	}
 
 	public function dep()
+	{
+		return $this->belongsTo('App\Models\Hris\Department', 'department_id');
+	}
+
+	public function departmentdetail()
 	{
 		return $this->belongsTo('App\Models\Hris\Department', 'department_id');
 	}
@@ -208,4 +224,71 @@ class Employee extends Model
 	{
 		return selisihDalamBulan(date('Y-m-d'), $this->joining_date);
 	}
+
+	public function scopeLeftLeaveByStatus($q, $employee_id, $status_id, $year)
+	{
+		$status 	= Status::find($status_id);
+		$employee 	= $q->where('id', $employee_id)->first();
+		$is_local 	= $employee->e_from == 'Local' ? 'true' : 'false';
+		$rule 		= Rule::where('rule_year', $year)
+		->where('status_id', $status_id)
+		->where('is_local', $is_local)
+		->first();
+		if(is_null($rule)){
+			return 0;
+		}
+		$max 		= $rule->qty_max;
+		if($status->joining_date == 'true'){
+			if($employee->length_of_work_in_month < $max){
+				$max = $employee->length_of_work_in_month;
+			}
+		}
+		if($status->only_female == 'true'){
+			if($employee->gender != 'Female'){
+				return 0;
+			}
+		}
+		if($status->only_maried == 'true'){
+			if($employee->marital_status != 1){
+				return 0;
+			}
+		}
+		$used 		= (int) LeavePeriod::where('employee_id', $employee_id)
+		->whereYear('start_date', $year)
+		->where('status_id', $status_id)
+		->sum('day_total');
+		return $max - $used;
+	}
+
+	public function scopeMaxLeaveByStatus($q, $employee_id, $status_id, $year)
+	{
+		$status 	= Status::find($status_id);
+		$employee 	= $q->where('id', $employee_id)->first();
+		$is_local 	= $employee->e_from == 'Local' ? 'true' : 'false';
+		$rule 		= Rule::where('rule_year', $year)
+		->where('status_id', $status_id)
+		->where('is_local', $is_local)
+		->first();
+		if(is_null($rule)){
+			return 0;
+		}
+		$max 		= $rule->qty_max;
+		if($status->joining_date == 'true'){
+			if($employee->length_of_work_in_month < $max){
+				$max = $employee->length_of_work_in_month;
+			}
+		}
+		if($status->only_female == 'true'){
+			if($employee->gender != 'Female'){
+				return 0;
+			}
+		}
+		if($status->only_maried == 'true'){
+			if($employee->marital_status != 1){
+				return 0;
+			}
+		}
+		return $max;
+	}
+
 }

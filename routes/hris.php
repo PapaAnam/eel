@@ -189,6 +189,7 @@ Route::prefix('salary-group')->group(function(){
 # LEAVE PERIOD
 Route::prefix('leave-period')->group(function(){
 	Route::view('/', 'App.hris');
+	Route::get('/print-doc/{leave}', 'LeavePeriodController@docPrint');
 });
 
 # CASH WITHDRAWAL

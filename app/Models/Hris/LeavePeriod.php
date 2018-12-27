@@ -15,10 +15,26 @@ class LeavePeriod extends Model
 		'status_id',
 		'status',
 		'attachment',
+		'reason',
+	];
+
+	protected $appends = [
+		'print_link',
+		'year',
 	];
 
 	public function employee()
 	{
 		return $this->belongsTo('App\Models\Hris\Employee', 'employee_id');
+	}
+
+	public function getPrintLinkAttribute()
+	{
+		return url('hris/leave-period/print-doc/'.$this->id);
+	}
+
+	public function getYearAttribute()
+	{
+		return substr($this->start_date, 0, 4);
 	}
 }

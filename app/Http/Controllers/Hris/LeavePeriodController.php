@@ -43,7 +43,7 @@ class LeavePeriodController extends Controller
 
 	public function store(Request $request)
 	{
-		$day_total 	= (strtotime($request->end_date)-strtotime($request->start_date)) / 3600 / 24;
+		$day_total 	= (strtotime($request->end_date)-strtotime($request->start_date)) / 3600 / 24; // brp lama leave
 		$status_id 	= $request->status;
 		$status = Status::find($request->status);
 		$requiredAttach = $status->attachment == 'true';
@@ -119,6 +119,17 @@ class LeavePeriodController extends Controller
 			$max = $lama_bekerja;
 		}
 		$sisa = $max - $ygKeambil;
+		if($rule_year > 2018){
+			if($status->accumulation == 'true'){
+				$tahun = range(2018,$rule_year);
+				$sisa = 0;
+				foreach ($tahun as $t) {
+					$sisa += Employee::LeftLeaveByStatus($employee->id, $status_id, $t);
+				}
+				// return $tahun;
+			}
+		}
+		// return $sisa;
 		if($sisa <= 0){
 			return response('Status '.$status->status_name.' in '.$rule_year.' reach the limit for employee '.$employee->name, 409);
 		}
@@ -141,6 +152,7 @@ class LeavePeriodController extends Controller
 		$lp->day_total 		= $day_total;
 		$lp->status_id 		= $request->status;
 		$lp->status 		= $status->status_name;
+		$lp->reason 		= $request->reason;
 		if($requiredAttach)
 			$lp->attachment 	= $attachment;
 		$lp->save();
@@ -192,8 +204,8 @@ class LeavePeriodController extends Controller
 		$year			= $request->query('year');
 		$employee 		= Employee::find($employee_id);
 		$is_local 		= $employee->e_from == 'Local' ? 'true' : 'false';
-		$rules = Rule::with('status')->where('rule_year', $year)->where('is_local', $is_local)->get();
-		$rules->transform(function($item) use ($employee, $year){
+		$rules 			= Rule::with('status')->where('rule_year', $year)->where('is_local', $is_local)->get();
+		$rules->transform(function($item) use ($employee, $year, $is_local){
 			$max = $item->qty_max;
 			if($item->status->joining_date == 'true'){
 				if($employee->length_of_work_in_month < $max){
@@ -210,6 +222,16 @@ class LeavePeriodController extends Controller
 					$max = 0;
 				}
 			}
+			if($year > 2018){
+				if($item->status->accumulation == 'true'){
+					$tahun = range(2018,($year-1));
+					$sisa = 0;
+					foreach ($tahun as $t) {
+						$sisa += Employee::LeftLeaveByStatus($employee->id, $item->status_id, $t);
+					}
+					$max += $sisa;
+				}
+			}
 			$item->max = $max;
 			$used = (int) LeavePeriod::where('employee_id', $employee->id)->whereYear('start_date', $year)->where('status_id', $item->status_id)->sum('day_total');
 			$item->used = $used;
@@ -223,6 +245,31 @@ class LeavePeriodController extends Controller
 			return $item;
 		});
 		return $rules;
+	}
+
+	public function docPrint(LeavePeriod $leave)
+	{
+		$leave->load('employee.departmentdetail', 'employee.job');
+		$rules = Rule::with('status')
+		->where('rule_year', $leave->year)
+		->where('is_local', $leave->employee->is_local)
+		->get();
+		$rules->transform(function($item) use ($leave){
+			$item->max = Employee::maxLeaveByStatus($leave->employee_id, $item->status_id, $leave->year);
+			if($leave->status_id == $item->status_id){
+				$item->total = $leave->day_total;
+				$item->sisa  = $item->max - $item->total;
+			}else{
+				$item->total = '';
+				$item->sisa  = '';
+			}
+			return $item;
+		});
+		// return $rules;
+		return view('hris.leave-periods.doc-print',[
+			'leave'=>$leave,
+			'rules'=>$rules,
+		]);
 	}
 
 }
