@@ -13,6 +13,7 @@ class CreateHrisLeavePeriodNames extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('hris_leave_period_names');
         Schema::create('hris_leave_period_names', function (Blueprint $table) {
             $table->increments('id');
             $table->string('status_name');
