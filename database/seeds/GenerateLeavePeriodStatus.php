@@ -31,6 +31,7 @@ class GenerateLeavePeriodStatus extends Seeder
     			'joining_date'	=> 'true',
     			'only_female'	=> 'false',
     			'only_maried' 	=> 'true',
+                'only_male'     => 'true',
     		],
     		[
     			'status_name' 	=> 'Sick',

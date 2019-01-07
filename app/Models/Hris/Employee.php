@@ -283,6 +283,11 @@ class Employee extends Model
 				return 0;
 			}
 		}
+		if($status->only_male == 'true'){
+			if($employee->gender != 'Male'){
+				return 0;
+			}
+		}
 		if($status->only_maried == 'true'){
 			if($employee->marital_status != 1){
 				return 0;

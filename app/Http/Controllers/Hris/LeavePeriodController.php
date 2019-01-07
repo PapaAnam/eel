@@ -98,6 +98,12 @@ class LeavePeriodController extends Controller
 				return response('Status '.$status->status_name.' only for maried employee', 409);
 			}
 		}
+		// CEK ONLY MALE
+		if($status->only_male == 'true'){
+			if($employee->gender != 'Male'){
+				return response('Status '.$status->status_name.' only for male employee', 409);
+			}
+		}
 		// JIKA RULE PADA STATUS DAN PADA TAHUN TERTENTU BELUM DI SET
 		if(is_null($max)){
 			return response('Status '.$status->status_name.' in '.$rule_year.' not set yet', 409);
