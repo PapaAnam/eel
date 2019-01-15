@@ -57,6 +57,7 @@ class Salary extends Model
 			$ot_regular = 0;
 			$ot_holiday = 0;
 			$etc = 0;
+			$thr = 0;
 			$rent_motorcycle = 0;
 			$sg = $sr->salaryGroup;
 			if($sg){
@@ -90,8 +91,11 @@ class Salary extends Model
 				if($sg['etc'] == 1){
 					$etc = $sr->etc;
 				}	
+				if($sg['thr'] == 1){
+					$thr = $sr->thr;
+				}	
 			}
-			return $bs+$incentive+$food+$allowance+$retention+$ot_regular+$ot_holiday+$rent_motorcycle+$etc;
+			return $bs+$incentive+$food+$allowance+$retention+$ot_regular+$ot_holiday+$rent_motorcycle+$etc+$thr;
 		}
 		return 0;
 	}

@@ -203,43 +203,44 @@ class PayrollController extends Controller
                         $total_hari_kerja = Attendance::totalHariKerja($year, $month, $a->emp->id);
                         $work_total = Attendance::workTotalInMonth($year, $month, $a->emp->id);
                         $arr[]         = [
-                            'NIN'                                               => $a->emp->nin,
-                            'Seguranca ID'                                      => $a->emp->seguranca_social,
-                            'BRI Account'                                       => $a->emp->bri_account,
-                            'Employee Name'                                     => $a->emp->name,
-                            'Group'                                             => config('app.group', 'mix'),
-                            'Department'                                        => $a->emp->dep->name,
-                            'Job Title'                                         => $a->emp->pos->name,
-                            'Basic Salary'                                      => $a->sr->basic_salary,
-                            'Allowance'                                         => $a->sr->allowance,
-                            'Days Work Total'                                   => $total_hari_kerja,
-                            'Cuti Taken'                                        => '',
-                            'Sick Leave take'                                   => '',
-                            'Days Absent Total'                                 => $a->absent,
-                            'Total Working Hours'                               => convertHour($work_total),
-                            'Overtime Hours (x1.5)'                             => $a->ot_regular_in_hours,
-                            'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
-                            'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
-                            'Total Overtime Hours (x2)'                         => $a->ot_holiday,
-                            'Food Allowance'                                    => $a->sr->eat_cost,
-                            'Retention Number'                                  => '',
-                            'Retention Amount'                                  => $a->sr->ritation,
-                            'Incentive Amount'                                  => $a->sr->incentive,
-                            'ETC'                                               => $a->sr->etc,
-                            'Total'                                             => $a->gross_salary,
-                            'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
-                            'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
-                            'Cash Withdrawal'                                   => $a->sr->cash_receipt,
-                            'Deduct Absent $'                                   => $a->absent_punishment,
-                            'Total To Pay $'                                    => $a->clear_salary,
-                            'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
-                            'Declared Basic Salary Less Absence'                => '',
+                            /* A */'NIN'                                               => $a->emp->nin,
+                            /* B */'Seguranca ID'                                      => $a->emp->seguranca_social,
+                            /* C */'BRI Account'                                       => $a->emp->bri_account,
+                            /* D */'Employee Name'                                     => $a->emp->name,
+                            /* E */'Group'                                             => config('app.group', 'mix'),
+                            /* F */'Department'                                        => $a->emp->dep->name,
+                            /* G */'Job Title'                                         => $a->emp->pos->name,
+                            /* H */'Basic Salary'                                      => $a->sr->basic_salary,
+                            /* I */'Allowance'                                         => $a->sr->allowance,
+                            /* J */'Days Work Total'                                   => $total_hari_kerja,
+                            /* K */'Cuti Taken'                                        => '',
+                            /* L */'Sick Leave take'                                   => '',
+                            /* M */'Days Absent Total'                                 => $a->absent,
+                            /* N */'Total Working Hours'                               => convertHour($work_total),
+                            /* O */'Overtime Hours (x1.5)'                             => $a->ot_regular_in_hours,
+                            /* P */'Overtime Hours (x2)'                               => $a->ot_holiday_in_hours,
+                            /* Q */'Total Overtime Amount (x1.5)'                      => $a->ot_regular,
+                            /* R */'Total Overtime Hours (x2)'                         => $a->ot_holiday,
+                            /* S */'Food Allowance'                                    => $a->sr->eat_cost,
+                            /* T */'Retention Number'                                  => '',
+                            /* U */'Retention Amount'                                  => $a->sr->ritation,
+                            /* V */'Incentive Amount'                                  => $a->sr->incentive,
+                            /* W */'THR'                                               => $a->sr->thr,
+                            /* X */'ETC'                                               => $a->sr->etc,
+                            /* Y */'Total'                                             => $a->gross_salary,
+                            /* Z */'Registered 4% Seguranca Social (Behalf of Staff)'  => $a->seguranca,
+                            /* AA */'Deduct Company Tax 10%'                            => round($a->tax_insurance, 2),
+                            /* AB */'Cash Withdrawal'                                   => $a->sr->cash_receipt,
+                            /* AC */'Deduct Absent $'                                   => $a->absent_punishment,
+                            /* AD */'Total To Pay $'                                    => $a->clear_salary,
+                            /* AE */'Seguransa Social 4% (Behalf of Company)'           => $a->seguranca,
+                            /* AF */'Declared Basic Salary Less Absence'                => '',
 
                         ];
                     }
                 }
                 $sheet->with($arr);
-                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC','AD','AE'];
+                $kolom = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB', 'AC','AD','AE','AF'];
                 
                 // set border to all active cell
                 foreach ($kolom as $k) {
@@ -252,19 +253,19 @@ class PayrollController extends Controller
                 $sheet->row(1, function($row){
                     $row->setFontWeight('bold');
                 });
-                $ijo = ['H','P','Q','S','T','U', 'V','W'];
+                $ijo = ['H','P','Q','S','T','U', 'V','W','X'];
                 foreach ($ijo as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#44bb33');
                     });
                 }
-                $kuning = ['X','Y','Z','AA'];
+                $kuning = ['Y','Z','AA','AB'];
                 foreach ($kuning as $k) {
                     $sheet->cell($k.'1', function($cell){
                         $cell->setBackground('#ffff33');
                     });
                 }
-                $sheet->cell('AB1', function($cell){
+                $sheet->cell('AC1', function($cell){
                     $cell->setBackground('#0044ff');
                 });
                 $sheet->prependRow(1, []);
@@ -280,9 +281,9 @@ class PayrollController extends Controller
                         $cell->setBackground('#ffff33')->setBorder('thin', 'thin', 'thin', 'thin');
                     });
                 }
-                $sheet->mergeCells('AB1:AC1');
-                $sheet->cell('AB1', 'Apply to form');
-                $sheet->cell('AB1', function($cell){
+                $sheet->mergeCells('AC1:AD1');
+                $sheet->cell('AC1', 'Apply to form');
+                $sheet->cell('AC1', function($cell){
                     $cell->setAlignment('center')->setBorder('thin', 'thin', 'thin', 'thin');
                 });
                 $sheet->prependRow(1, ['GLOBAL REPORT']);

@@ -86,6 +86,13 @@
 			<td align="right">{{ $s->sr ? $s->sr->etc : 'Not Set' }}</td>
 		</tr>
 		@endif
+		@if($s->sg->thr == 1)
+		<tr>
+			<td>ETC</td>
+			<td align="right">$</td>
+			<td align="right">{{ $s->sr ? $s->sr->thr : 'Not Set' }}</td>
+		</tr>
+		@endif
 		@if($s->sg->retention == 1)
 		<tr>
 			<td>Retention</td>

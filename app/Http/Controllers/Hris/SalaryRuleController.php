@@ -37,8 +37,14 @@ class SalaryRuleController extends Controller
 			->latest()
 			->orderBy('updated_at','desc')
 			->first();
+			$bln = date('m');
+			$tahun = date('Y');
+			if($bln == 1){
+				$tahun--;
+			}
 			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
-			->whereMonth('created_at', '<', date('m'))
+			->whereMonth('created_at', '<', $bln)
+			->whereYear('created_at', $tahun)
 			->where('employee', $r->query('employee'))
 			->latest()
 			->first();
@@ -91,6 +97,7 @@ class SalaryRuleController extends Controller
 			'seguranca' 		=> 'numeric|min:0|max:999999999',
 			'cash_receipt'		=> 'numeric|min:0|max:999999999',
 			'rent_motorcycle'	=> 'numeric|min:0|max:999999999',
+			'thr'				=> 'numeric|min:0|max:999999999',
 		]);
 		$data = $r->except(['name', 'tipe', 'salary_group']);
 		$sr = SalaryRule::whereEmployee($r->query('employee'))->where('status', '1')->first();
