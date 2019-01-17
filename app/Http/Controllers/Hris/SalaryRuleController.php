@@ -37,13 +37,13 @@ class SalaryRuleController extends Controller
 			->latest()
 			->orderBy('updated_at','desc')
 			->first();
-			$bln = date('m');
+			$bln = date('m', strtotime('-1 months'));
 			$tahun = date('Y');
-			if($bln == 1){
+			if(date('m') == 1){
 				$tahun--;
 			}
 			$salaryrule2 = SalaryRule::with('emp.pos','emp.dep','salaryGroup', 'user')
-			->whereMonth('created_at', '<', $bln)
+			->whereMonth('created_at', $bln)
 			->whereYear('created_at', $tahun)
 			->where('employee', $r->query('employee'))
 			->latest()
