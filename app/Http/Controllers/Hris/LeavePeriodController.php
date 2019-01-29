@@ -210,44 +210,51 @@ class LeavePeriodController extends Controller
 		$year			= $request->query('year');
 		$employee 		= Employee::find($employee_id);
 		$is_local 		= $employee->e_from == 'Local' ? 'true' : 'false';
-		$rules 			= Rule::with('status')->where('rule_year', $year)->where('is_local', $is_local)->get();
-		$rules->transform(function($item) use ($employee, $year, $is_local){
-			$max = $item->qty_max;
-			if($item->status->joining_date == 'true'){
-				if($employee->length_of_work_in_month < $max){
-					$max = $employee->length_of_work_in_month;
-				}
-			}
-			if($item->status->only_female == 'true'){
-				if($employee->gender != 'Female'){
-					$max = 0;
-				}
-			}
-			if($item->status->only_maried == 'true'){
-				if($employee->marital_status != 1){
-					$max = 0;
-				}
-			}
-			if($year > 2018){
-				if($item->status->accumulation == 'true'){
-					$tahun = range(2018,($year-1));
-					$sisa = 0;
-					foreach ($tahun as $t) {
-						$sisa += Employee::LeftLeaveByStatus($employee->id, $item->status_id, $t);
-					}
-					$max += $sisa;
-				}
-			}
-			$item->max = $max;
-			$used = (int) LeavePeriod::where('employee_id', $employee->id)->whereYear('start_date', $year)->where('status_id', $item->status_id)->sum('day_total');
-			$item->used = $used;
-			$item->leftovers = $max - $used;
+		$rules 			= Rule::with('status')->where('employee_id', $employee_id)->where('rule_year', $year)->where('is_local', $is_local)->get();
+		// $rules->transform(function($item) use ($employee, $year, $is_local){
+		// 	$max = $item->qty_max;
+		// 	if($item->status->joining_date == 'true'){
+		// 		if($employee->length_of_work_in_month < $max){
+		// 			$max = $employee->length_of_work_in_month;
+		// 		}
+		// 	}
+		// 	if($item->status->only_female == 'true'){
+		// 		if($employee->gender != 'Female'){
+		// 			$max = 0;
+		// 		}
+		// 	}
+		// 	if($item->status->only_maried == 'true'){
+		// 		if($employee->marital_status != 1){
+		// 			$max = 0;
+		// 		}
+		// 	}
+		// 	if($year > 2018){
+		// 		if($item->status->accumulation == 'true'){
+		// 			$tahun = range(2018,($year-1));
+		// 			$sisa = 0;
+		// 			foreach ($tahun as $t) {
+		// 				$sisa += Employee::LeftLeaveByStatus($employee->id, $item->status_id, $t);
+		// 			}
+		// 			$max += $sisa;
+		// 		}
+		// 	}
+		// 	$item->max = $max;
+		// 	$used = (int) LeavePeriod::where('employee_id', $employee->id)->whereYear('start_date', $year)->where('status_id', $item->status_id)->sum('day_total');
+		// 	$item->used = $used;
+		// 	$item->leftovers = $max - $used;
+		// 	$item->employee = $employee->name;
+		// 	if($item->status->only_female == 'true'){
+		// 		if($employee->gender != 'Female'){
+		// 			$item->status->status_name = $item->status->status_name.' <b><i>(only female employee)</i></b>';
+		// 		}
+		// 	}
+		// 	return $item;
+		// });
+		// return [];
+		$rules->transform(function($item) use ($employee){
+			$item->max = $item->qty_max;
+			$item->leftovers = $item->qty_max - $item->used;
 			$item->employee = $employee->name;
-			if($item->status->only_female == 'true'){
-				if($employee->gender != 'Female'){
-					$item->status->status_name = $item->status->status_name.' <b><i>(only female employee)</i></b>';
-				}
-			}
 			return $item;
 		});
 		return $rules;

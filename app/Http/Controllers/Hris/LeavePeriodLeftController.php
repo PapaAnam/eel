@@ -35,6 +35,7 @@ class LeavePeriodLeftController extends Controller
     			'pregnancy'				=> $from['pregnancy'],
     		]);
     	}
+        // return [];
     	return LeavePeriodLeft::with('emp')->where('year', $r->year)->get();
     }
 
