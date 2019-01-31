@@ -279,7 +279,7 @@ class Attendance extends Model
             $att = $q->with(['emp' => function($q){
                 $q->with(['sr'=>function($k){
                     $k->where('status', '1');
-                }]);
+                }, 'pos']);
             }])->where('employee', $employee)
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)

@@ -30,7 +30,7 @@ class AttendanceController extends Controller
         if($date)
             return A::byDate($date);
         return A::with(['emp'=>function($q){
-            $q->whereNull('non_active_at');
+            $q->with('pos')->whereNull('non_active_at');
         }])->where('created_at', date('Y-m-d'))->get();
     }
 
