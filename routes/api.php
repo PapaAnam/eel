@@ -73,6 +73,7 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'LeavePeriodController@index');
 		Route::get('/left', 'LeavePeriodController@left');
 		Route::get('/rule', 'LeavePeriodRuleController@index');
+		Route::post('/rule', 'LeavePeriodRuleController@storeRule');
 		Route::delete('/{leave}', 'LeavePeriodController@delete');
 		Route::post('/', 'LeavePeriodController@store');
 		Route::get('/rule-status', 'LeavePeriodController@allStatus');

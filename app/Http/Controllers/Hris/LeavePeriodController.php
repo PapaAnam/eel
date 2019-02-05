@@ -206,11 +206,37 @@ class LeavePeriodController extends Controller
 
 	public function left(Request $request)
 	{
+		$request->validate([
+			'employee_id'=>[
+				'required',
+				'numeric',
+			]
+		]);
 		$employee_id	= $request->query('employee_id');
 		$year			= $request->query('year');
 		$employee 		= Employee::find($employee_id);
 		$is_local 		= $employee->e_from == 'Local' ? 'true' : 'false';
 		$rules 			= Rule::with('status')->where('employee_id', $employee_id)->where('rule_year', $year)->where('is_local', $is_local)->get();
+		$status =  Status::with(['rules'=>function($q) use ($year, $employee_id){
+			$q->with('employee')->where('rule_year', $year)->where('employee_id', $employee_id);
+		}])->get()->transform(function($item) use ($employee){
+			$item->rule = null;
+			$item->employee = $employee->name;
+			$item->max = 0;
+			$item->used = 0;
+			$item->leftovers = 0;
+			if(count($item->rules) > 0){
+				$item->rule = $item->rules->first();
+				$item->max = $item->rule->qty_max;
+				$item->used = $item->rule->used;
+				$item->leftovers = $item->max - $item->used;
+			}
+			return $item;
+		});
+		$status_id = $request->query('status_id');
+		if(is_null($status_id))
+			return $status;
+		return $status->where('id', $status_id)->first();
 		// $rules->transform(function($item) use ($employee, $year, $is_local){
 		// 	$max = $item->qty_max;
 		// 	if($item->status->joining_date == 'true'){
@@ -251,13 +277,13 @@ class LeavePeriodController extends Controller
 		// 	return $item;
 		// });
 		// return [];
-		$rules->transform(function($item) use ($employee){
-			$item->max = $item->qty_max;
-			$item->leftovers = $item->qty_max - $item->used;
-			$item->employee = $employee->name;
-			return $item;
-		});
-		return $rules;
+		// $rules->transform(function($item) use ($employee){
+		// 	$item->max = $item->qty_max;
+		// 	$item->leftovers = $item->qty_max - $item->used;
+		// 	$item->employee = $employee->name;
+		// 	return $item;
+		// });
+		// return $rules;
 	}
 
 	public function docPrint(LeavePeriod $leave)

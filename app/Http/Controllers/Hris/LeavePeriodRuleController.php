@@ -122,4 +122,37 @@ class LeavePeriodRuleController extends Controller
     {
         //
     }
+
+    public function storeRule(Request $request)
+    {
+        $max = (int) $request->max;
+        $request->validate([
+            'max'=>'required|numeric|min:0',
+            'used'=>'required|numeric|min:0|max:'.$max,
+            'employee_id'=>'required|numeric|min:0',
+            'year'=>'required|numeric|min:2000',
+        ]);
+        $year = (int) $request->year;
+        $employee_id = (int) $request->employee_id;
+        $status_id = (int) $request->status_id;
+        $rule = Rule::where('rule_year', $year)
+        ->where('employee_id', $employee_id)
+        ->where('status_id', $status_id)
+        ->first();
+        if(is_null($rule)){
+            $rule = Rule::create([
+                'employee_id'=>$employee_id,
+                'rule_year'=>$year,
+                'status_id'=>$status_id,
+                'qty_max'=>(int) $request->max,
+                'used'=>(int) $request->used,
+            ]);
+        }else{
+            $rule->update([
+                'qty_max'=>(int) $request->max,
+                'used'=>(int) $request->used,
+            ]);
+        }
+        return 'Leave Period Rule Success Saved';
+    }
 }

@@ -13,11 +13,18 @@ class Rule extends Model
 		'qty_max',
 		'is_local',
 		'user_id',
+		'employee_id',
+		'used',
 	];
 
 	public function status()
 	{
 		return $this->belongsTo('App\Models\Hris\LeavePeriod\Status', 'status_id');
+	}
+
+	public function employee()
+	{
+		return $this->belongsTo('App\Models\Hris\Employee', 'employee_id');
 	}
 
 	

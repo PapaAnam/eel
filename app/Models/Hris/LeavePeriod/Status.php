@@ -22,4 +22,9 @@ class Status extends Model
 		return $this->hasMany('App\Models\Hris\LeavePeriod', 'status_id');
 	}
 
+	public function rules()
+	{
+		return $this->hasMany('App\Models\Hris\LeavePeriod\Rule', 'status_id');
+	}
+
 }
