@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hris;
 
 use App\Models\Hris\LeavePeriod\Rule;
+use App\Models\Hris\Employee;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -139,6 +140,7 @@ class LeavePeriodRuleController extends Controller
         ->where('employee_id', $employee_id)
         ->where('status_id', $status_id)
         ->first();
+        $employee = Employee::find($employee_id);
         if(is_null($rule)){
             $rule = Rule::create([
                 'employee_id'=>$employee_id,
@@ -146,6 +148,7 @@ class LeavePeriodRuleController extends Controller
                 'status_id'=>$status_id,
                 'qty_max'=>(int) $request->max,
                 'used'=>(int) $request->used,
+                'is_local'=>$employee->e_from == 'Local' ? "true" : "false",
             ]);
         }else{
             $rule->update([

@@ -82,59 +82,61 @@ class LeavePeriodController extends Controller
 		$employee_id 	= $request->employee;
 		$employee 		= Employee::find($employee_id);
 		$is_local		= $employee->e_from == 'Local' ? 'true' : 'false';
-		$max 			= Rule::where('status_id', $status_id)
+		$rule 			= Rule::where('status_id', $status_id)
 		->where('rule_year', $rule_year)
-		->where('is_local', $is_local)
+		// ->where('is_local', $is_local)
+		->where('employee_id', $employee_id)
 		->first();
-		// CEK GENDER
-		if($status->only_female == 'true'){
-			if($employee->gender != 'Female'){
-				return response('Status '.$status->status_name.' only for female employee', 409);
-			}
-		}
-		// CEK MARIED
-		if($status->only_maried == 'true'){
-			if($employee->marital_status == 0){
-				return response('Status '.$status->status_name.' only for maried employee', 409);
-			}
-		}
-		// CEK ONLY MALE
-		if($status->only_male == 'true'){
-			if($employee->gender != 'Male'){
-				return response('Status '.$status->status_name.' only for male employee', 409);
-			}
-		}
+		// // CEK GENDER
+		// if($status->only_female == 'true'){
+		// 	if($employee->gender != 'Female'){
+		// 		return response('Status '.$status->status_name.' only for female employee', 409);
+		// 	}
+		// }
+		// // CEK MARIED
+		// if($status->only_maried == 'true'){
+		// 	if($employee->marital_status == 0){
+		// 		return response('Status '.$status->status_name.' only for maried employee', 409);
+		// 	}
+		// }
+		// // CEK ONLY MALE
+		// if($status->only_male == 'true'){
+		// 	if($employee->gender != 'Male'){
+		// 		return response('Status '.$status->status_name.' only for male employee', 409);
+		// 	}
+		// }
 		// JIKA RULE PADA STATUS DAN PADA TAHUN TERTENTU BELUM DI SET
-		if(is_null($max)){
-			return response('Status '.$status->status_name.' in '.$rule_year.' not set yet', 409);
+		if(is_null($rule)){
+			return response('Status '.$status->status_name.' employee '.$employee->name.' in '.$rule_year.' not set yet', 409);
 		}
-		$max = $max->qty_max;
+		$max = $rule->qty_max;
 		// AMBIL LEAVE PERIOD YANG SUDAH DIPAKAI
-		$ygKeambil = LeavePeriod::where('employee_id', $employee_id)
-		->where('status_id', $status_id)
-		->whereYear('start_date', $rule_year)
-		->sum('day_total');
-		// DICEK DENGAN LAMA BEKERJANYA
-		if($employee->joining_date == '0000-00-00' || is_null($employee->joining_date)){
-			return response('Joining date for employee '.$employee->name.' is invalid with value '.$employee->joining_date, 409);
-		}
-		$joining_date = $employee->joining_date;
-		$lama_bekerja = $employee->length_of_work_in_month;
+		// $ygKeambil = LeavePeriod::where('employee_id', $employee_id)
+		// ->where('status_id', $status_id)
+		// ->whereYear('start_date', $rule_year)
+		// ->sum('day_total');
+		$ygKeambil = $rule->used;
+		// // DICEK DENGAN LAMA BEKERJANYA
+		// if($employee->joining_date == '0000-00-00' || is_null($employee->joining_date)){
+		// 	return response('Joining date for employee '.$employee->name.' is invalid with value '.$employee->joining_date, 409);
+		// }
+		// $joining_date = $employee->joining_date;
+		// $lama_bekerja = $employee->length_of_work_in_month;
 		// return $lama_bekerja;
-		if($status->joining_date == 'true' && $lama_bekerja < $max){
-			$max = $lama_bekerja;
-		}
+		// if($status->joining_date == 'true' && $lama_bekerja < $max){
+		// 	$max = $lama_bekerja;
+		// }
 		$sisa = $max - $ygKeambil;
-		if($rule_year > 2018){
-			if($status->accumulation == 'true'){
-				$tahun = range(2018,$rule_year);
-				$sisa = 0;
-				foreach ($tahun as $t) {
-					$sisa += Employee::LeftLeaveByStatus($employee->id, $status_id, $t);
-				}
-				// return $tahun;
-			}
-		}
+		// if($rule_year > 2018){
+		// 	if($status->accumulation == 'true'){
+		// 		$tahun = range(2018,$rule_year);
+		// 		$sisa = 0;
+		// 		foreach ($tahun as $t) {
+		// 			$sisa += Employee::LeftLeaveByStatus($employee->id, $status_id, $t);
+		// 		}
+		// 		// return $tahun;
+		// 	}
+		// }
 		// return $sisa;
 		if($sisa <= 0){
 			return response('Status '.$status->status_name.' in '.$rule_year.' reach the limit for employee '.$employee->name, 409);
@@ -181,6 +183,8 @@ class LeavePeriodController extends Controller
 				]);
 			}
 		}
+		$rule->used += $day_total;
+		$rule->save();
 		return 'Leave period success created';
 	}
 
