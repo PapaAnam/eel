@@ -195,3 +195,6 @@ Route::prefix('leave-period')->group(function(){
 # CASH WITHDRAWAL
 Route::view('/cash-withdrawal', 'App.hris');
 Route::get('/cash-withdrawal/print-form/{cash_withdrawal}', 'CashWithdrawalController@printForm');
+
+# ALWAYS PRESENCE
+Route::view('/always-presence', 'App.hris');

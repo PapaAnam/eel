@@ -35,7 +35,8 @@ class AccountController extends Controller
         $store['calendar']        =  $r->calendar!=null ? $r->calendar : 0;
         $store['special_day']     =  $r->special_day!=null ? $r->special_day : 0;
         $store['attendance']      =  $r->attendance!=null ? $r->attendance : 0;
-        $store['cash_withdrawal']       =  $r->cash_withdrawal!=null ? $r->cash_withdrawal : 0;
+        $store['cash_withdrawal'] =  $r->cash_withdrawal!=null ? $r->cash_withdrawal : 0;
+        $store['always_presence'] =  $r->always_presence!=null ? $r->always_presence : 0;
         $store['official_travel'] =  $r->official_travel!=null ? $r->official_travel : 0;
         $store['payroll']         =  $r->payroll!=null ? $r->payroll : 0;
         $store['announcement']    =  $r->announcement!=null ? $r->announcement : 0;

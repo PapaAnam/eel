@@ -59,7 +59,7 @@ class LeavePeriodController extends Controller
 						return $fail('End date is invalid.');
 					}
 				},
-				'before:'.(substr($request->start_date, 0, 4)+1).'-01-01',
+				// 'before:'.(substr($request->start_date, 0, 4)+1).'-01-01',
 			],
 			'attachment'=>$requiredAttach ? 'required|file' : 'nullable',
 		]);

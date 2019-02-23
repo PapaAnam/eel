@@ -32,6 +32,7 @@ return [
     'x100c'=>env('X100C', false),
     'map_api'=>env('MAP_API_KEY'),
     'is_online'=>env('ONLINE',false),
+    'google_map_api_key'=>env('GOOGLE_MAP_API_KEY', null),
 
     /*
     |--------------------------------------------------------------------------

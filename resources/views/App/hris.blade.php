@@ -55,6 +55,7 @@
   {{-- <script src="{{ asset('datatable/responsive/js/dataTables.responsive.min.js') }}"></script>
   <script src="{{ asset('datatable/responsive/js/responsive.bootstrap4.min.js') }}"></script> --}}
   <script src="{{ asset('datatable/datatables.min.js') }}"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{config('app.google_map_api_key')}}"></script>
   @include('manifest')
   <script src="{{ asset(mix('js/hris.js')) }}"></script>
 </body>

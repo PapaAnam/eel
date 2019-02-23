@@ -86,6 +86,13 @@ Route::namespace('Hris')->group(function(){
 		Route::get('/', 'CashWithdrawalController@index');
 		Route::post('/', 'CashWithdrawalController@store');
 	});
+
+	# ALWAYS PRESENCE
+	Route::prefix('hris/always-presence')->namespace('AlwaysPresence')->group(function(){
+		Route::get('location', 'LocationController@index');
+		Route::post('location', 'LocationController@save');
+		Route::post('login', 'LoginController@login');
+	});
 });
 
 Route::namespace('MIdea')->group(function(){
