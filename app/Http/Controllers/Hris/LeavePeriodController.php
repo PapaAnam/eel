@@ -54,11 +54,12 @@ class LeavePeriodController extends Controller
 			'end_date'=>[
 				'required',
 				'date_format:Y-m-d',
-				function($attribute, $value, $fail) use ($day_total, $request){
-					if ($day_total <= 0) {
-						return $fail('End date is invalid.');
-					}
-				},
+				
+					
+						
+					
+                    
+				
 				// 'before:'.(substr($request->start_date, 0, 4)+1).'-01-01',
 			],
 			'attachment'=>$requiredAttach ? 'required|file' : 'nullable',
