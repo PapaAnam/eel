@@ -1,0 +1,5 @@
+Vue.component('tabcontrol', require('./tabcontrol'))
+Vue.component('tabs', require('./tabs'))
+Vue.component('tab', require('./tab'))
+Vue.component('frames', require('./frames'))
+Vue.component('tab-content', require('./frame'))

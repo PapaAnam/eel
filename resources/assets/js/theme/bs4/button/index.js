@@ -1,0 +1,1 @@
+Vue.component('btn', require('./btn'))

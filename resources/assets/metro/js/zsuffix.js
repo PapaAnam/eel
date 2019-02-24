@@ -1,0 +1,2 @@
+	return $.Metro.init();
+}));

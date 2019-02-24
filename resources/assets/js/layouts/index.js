@@ -1,0 +1,8 @@
+// Vue.component('my-data', require('./data'))
+Vue.component('my-card', require('./my-card'))
+Vue.component('my-datepicker', require('./datepicker'))
+Vue.component('timemask', require('./timemask'))
+Vue.component('my-select', require('./my-select'))
+Vue.component('my-inp', require('./my-inp'))
+Vue.component('my-table', require('./my-table'))
+Vue.component('my-textarea', require('./my-textarea'))

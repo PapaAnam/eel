@@ -1,0 +1,6 @@
+Vue.component('isian', require('./isian.vue'))
+Vue.component('isian-area', require('./isian-area.vue'))
+Vue.component('isian-gambar', require('./isian-gambar.vue'))
+Vue.component('tombol-simpan', require('./tombol-simpan.vue'))
+Vue.component('tombol-ubah', require('./tombol-ubah.vue'))
+Vue.component('tombol-detail', require('./tombol-detail.vue'))

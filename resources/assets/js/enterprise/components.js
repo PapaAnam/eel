@@ -1,0 +1,5 @@
+Vue.component('skin', require('./../theme/metro/skin.vue'))
+Vue.component('skin-btn', require('./../theme/metro/skin-btn.vue'))
+Vue.component('enterprise-edition', require('./index.vue'))
+Vue.component('enterprise-menu', require('./menu.vue'))
+Vue.component('enterprise-header', require('./header.vue'))

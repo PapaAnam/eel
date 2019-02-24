@@ -1,0 +1,45 @@
+Vue.component('inp', require('./../theme/bs4/form/inp.vue'))
+require('./../layouts')
+require('./layouts')
+Vue.component('tags', require('./../theme/metro/form/tags.vue'))
+
+// HRIS
+Vue.component('marketing-idea', require('./index.vue'))
+Vue.component('hris-header', require('./header.vue'))
+Vue.component('mac', require('./mac.vue'))
+Vue.component('mac-view', require('./../form/mac.vue'))
+Vue.component('mac-preloader', require('./mac-preloader.vue'))
+Vue.component('whats-new', require('./whats-new.vue'))
+Vue.component('skin', require('./skin.vue'))
+Vue.component('about-app', require('./about-app.vue'))
+
+// TILES
+Vue.component('hris-tiles', require('./tiles/all.vue'))
+
+//MAC
+Vue.component('mac-header', require('./../mac/header.vue'))
+
+// FORM
+Vue.component('filter-bar', require('./../form/FilterBar.vue'))
+Vue.component('export-btn', require('./../form/button/export-btn.vue'))
+Vue.component('simpan-btn', require('./../form/button/simpan-btn.vue'))
+Vue.component('batal-btn', require('./../form/button/batal-btn.vue'))
+Vue.component('edit-btn', require('./../form/button/edit-btn.vue'))
+Vue.component('detail-btn', require('./../form/button/detail-btn.vue'))
+Vue.component('print-btn', require('./../form/button/print-btn.vue'))
+Vue.component('pdf-btn', require('./../form/button/pdf-btn.vue'))
+Vue.component('excel-btn', require('./../form/button/excel-btn.vue'))
+Vue.component('hapus-btn', require('./../form/button/hapus-btn.vue'))
+Vue.component('btn-primary', require('./../form/button/btn-primary.vue'))
+Vue.component('input-text', require('./../form/input/input-text.vue'))
+Vue.component('input-number', require('./../form/input/input-number.vue'))
+Vue.component('input-pass', require('./../form/input/input-pass.vue'))
+Vue.component('input-tags', require('./../form/input/input-tags.vue'))
+Vue.component('input-date', require('./../form/input/input-date.vue'))
+Vue.component('input-datetime', require('./../form/input/input-datetime.vue'))
+Vue.component('input-file', require('./../form/input/input-file.vue'))
+Vue.component('datepicker', require('./../form/datepicker.vue'))
+Vue.component('textar', require('./../form/textar.vue'))
+Vue.component('select2', require('./../form/select2.vue'))
+Vue.component('icheck', require('./../form/icheck.vue'))
+Vue.component('iradio', require('./../form/iradio.vue'))
