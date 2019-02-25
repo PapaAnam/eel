@@ -277,8 +277,8 @@
 				let sd = new Date(this.startDate)
 				let range = ed.getTime() - sd.getTime()
 				range = range / 3600 / 24 / 1000
-				if(range <= 0){
-					alert('end date must be greater than start date')
+				if(range <= -1){
+					alert('end date must be same or greater than start date')
 					this.endDate = ''
 				}
 			}
