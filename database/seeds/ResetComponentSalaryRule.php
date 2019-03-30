@@ -30,8 +30,8 @@ class ResetComponentSalaryRule extends Seeder
         }
         foreach(Employee::active() as $e){
             $sr = SalaryRule::where('employee', $e->id)
-                ->where('month', date('m'))
-                ->where('year', date('Y'))
+                ->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))
                 ->where('status', '1')
                 ->first();
             if(is_null($sr)){
