@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Hris\SalaryRule;
+use App\Models\Hris\Employee;
 
 class ResetComponentSalaryRule extends Seeder
 {
@@ -26,6 +27,19 @@ class ResetComponentSalaryRule extends Seeder
         	$data = $temp + $s->only('basic_salary', 'allowance', 'status', 'salary_type','employee','salary_group_id','out_at_rule');
         	SalaryRule::find($s->id)->update(['status'=>0]);
         	SalaryRule::create($data);
+        }
+        foreach(Employee::active() as $e){
+            $sr = SalaryRule::where('employee', $e->id)
+                ->where('month', date('m'))
+                ->where('year', date('Y'))
+                ->where('status', '1')
+                ->first();
+            if(is_null($sr)){
+                $sr = SalaryRule::where('employee', $e->id)
+                    ->latest()
+                    ->first();
+                SalaryRule::create($sr->only('basic_salary', 'allowance', 'status', 'salary_type','employee','salary_group_id','out_at_rule'));
+            }
         }
         echo 'Salary rule reset success';
     }
