@@ -38,7 +38,7 @@ class ResetComponentSalaryRule extends Seeder
                 $sr = SalaryRule::where('employee', $e->id)
                     ->latest()
                     ->first();
-                $data = $sr->only('basic_salary', 'allowance', 'status', 'salary_type','employee','salary_group_id','out_at_rule')+['status'=>'1'];
+                $data = $sr->only('basic_salary', 'allowance', 'salary_type','employee','salary_group_id','out_at_rule')+['status'=>'1'];
                 SalaryRule::create($data);
             }
         }
